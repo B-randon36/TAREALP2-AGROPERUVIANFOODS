@@ -1,0 +1,288 @@
+2026-08-27 21:41:15.122 [] INFO  p.e.u.b.c.c.c.CategoriaControllerTest - Starting CategoriaControllerTest using Java 24.0.2 with PID 23240 (started by PC in E:\repoprofe\bomerp-backend)
+2026-08-27 21:41:15.128 [] DEBUG p.e.u.b.c.c.c.CategoriaControllerTest - Running with Spring Boot v4.0.7, Spring v7.0.8
+2026-08-27 21:41:15.129 [] INFO  p.e.u.b.c.c.c.CategoriaControllerTest - The following 1 profile is active: "dev"
+2026-08-27 21:41:16.690 [] DEBUG p.e.u.b.filter.CorrelationIdFilter - Filter 'correlationIdFilter' configured for use
+2026-08-27 21:41:16.696 [] INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-08-27 21:41:16.697 [] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-08-27 21:41:16.703 [] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-08-27 21:41:16.729 [] INFO  p.e.u.b.c.c.c.CategoriaControllerTest - Started CategoriaControllerTest in 2.128 seconds (process running for 3.286)
+2026-08-27 21:41:17.116 [] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pe.edu.upeu.bomerp.catalogo.producto.controller.ProductoControllerTest]: ProductoControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-27 21:41:17.137 [] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pe.edu.upeu.bomerp.BomerpBackendApplication for test class pe.edu.upeu.bomerp.catalogo.producto.controller.ProductoControllerTest
+2026-08-27 21:41:17.139 [] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pe.edu.upeu.bomerp.catalogo.producto.controller.ProductoControllerTest]: ProductoControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-27 21:41:17.144 [] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pe.edu.upeu.bomerp.BomerpBackendApplication for test class pe.edu.upeu.bomerp.catalogo.producto.controller.ProductoControllerTest
+2026-08-27 21:41:17.152 [] INFO  o.s.b.d.r.RestartApplicationListener - Restart disabled due to context in which it is running
+2026-08-27 21:41:17.181 [] INFO  p.e.u.b.c.p.c.ProductoControllerTest - Starting ProductoControllerTest using Java 24.0.2 with PID 23240 (started by PC in E:\repoprofe\bomerp-backend)
+2026-08-27 21:41:17.182 [] DEBUG p.e.u.b.c.p.c.ProductoControllerTest - Running with Spring Boot v4.0.7, Spring v7.0.8
+2026-08-27 21:41:17.182 [] INFO  p.e.u.b.c.p.c.ProductoControllerTest - The following 1 profile is active: "dev"
+2026-08-27 21:41:17.388 [] DEBUG p.e.u.b.filter.CorrelationIdFilter - Filter 'correlationIdFilter' configured for use
+2026-08-27 21:41:17.389 [] INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-08-27 21:41:17.389 [] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-08-27 21:41:17.389 [] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-08-27 21:41:17.395 [] INFO  p.e.u.b.c.p.c.ProductoControllerTest - Started ProductoControllerTest in 0.243 seconds (process running for 3.953)
+2026-08-27 21:41:17.475 [] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pe.edu.upeu.bomerp.finanzas.controller.CategoriaFinancieraControllerTest]: CategoriaFinancieraControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-27 21:41:17.497 [] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pe.edu.upeu.bomerp.BomerpBackendApplication for test class pe.edu.upeu.bomerp.finanzas.controller.CategoriaFinancieraControllerTest
+2026-08-27 21:41:17.498 [] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pe.edu.upeu.bomerp.finanzas.controller.CategoriaFinancieraControllerTest]: CategoriaFinancieraControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-27 21:41:17.504 [] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pe.edu.upeu.bomerp.BomerpBackendApplication for test class pe.edu.upeu.bomerp.finanzas.controller.CategoriaFinancieraControllerTest
+2026-08-27 21:41:17.508 [] INFO  o.s.b.d.r.RestartApplicationListener - Restart disabled due to context in which it is running
+2026-08-27 21:41:17.532 [] INFO  p.e.u.b.f.c.CategoriaFinancieraControllerTest - Starting CategoriaFinancieraControllerTest using Java 24.0.2 with PID 23240 (started by PC in E:\repoprofe\bomerp-backend)
+2026-08-27 21:41:17.533 [] DEBUG p.e.u.b.f.c.CategoriaFinancieraControllerTest - Running with Spring Boot v4.0.7, Spring v7.0.8
+2026-08-27 21:41:17.533 [] INFO  p.e.u.b.f.c.CategoriaFinancieraControllerTest - The following 1 profile is active: "dev"
+2026-08-27 21:41:17.768 [] DEBUG p.e.u.b.filter.CorrelationIdFilter - Filter 'correlationIdFilter' configured for use
+2026-08-27 21:41:17.768 [] INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-08-27 21:41:17.768 [] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-08-27 21:41:17.769 [] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-08-27 21:41:17.774 [] INFO  p.e.u.b.f.c.CategoriaFinancieraControllerTest - Started CategoriaFinancieraControllerTest in 0.267 seconds (process running for 4.332)
+2026-08-27 21:41:17.823 [] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pe.edu.upeu.bomerp.finanzas.controller.TransaccionFinancieraControllerTest]: TransaccionFinancieraControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-27 21:41:17.828 [] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pe.edu.upeu.bomerp.BomerpBackendApplication for test class pe.edu.upeu.bomerp.finanzas.controller.TransaccionFinancieraControllerTest
+2026-08-27 21:41:17.829 [] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pe.edu.upeu.bomerp.finanzas.controller.TransaccionFinancieraControllerTest]: TransaccionFinancieraControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-27 21:41:17.834 [] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pe.edu.upeu.bomerp.BomerpBackendApplication for test class pe.edu.upeu.bomerp.finanzas.controller.TransaccionFinancieraControllerTest
+2026-08-27 21:41:17.836 [] INFO  o.s.b.d.r.RestartApplicationListener - Restart disabled due to context in which it is running
+2026-08-27 21:41:17.861 [] INFO  p.e.u.b.f.c.TransaccionFinancieraControllerTest - Starting TransaccionFinancieraControllerTest using Java 24.0.2 with PID 23240 (started by PC in E:\repoprofe\bomerp-backend)
+2026-08-27 21:41:17.862 [] DEBUG p.e.u.b.f.c.TransaccionFinancieraControllerTest - Running with Spring Boot v4.0.7, Spring v7.0.8
+2026-08-27 21:41:17.862 [] INFO  p.e.u.b.f.c.TransaccionFinancieraControllerTest - The following 1 profile is active: "dev"
+2026-08-27 21:41:18.043 [] DEBUG p.e.u.b.filter.CorrelationIdFilter - Filter 'correlationIdFilter' configured for use
+2026-08-27 21:41:18.043 [] INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-08-27 21:41:18.043 [] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-08-27 21:41:18.044 [] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-08-27 21:41:18.050 [] INFO  p.e.u.b.f.c.TransaccionFinancieraControllerTest - Started TransaccionFinancieraControllerTest in 0.214 seconds (process running for 4.608)
+2026-08-27 21:41:18.151 [] INFO  c.tngtech.archunit.core.PluginLoader - Detected Java version 24.0.2
+2026-08-27 21:41:19.597 [] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pe.edu.upeu.bomerp.receta.controller.RecetaControllerTest]: RecetaControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-27 21:41:19.613 [] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pe.edu.upeu.bomerp.BomerpBackendApplication for test class pe.edu.upeu.bomerp.receta.controller.RecetaControllerTest
+2026-08-27 21:41:19.613 [] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pe.edu.upeu.bomerp.receta.controller.RecetaControllerTest]: RecetaControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-27 21:41:19.616 [] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pe.edu.upeu.bomerp.BomerpBackendApplication for test class pe.edu.upeu.bomerp.receta.controller.RecetaControllerTest
+2026-08-27 21:41:19.620 [] INFO  o.s.b.d.r.RestartApplicationListener - Restart disabled due to context in which it is running
+2026-08-27 21:41:19.639 [] INFO  p.e.u.b.r.c.RecetaControllerTest - Starting RecetaControllerTest using Java 24.0.2 with PID 23240 (started by PC in E:\repoprofe\bomerp-backend)
+2026-08-27 21:41:19.639 [] DEBUG p.e.u.b.r.c.RecetaControllerTest - Running with Spring Boot v4.0.7, Spring v7.0.8
+2026-08-27 21:41:19.640 [] INFO  p.e.u.b.r.c.RecetaControllerTest - The following 1 profile is active: "dev"
+2026-08-27 21:41:19.840 [] DEBUG p.e.u.b.filter.CorrelationIdFilter - Filter 'correlationIdFilter' configured for use
+2026-08-27 21:41:19.841 [] INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-08-27 21:41:19.841 [] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-08-27 21:41:19.842 [] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-08-27 21:41:19.847 [] INFO  p.e.u.b.r.c.RecetaControllerTest - Started RecetaControllerTest in 0.228 seconds (process running for 6.405)
+2026-08-27 21:41:19.947 [] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pe.edu.upeu.bomerp.reportes.controller.ReporteControllerTest]: ReporteControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-27 21:41:19.959 [] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pe.edu.upeu.bomerp.BomerpBackendApplication for test class pe.edu.upeu.bomerp.reportes.controller.ReporteControllerTest
+2026-08-27 21:41:19.959 [] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [pe.edu.upeu.bomerp.reportes.controller.ReporteControllerTest]: ReporteControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-27 21:41:19.966 [] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration pe.edu.upeu.bomerp.BomerpBackendApplication for test class pe.edu.upeu.bomerp.reportes.controller.ReporteControllerTest
+2026-08-27 21:41:19.969 [] INFO  o.s.b.d.r.RestartApplicationListener - Restart disabled due to context in which it is running
+2026-08-27 21:41:19.988 [] INFO  p.e.u.b.r.c.ReporteControllerTest - Starting ReporteControllerTest using Java 24.0.2 with PID 23240 (started by PC in E:\repoprofe\bomerp-backend)
+2026-08-27 21:41:19.988 [] DEBUG p.e.u.b.r.c.ReporteControllerTest - Running with Spring Boot v4.0.7, Spring v7.0.8
+2026-08-27 21:41:19.988 [] INFO  p.e.u.b.r.c.ReporteControllerTest - The following 1 profile is active: "dev"
+2026-08-27 21:41:20.167 [] DEBUG p.e.u.b.filter.CorrelationIdFilter - Filter 'correlationIdFilter' configured for use
+2026-08-27 21:41:20.168 [] INFO  o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-08-27 21:41:20.168 [] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-08-27 21:41:20.168 [] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-08-27 21:41:20.172 [] INFO  p.e.u.b.r.c.ReporteControllerTest - Started ReporteControllerTest in 0.203 seconds (process running for 6.73)
+2026-08-27 21:41:29.321 [] INFO  p.e.u.b.BomerpBackendApplication - Starting BomerpBackendApplication using Java 24.0.2 with PID 8336 (E:\repoprofe\bomerp-backend\target\classes started by PC in E:\repoprofe\bomerp-backend)
+2026-08-27 21:41:29.323 [] DEBUG p.e.u.b.BomerpBackendApplication - Running with Spring Boot v4.0.7, Spring v7.0.8
+2026-08-27 21:41:29.323 [] INFO  p.e.u.b.BomerpBackendApplication - The following 1 profile is active: "dev"
+2026-08-27 21:41:29.360 [] INFO  o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\PC\.m2\repository\com\oracle\database\jdbc\ojdbc11\23.9.0.25.07\ojdbc11-23.9.0.25.07.jar referenced one or more files that do not exist: file:/C:/Users/PC/.m2/repository/com/oracle/database/jdbc/ojdbc11/23.9.0.25.07/oraclepki.jar
+2026-08-27 21:41:29.361 [] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-08-27 21:41:29.361 [] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-08-27 21:41:30.121 [] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-27 21:41:30.183 [] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 54 ms. Found 6 JPA repository interfaces.
+2026-08-27 21:41:30.697 [] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-08-27 21:41:30.715 [] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-08-27 21:41:30.716 [] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-08-27 21:41:30.762 [] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1399 ms
+2026-08-27 21:41:30.873 [] DEBUG p.e.u.b.filter.CorrelationIdFilter - Filter 'correlationIdFilter' configured for use
+2026-08-27 21:41:31.113 [] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-08-27 21:41:31.169 [] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.19.Final
+2026-08-27 21:41:31.527 [] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-27 21:41:31.556 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-08-27 21:41:32.738 [] WARN  org.hibernate.orm.jdbc.error - HHH000247: ErrorCode: 12541, SQLState: 66000
+2026-08-27 21:41:32.738 [] WARN  org.hibernate.orm.jdbc.error - ORA-12541: No se puede conectar. No hay ningún listener en host localhost port 1521. (CONNECTION_ID=lC1m3jNRTL6ODmFUlA1E/w==)
+https://docs.oracle.com/error-help/db/ora-12541/
+2026-08-27 21:41:32.743 [] WARN  org.hibernate.orm.jdbc - HHH100046: Could not obtain connection to query JDBC database metadata
+org.hibernate.exception.GenericJDBCException: Unable to obtain isolated JDBC connection [ORA-12541: No se puede conectar. No hay ningún listener en host localhost port 1521. (CONNECTION_ID=lC1m3jNRTL6ODmFUlA1E/w==)
+https://docs.oracle.com/error-help/db/ora-12541/] [n/a]
+	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:39)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:115)
+	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:101)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:51)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:366)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironment(JdbcEnvironmentInitiator.java:143)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:120)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:80)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:133)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:260)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:235)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:212)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:44)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:251)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:203)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:172)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1392)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.populateSessionFactoryBuilder(EntityManagerFactoryBuilderImpl.java:1472)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1454)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:93)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:443)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:436)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:411)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:419)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1862)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1811)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:977)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+	at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at pe.edu.upeu.bomerp.BomerpBackendApplication.main(BomerpBackendApplication.java:10)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:52)
+Caused by: java.sql.SQLException: ORA-12541: No se puede conectar. No hay ningún listener en host localhost port 1521. (CONNECTION_ID=lC1m3jNRTL6ODmFUlA1E/w==)
+https://docs.oracle.com/error-help/db/ora-12541/
+	at oracle.jdbc.driver.T4CConnection.handleLogonNetException(T4CConnection.java:1912)
+	at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:1228)
+	at oracle.jdbc.driver.PhysicalConnection.connect(PhysicalConnection.java:1210)
+	at oracle.jdbc.driver.T4CDriverExtension.getConnection(T4CDriverExtension.java:106)
+	at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:887)
+	at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:694)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:373)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:210)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.hibernate.engine.jdbc.connections.internal.DataSourceConnectionProvider.getConnection(DataSourceConnectionProvider.java:137)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:508)
+	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:48)
+	... 40 common frames omitted
+Caused by: oracle.net.ns.NetException: ORA-12541: No se puede conectar. No hay ningún listener en host localhost port 1521. (CONNECTION_ID=lC1m3jNRTL6ODmFUlA1E/w==)
+https://docs.oracle.com/error-help/db/ora-12541/
+	at oracle.net.nt.TcpNTAdapter.handleEstablishSocketException(TcpNTAdapter.java:418)
+	at oracle.net.nt.TcpNTAdapter.establishSocket(TcpNTAdapter.java:350)
+	at oracle.net.nt.TcpNTAdapter.connect(TcpNTAdapter.java:228)
+	at oracle.net.nt.ConnOption.connect(ConnOption.java:357)
+	at oracle.net.nt.ConnStrategy.executeConnOption(ConnStrategy.java:1296)
+	at oracle.net.nt.ConnStrategy.execute(ConnStrategy.java:791)
+	at oracle.net.resolver.AddrResolution.resolveAndExecute(AddrResolution.java:724)
+	at oracle.net.ns.NSProtocol.establishConnection(NSProtocol.java:972)
+	at oracle.net.ns.NSProtocol.connect(NSProtocol.java:341)
+	at oracle.jdbc.driver.T4CConnection.connectNetworkSessionProtocol(T4CConnection.java:3746)
+	at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:1107)
+	... 54 common frames omitted
+Caused by: java.net.ConnectException: Connection refused: getsockopt
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:628)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishTimedConnect(SocketChannelImpl.java:1269)
+	at java.base/sun.nio.ch.SocketChannelImpl.blockingConnect(SocketChannelImpl.java:1311)
+	at java.base/sun.nio.ch.SocketAdaptor.connect(SocketAdaptor.java:102)
+	at oracle.net.nt.TimeoutSocketChannel.doConnect(TimeoutSocketChannel.java:296)
+	at oracle.net.nt.TimeoutSocketChannel.initializeSocketChannel(TimeoutSocketChannel.java:276)
+	at oracle.net.nt.TimeoutSocketChannel.connect(TimeoutSocketChannel.java:243)
+	at oracle.net.nt.TimeoutSocketChannel.<init>(TimeoutSocketChannel.java:210)
+	at oracle.net.nt.TcpNTAdapter.establishSocket(TcpNTAdapter.java:339)
+	... 63 common frames omitted
+2026-08-27 21:41:32.749 [] ERROR o.s.o.j.LocalContainerEntityManagerFactoryBean - Failed to initialize JPA EntityManagerFactory: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+2026-08-27 21:41:32.749 [] WARN  o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/hibernate/autoconfigure/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+2026-08-27 21:41:32.753 [] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-08-27 21:41:32.760 [] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-08-27 21:41:32.770 [] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/hibernate/autoconfigure/HibernateJpaConfiguration.class]: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1815)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:603)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:201)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:977)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:621)
+	at org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1365)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1354)
+	at pe.edu.upeu.bomerp.BomerpBackendApplication.main(BomerpBackendApplication.java:10)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:52)
+Caused by: org.hibernate.service.spi.ServiceException: Unable to create requested service [org.hibernate.engine.jdbc.env.spi.JdbcEnvironment] due to: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:273)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:235)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:212)
+	at org.hibernate.boot.model.relational.Database.<init>(Database.java:44)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:251)
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:203)
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:172)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1392)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.populateSessionFactoryBuilder(EntityManagerFactoryBuilderImpl.java:1472)
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1454)
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:93)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:443)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:436)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:411)
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:419)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1862)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1811)
+	... 18 common frames omitted
+Caused by: org.hibernate.HibernateException: Unable to determine Dialect without JDBC metadata (please set 'jakarta.persistence.jdbc.url' for common cases or 'hibernate.dialect' when a custom Dialect implementation must be provided)
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.determineDialect(DialectFactoryImpl.java:190)
+	at org.hibernate.engine.jdbc.dialect.internal.DialectFactoryImpl.buildDialect(DialectFactoryImpl.java:86)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentWithDefaults(JdbcEnvironmentInitiator.java:200)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:452)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironment(JdbcEnvironmentInitiator.java:143)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:120)
+	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:80)
+	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:133)
+	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:260)
+	... 34 common frames omitted
+2026-08-27 21:43:51.247 [] INFO  p.e.u.b.BomerpBackendApplication - Starting BomerpBackendApplication using Java 24.0.2 with PID 21768 (E:\repoprofe\bomerp-backend\target\classes started by PC in E:\repoprofe\bomerp-backend)
+2026-08-27 21:43:51.251 [] DEBUG p.e.u.b.BomerpBackendApplication - Running with Spring Boot v4.0.7, Spring v7.0.8
+2026-08-27 21:43:51.251 [] INFO  p.e.u.b.BomerpBackendApplication - The following 1 profile is active: "h2"
+2026-08-27 21:43:51.293 [] INFO  o.s.b.d.restart.ChangeableUrls - The Class-Path manifest attribute in C:\Users\PC\.m2\repository\com\oracle\database\jdbc\ojdbc11\23.9.0.25.07\ojdbc11-23.9.0.25.07.jar referenced one or more files that do not exist: file:/C:/Users/PC/.m2/repository/com/oracle/database/jdbc/ojdbc11/23.9.0.25.07/oraclepki.jar
+2026-08-27 21:43:51.294 [] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-08-27 21:43:51.294 [] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-08-27 21:43:52.109 [] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-27 21:43:52.178 [] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 58 ms. Found 6 JPA repository interfaces.
+2026-08-27 21:43:52.702 [] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-08-27 21:43:52.716 [] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-08-27 21:43:52.717 [] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-08-27 21:43:52.753 [] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1458 ms
+2026-08-27 21:43:52.845 [] DEBUG p.e.u.b.filter.CorrelationIdFilter - Filter 'correlationIdFilter' configured for use
+2026-08-27 21:43:52.918 [] INFO  c.tngtech.archunit.core.PluginLoader - Detected Java version 24.0.2
+2026-08-27 21:43:54.090 [] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-08-27 21:43:54.144 [] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.19.Final
+2026-08-27 21:43:54.534 [] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-27 21:43:54.569 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-08-27 21:43:54.878 [] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:bomerp_db user=SA
+2026-08-27 21:43:54.879 [] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-08-27 21:43:54.935 [] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:bomerp_db]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: BOMERP_DB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-08-27 21:43:55.826 [] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-27 21:43:55.893 [] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-27 21:43:55.976 [] INFO  o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-08-27 21:43:56.789 [] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 3 endpoints beneath base path '/actuator'
+2026-08-27 21:43:56.856 [] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-08-27 21:43:56.866 [] INFO  o.s.s.config.TaskSchedulerRouter - No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2026-08-27 21:43:56.872 [] INFO  p.e.u.b.BomerpBackendApplication - Started BomerpBackendApplication in 6.238 seconds (process running for 6.742)
+2026-08-27 21:43:56.877 [] WARN  o.s.c.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-08-27 21:43:56.877 [] WARN  o.s.c.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-08-27 21:45:18.087 [] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-08-27 21:45:18.088 [] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-08-27 21:45:18.090 [] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-08-27 21:45:39.630 [310bef27-5ac7-4fe5-b519-f57b237490cf] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 390 ms
