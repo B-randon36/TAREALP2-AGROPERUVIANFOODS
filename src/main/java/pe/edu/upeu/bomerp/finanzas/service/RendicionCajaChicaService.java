@@ -1,5 +1,7 @@
 package pe.edu.upeu.bomerp.finanzas.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import pe.edu.upeu.bomerp.finanzas.dto.CajaChicaResponse;
 import pe.edu.upeu.bomerp.finanzas.dto.RendicionCajaChicaRequest;
 import pe.edu.upeu.bomerp.finanzas.dto.RendicionCajaChicaResponse;
@@ -14,4 +16,5 @@ public interface RendicionCajaChicaService {
     RendicionCajaChicaResponse registrarRendicion(RendicionCajaChicaRequest request);
     RendicionCajaChicaResponse obtenerRendicion(Long id);
     List<RendicionCajaChicaResponse> listarRendicionesPorCaja(Long cajaChicaId);
+    Page<RendicionCajaChicaResponse> listarPaginado(Pageable pageable);
 }

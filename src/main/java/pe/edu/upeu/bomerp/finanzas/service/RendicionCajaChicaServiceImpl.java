@@ -1,6 +1,8 @@
 package pe.edu.upeu.bomerp.finanzas.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.upeu.bomerp.catalogo.producto.service.ProductoService;
@@ -122,6 +124,13 @@ public class RendicionCajaChicaServiceImpl implements RendicionCajaChicaService 
         return rendicionRepository.findByCajaChicaId(cajaChicaId).stream()
                 .map(this::mapToRendicionResponse)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<RendicionCajaChicaResponse> listarPaginado(Pageable pageable) {
+        return rendicionRepository.findAll(pageable)
+                .map(this::mapToRendicionResponse);
     }
 
     private CajaChica buscarCajaChicaOFallar(Long id) {

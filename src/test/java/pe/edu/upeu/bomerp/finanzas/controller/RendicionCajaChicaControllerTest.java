@@ -27,7 +27,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.springframework.context.annotation.Import;
+import pe.edu.upeu.bomerp.exception.GlobalExceptionHandler;
+
 @WebMvcTest(RendicionCajaChicaController.class)
+@Import(GlobalExceptionHandler.class)
 class RendicionCajaChicaControllerTest {
 
     @Autowired
@@ -113,5 +117,33 @@ class RendicionCajaChicaControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.reglaNegocio").value("RN-FIN-01"))
                 .andExpect(jsonPath("$.message").value(containsString("supera la solvencia/saldo disponible")));
+    }
+
+    @Test
+    @DisplayName("GET /rendiciones/paginado responde 200 OK con estructura de página")
+    void listarRendicionesPaginado_exito() throws Exception {
+        RendicionCajaChicaResponse item = RendicionCajaChicaResponse.builder()
+                .id(1L)
+                .codigo("REND-2026-PAG")
+                .responsable("Carlos M.")
+                .fecha(LocalDate.now())
+                .montoTotal(new BigDecimal("100.00"))
+                .estado(EstadoRendicion.APROBADO)
+                .cajaChicaId(1L)
+                .build();
+
+        org.springframework.data.domain.Page<RendicionCajaChicaResponse> page =
+                new org.springframework.data.domain.PageImpl<>(List.of(item));
+
+        when(rendicionService.listarPaginado(any())).thenReturn(page);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/v1/finanzas/rendiciones/paginado")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sort", "id,asc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].codigo").value("REND-2026-PAG"))
+                .andExpect(jsonPath("$.totalElements").value(1));
     }
 }
