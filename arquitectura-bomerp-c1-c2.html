@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOMERP — Arquitectura Monolito Modular (Vista C1 y C2)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #0a0e17;
+      --bg-surface: #111726;
+      --bg-card: #182238;
+      --bg-card-subtle: #1e2a45;
+      --border-subtle: #253352;
+      --border-accent: #3b82f6;
+
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-light: rgba(59, 130, 246, 0.12);
+
+      --success: #10b981;
+      --success-light: rgba(16, 185, 129, 0.12);
+      --warning: #f59e0b;
+      --warning-light: rgba(245, 158, 11, 0.12);
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.12);
+      --purple: #a855f7;
+      --purple-light: rgba(168, 85, 247, 0.12);
+
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Outfit', sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.65;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HEADER */
+    .top-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(17, 23, 38, 0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-tag {
+      background: var(--primary-light);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      font-family: var(--font-code);
+    }
+
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .header-link:hover {
+      color: #fff;
+    }
+
+    .btn-print {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .btn-print:hover {
+      background: var(--bg-card-subtle);
+      border-color: var(--border-accent);
+    }
+
+    /* MAIN CONTAINER */
+    .layout-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      min-height: calc(100vh - 65px);
+    }
+
+    /* SIDEBAR NAV */
+    .sidebar {
+      width: 300px;
+      flex-shrink: 0;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      padding: 2rem 1.25rem;
+      position: sticky;
+      top: 65px;
+      height: calc(100vh - 65px);
+      overflow-y: auto;
+    }
+
+    .nav-group-title {
+      font-family: var(--font-heading);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .nav-item a {
+      display: block;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+
+    .nav-item a:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    .nav-item.active a {
+      background: var(--primary-light);
+      color: #60a5fa;
+      font-weight: 600;
+      border-left: 3px solid var(--primary);
+    }
+
+    /* ARTICLE CONTENT */
+    .content-area {
+      flex: 1;
+      padding: 2.5rem 3.5rem;
+      max-width: 1060px;
+      overflow-x: hidden;
+    }
+
+    @media (max-width: 1024px) {
+      .layout-container {
+        flex-direction: column;
+      }
+      .sidebar {
+        display: none;
+      }
+      .content-area {
+        padding: 1.5rem;
+      }
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4 {
+      font-family: var(--font-heading);
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      line-height: 1.25;
+      margin-bottom: 0.75rem;
+    }
+
+    .doc-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      margin-top: 3rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 2rem;
+      margin-bottom: 0.85rem;
+      color: #e2e8f0;
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+      color: #cbd5e1;
+    }
+
+    strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    code {
+      font-family: var(--font-code);
+      background: rgba(30, 42, 69, 0.7);
+      color: #93c5fd;
+      padding: 0.15rem 0.45rem;
+      border-radius: 5px;
+      font-size: 0.86em;
+      border: 1px solid rgba(147, 197, 253, 0.2);
+    }
+
+    ul, ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+      color: #cbd5e1;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* CALLOUT BOXES */
+    .admonition {
+      background: var(--bg-surface);
+      border-left: 4px solid var(--primary);
+      border-radius: 0 10px 10px 0;
+      padding: 1.1rem 1.35rem;
+      margin: 1.5rem 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .admonition.warning {
+      border-left-color: var(--warning);
+      background: rgba(245, 158, 11, 0.06);
+    }
+
+    .admonition.danger {
+      border-left-color: var(--danger);
+      background: rgba(239, 68, 68, 0.06);
+    }
+
+    .admonition.success {
+      border-left-color: var(--success);
+      background: rgba(16, 185, 129, 0.06);
+    }
+
+    .admonition-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.45rem;
+    }
+
+    /* MERMAID DIAGRAM WRAPPERS */
+    .diagram-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.75rem 0;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      position: relative;
+    }
+
+    .diagram-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .diagram-caption {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .diagram-tools {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-toggle-code {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-family: var(--font-code);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-toggle-code:hover {
+      background: var(--bg-card-subtle);
+      color: #fff;
+      border-color: var(--border-accent);
+    }
+
+    .mermaid-container {
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+      padding: 1rem 0;
+    }
+
+    .code-view {
+      display: none;
+      background: #090e18;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: var(--font-code);
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      margin-top: 1rem;
+    }
+
+    /* TABLES */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1.75rem 0;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    thead {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    th {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: #fff;
+      padding: 0.9rem 1.1rem;
+    }
+
+    td {
+      padding: 0.85rem 1.1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: #cbd5e1;
+      vertical-align: top;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* PILLS & BADGES */
+    .badge-frente {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-family: var(--font-code);
+      font-size: 0.76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-finanzas { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-ventas { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+    .badge-produccion { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-compras { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .badge-portal { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    /* ANIMATED DIAGRAM & SIMULATION STYLES */
+    .sim-card {
+      background: #0b1120;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin: 1.75rem 0;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+    }
+
+    .sim-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1rem;
+    }
+
+    .sim-title-group h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .sim-status-pill {
+      font-size: 0.75rem;
+      font-family: var(--font-code);
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .sim-controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .sim-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .sim-btn:hover {
+      background: var(--bg-card-subtle);
+      border-color: var(--border-accent);
+      color: #fff;
+    }
+
+    .sim-btn.active {
+      background: #2563eb;
+      border-color: #3b82f6;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+    }
+
+    .sim-btn.danger-sim:hover {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .sim-btn.danger-sim.active {
+      background: #dc2626;
+      border-color: #ef4444;
+      box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+    }
+
+    /* SVG Animation Elements */
+    .anim-svg {
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
+      user-select: none;
+    }
+
+    .flow-line {
+      stroke-dasharray: 6 6;
+      animation: flowDash 1.2s linear infinite;
+    }
+
+    .flow-line-reverse {
+      stroke-dasharray: 6 6;
+      animation: flowDashRev 1.2s linear infinite;
+    }
+
+    .flow-line-fast {
+      stroke-dasharray: 5 5;
+      animation: flowDash 0.65s linear infinite;
+    }
+
+    @keyframes flowDash {
+      from { stroke-dashoffset: 24; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes flowDashRev {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: 24; }
+    }
+
+    .svg-node {
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .svg-node:hover {
+      transform: translateY(-2px);
+    }
+
+    .svg-node.active-highlight rect.node-bg {
+      stroke: #60a5fa !important;
+      stroke-width: 3.5px !important;
+      filter: drop-shadow(0 0 16px rgba(96, 165, 250, 0.85));
+      animation: pulseNode 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulseNode {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.6)); }
+      50% { filter: drop-shadow(0 0 22px rgba(96, 165, 250, 0.95)); }
+    }
+
+    /* TERMINAL TRACE LOG */
+    .trace-terminal {
+      background: #050811;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-top: 1.25rem;
+      font-family: var(--font-code);
+      font-size: 0.8rem;
+    }
+
+    .trace-header {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.4rem;
+    }
+
+    .trace-feed {
+      height: 105px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .trace-line {
+      display: flex;
+      gap: 0.75rem;
+      color: #94a3b8;
+    }
+
+    .trace-time { color: #64748b; flex-shrink: 0; }
+    .trace-ok { color: #34d399; font-weight: 600; }
+    .trace-info { color: #60a5fa; }
+    .trace-warn { color: #fbbf24; }
+    .trace-err { color: #f87171; font-weight: 600; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 2.5rem 0;
+      margin-top: 4rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="top-header">
+    <div class="header-brand">
+      <div class="brand-icon">B</div>
+      <div>
+        <div class="brand-title">
+          BOMERP &middot; Arquitectura de Software
+          <span class="brand-tag">C4 Model &middot; Monolito Modular</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-links">
+      <span style="font-size: 0.82rem; color: var(--text-dim);">Dominio: Agro Peruvian Foods</span>
+      <button class="btn-print" onclick="window.print()">&#128424; Imprimir / PDF</button>
+    </div>
+  </header>
+
+  <!-- WORKSPACE -->
+  <div class="layout-container">
+
+    <!-- NAVIGATION SIDEBAR -->
+    <aside class="sidebar">
+      <div class="nav-group-title">Navegación del Documento</div>
+      <ul class="nav-list">
+        <li class="nav-item active"><a href="#intro">1. Fundamentos C4 & Dominio</a></li>
+        <li class="nav-item"><a href="#c1-contexto">2. Vista de Contexto (C1)</a></li>
+        <li class="nav-item"><a href="#c2-contenedores">3. Vista de Contenedores (C2)</a></li>
+        <li class="nav-item"><a href="#c2-animado">4. Diagrama Estructural Animado</a></li>
+        <li class="nav-item"><a href="#c2-capas">5. Organización por Capas</a></li>
+        <li class="nav-item"><a href="#componentes-tabla">6. Por qué cada componente va donde va</a></li>
+        <li class="nav-item"><a href="#decision">7. Decisión en una Frase</a></li>
+        <li class="nav-item"><a href="#quien-es-quien">8. Quién es quién (4 Frentes)</a></li>
+        <li class="nav-item"><a href="#flujo-punta-a-punta">9. El Flujo de Punta a Punta</a></li>
+        <li class="nav-item"><a href="#aclaraciones">10. Aclaraciones y Reglas Críticas</a></li>
+      </ul>
+
+      <div class="nav-group-title">Frentes de Trabajo</div>
+      <ul class="nav-list">
+        <li class="nav-item"><a href="#quien-es-quien"><span class="badge-frente badge-finanzas">Finanzas</span> Brandon Ccalla</a></li>
+        <li class="nav-item"><a href="#quien-es-quien"><span class="badge-frente badge-ventas">Ventas</span> Zaggy Morales</a></li>
+        <li class="nav-item"><a href="#quien-es-quien"><span class="badge-frente badge-produccion">Producción</span> Isai Armuto</a></li>
+        <li class="nav-item"><a href="#quien-es-quien"><span class="badge-frente badge-compras">Compras</span> Nestor Huaylla</a></li>
+      </ul>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area">
+
+      <section id="intro">
+        <h1>Sistema Integral de Gestión de Producción y Comercialización (BOMERP)</h1>
+        <div class="doc-subtitle">
+          Documento oficial de arquitectura para <strong>Agro Peruvian Foods</strong> (elaboración y comercialización de derivados de cacao y aceite de coco prensado en frío).
+        </div>
+
+        <p>Las figuras y definiciones de esta sección siguen rigurosamente el <strong>modelo C4</strong> (<em>Context, Containers, Components, Code</em>) de Simon Brown (<a href="https://c4model.com/" target="_blank" style="color: #60a5fa;">c4model.com</a>). Cada nivel hace zoom sobre el anterior, garantizando coherencia arquitectural, desacoplamiento estricto y trazabilidad de requerimientos.</p>
+
+        <div class="admonition">
+          <div class="admonition-title">&#128161; Propósito del Sistema</div>
+          BOMERP reemplaza el control manual en planillas de Excel y talonarios físicos por un sistema integrado que opera en ferias, tienda física y canales de delivery. Unifica el arqueo de caja con control de liquidez, la trazabilidad de lotes con caducidad (FEFO), el costeo estandarizado de recetas BOM y el CRM de personas.
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECCIÓN 1: VISTA DE CONTEXTO C1 -->
+      <!-- ========================================================================= -->
+      <section id="c1-contexto">
+        <h2>Vista de contexto (C1)</h2>
+        <p>La vista de contexto muestra el sistema completo como <strong>una sola caja negra</strong>: quién lo usa en el mundo real y con qué otros sistemas conversa — <strong>sin tecnología</strong>, y sin distinguir todavía entre <code>Portal Web/PWA</code> y el <code>ERP interno</code> (esa distinción aparece recién en el nivel C2). Sigue exactamente el patrón estándar del modelo C4 (<a href="https://c4model.com/diagrams/system-context" target="_blank" style="color: #60a5fa;">c4model.com/diagrams/system-context</a>):</p>
+
+        <div class="diagram-card">
+          <div class="diagram-card-header">
+            <div class="diagram-caption">&#128506; Figura 1. Vista de contexto (C1) — BOMERP</div>
+            <div class="diagram-tools">
+              <button class="btn-toggle-code" onclick="toggleCode('code-c1')">{ } Ver Mermaid</button>
+            </div>
+          </div>
+
+          <div class="mermaid-container">
+            <pre class="mermaid">
+flowchart LR
+    Proveedor(["Proveedor / Productor Agrícola"])
+    Personal(["Personal interno<br/>(compras, almacén, planta,<br/>ventas, caja y gerencia)"])
+    Cliente(["Cliente / Consumidor Final"])
+    Sistema["BOMERP<br/>(ERP Ligero + POS Modular Monolítico)"]
+    Impresora["Impresora Térmica ESC/POS<br/>(periférico hardware 58mm/80mm)"]
+    Delivery["Canal de Despacho & Delivery<br/>(reparto de última milla)"]
+    Sunat["SUNAT / Facturación Electrónica<br/>(sistema de gobierno)"]
+
+    Proveedor -->|"entrega materia prima (granos de cacao criollo,<br/>pulpa de coco fresco) e insumos de empaque"| Sistema
+    Personal -->|"opera turnos de caja con control de liquidez,<br/>recetas BOM, inventario FEFO, ventas y CRM"| Sistema
+    Cliente -->|"compra productos derivados en ferias/tienda,<br/>solicita delivery y recibe tickets"| Sistema
+    Sistema -->|"emite comprobantes de venta térmica<br/>y tickets de corte y arqueo de turno"| Impresora
+    Sistema -->|"coordina pedidos preparados y despacho a domicilio"| Delivery
+    Sistema -.->|"emite comprobantes electrónicos<br/>(opcional futuro, desacoplado)"| Sunat
+
+    classDef system fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    classDef external fill:#1f2937,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef gov fill:#371b1b,stroke:#ef4444,stroke-width:2px,color:#fca5a5;
+    classDef person fill:#0f3750,stroke:#0284c7,stroke-width:2px,color:#f8fafc;
+
+    class Sistema system;
+    class Impresora,Delivery external;
+    class Sunat gov;
+    class Proveedor,Personal,Cliente person;
+            </pre>
+          </div>
+
+          <div class="code-view" id="code-c1">flowchart LR
+    Proveedor(["Proveedor / Productor Agrícola"])
+    Personal(["Personal interno&lt;br/&gt;(compras, almacén, planta,&lt;br/&gt;ventas, caja y gerencia)"])
+    Cliente(["Cliente / Consumidor Final"])
+    Sistema["BOMERP&lt;br/&gt;(ERP Ligero + POS Modular Monolítico)"]
+    Impresora["Impresora Térmica ESC/POS&lt;br/&gt;(periférico hardware 58mm/80mm)"]
+    Delivery["Canal de Despacho &amp; Delivery&lt;br/&gt;(reparto de última milla)"]
+    Sunat["SUNAT / Facturación Electrónica&lt;br/&gt;(sistema de gobierno)"]
+
+    Proveedor --&gt;|"entrega materia prima (granos de cacao criollo,&lt;br/&gt;pulpa de coco fresco) e insumos de empaque"| Sistema
+    Personal --&gt;|"opera turnos de caja con control de liquidez,&lt;br/&gt;recetas BOM, inventario FEFO, ventas y CRM"| Sistema
+    Cliente --&gt;|"compra productos derivados en ferias/tienda,&lt;br/&gt;solicita delivery y recibe tickets"| Sistema
+    Sistema --&gt;|"emite comprobantes de venta térmica&lt;br/&gt;y tickets de corte y arqueo de turno"| Impresora
+    Sistema --&gt;|"coordina pedidos preparados y despacho a domicilio"| Delivery
+    Sistema -.-&gt;|"emite comprobantes electrónicos&lt;br/&gt;(opcional futuro, desacoplado)"| Sunat</div>
+        </div>
+
+        <p><strong>Criterio arquitectural de C1:</strong> Ningún nombre de framework o base de datos aparece aquí (nada de "Spring Boot", "Angular" ni "Oracle") — a este nivel de abstracción eso no importa todavía; únicamente quién interactúa con el sistema y qué valor intercambian. <code>Facturación electrónica (SUNAT)</code> se dibuja punteada como una integración externa opcional futura, desacoplada explícitamente en <a href="PROJECT_MEMORY.md" style="color: #60a5fa;"><code>PROJECT_MEMORY.md</code></a>: C1 responde con qué conversará el sistema, no qué está en alcance hoy — eso se aclara en la etiqueta de la flecha, no omitiendo el actor del entorno tributario.</p>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECCIÓN 2: VISTA DE CONTENEDORES C2 -->
+      <!-- ========================================================================= -->
+      <section id="c2-contenedores">
+        <h2>Vista de contenedores (C2)</h2>
+        <p>El <strong>ERP interno</strong> tiene usuarios acotados (cajeros en ferias, vendedores de tienda, operarios de la planta de prensado y tostado, compradores y administración) y un cuello de botella real en la planta física — el prensado en frío de coco, la refinación de cacao, la balanza y el envasado manual —, <strong>no en el tráfico de red</strong>. Sin un argumento de escala o de dispersión geográfica que lo justifique, sus módulos internos se construyen como <strong>un solo desplegable monolítico modular</strong>: corren en el mismo proceso de máquina virtual Java, se comunican entre sí mediante llamadas Java directas y contratos públicos (verificados por <code>ApplicationModules.of(...).verify()</code> de <strong>Spring Modulith</strong>) y comparten una única base de datos empresarial <strong>Oracle Database 23 Free</strong> con esquemas y tablas separados.</p>
+
+        <p>Por dentro, los módulos se organizan <strong>por capas</strong> (<code>Controller</code> &rarr; <code>Service</code> &rarr; <code>Repository</code>): es la opción más limpia, directa y rápida de construir. El aislamiento de dominios se garantiza con los paquetes internos de Spring Modulith y las interfaces públicas anotadas con <code>@NamedInterface("api")</code>.</p>
+
+        <p><strong>El <code>Portal Web & POS (Angular 18 SPA / PWA)</code> es la única excepción real del sistema.</strong> A diferencia de los módulos del backend, aquí sí existe una justificación técnica concreta de separación arquitectural:</p>
+
+        <ul>
+          <li><strong>Perímetro de seguridad e interfaz táctil:</strong> El Portal Web / PWA es la capa de presentación que corre en los navegadores de las tablets táctiles de feria, computadoras de tienda y teléfonos móviles. Se comunica con el backend exclusivamente mediante llamadas REST seguras sobre HTTPS con tokens JWT.</li>
+          <li><strong>Hardware periférico directo:</strong> La PWA se enlaza directamente en el navegador del cajero con las impresoras térmicas ESC/POS mediante las APIs del navegador (<em>Web Bluetooth API</em> y <em>Web Serial API</em>) para emitir tickets de compra al instante sin necesidad de instalar controladores pesados en el sistema operativo.</li>
+          <li><strong>Crecimiento futuro (v2):</strong> La empresa proyecta habilitar en el futuro un catálogo interactivo con carrito y pasarela de pago para clientes finales; separar el frontend desde el día uno evita un desacoplamiento traumático posterior.</li>
+        </ul>
+
+        <div class="diagram-card">
+          <div class="diagram-card-header">
+            <div class="diagram-caption">&#128506; Figura 2. Vista de contenedores (C2): Frontend PWA y Monolito Modular con Spring Modulith</div>
+            <div class="diagram-tools">
+              <button class="btn-toggle-code" onclick="toggleCode('code-c2')">{ } Ver Mermaid</button>
+            </div>
+          </div>
+
+          <div class="mermaid-container">
+            <pre class="mermaid">
+flowchart TB
+    Cliente(["Cliente / Consumidor<br/>(tienda física o delivery)"])
+    Usuario(["Usuario interno<br/>(Caja, Ventas, Planta,<br/>Compras, Gerencia)"])
+    Proveedor(["Proveedor<br/>(sin cuenta propia)"])
+
+    subgraph PORTAL["Portal Web & POS (Angular 18 SPA / PWA — Despliegue Propio, por capas)"]
+        PortalPOS["Punto de Venta (POS)<br/>Venta ágil en ferias y tienda<br/>+ Web Bluetooth ESC/POS"]
+        PortalMenu["Login, Arqueo de Caja &<br/>Menú de Módulos según Rol"]
+    end
+
+    subgraph APP["ERP Interno: Monolito Modular (Spring Boot 3 + Spring Modulith — 1 despliegue, 1 proceso)"]
+        Administracion["0. Administración & Seguridad<br/>Usuarios, roles, sucursales<br/>y auditoría transversal"]
+        Compras["1. Compras & Terceros<br/>(Nestor Huaylla)<br/>CRM Tercero, OC insumos"]
+        Produccion["2. Producción & Catálogo<br/>(Isai Armuto)<br/>Recetas BOM cacao/coco"]
+        Inventario["3. Inventario & Stock FEFO<br/>(Isai Armuto / Operaciones)<br/>Recepción, lotes, salidas"]
+        Ventas["4. Ventas & Despacho<br/>(Zaggy Morales)<br/>Pedidos, tickets, delivery"]
+        Finanzas["5. Finanzas & Reportes<br/>(Brandon Ccalla)<br/>SesionCaja, RN-FIN-01, POI/PDF"]
+
+        Compras -->|"llamada Java directa: insumos"| Inventario
+        Produccion -->|"llamada Java directa: consumo BOM"| Inventario
+        Inventario -->|"llamada Java directa: producto terminado"| Produccion
+        Ventas -->|"llamada Java directa: descuento FEFO"| Inventario
+        Compras -->|"llamada Java directa: cuenta x pagar"| Finanzas
+        Ventas -->|"llamada Java directa: FinanzasApi"| Finanzas
+
+        Compras --> Administracion
+        Inventario --> Administracion
+        Produccion --> Administracion
+        Ventas --> Administracion
+        Finanzas --> Administracion
+    end
+
+    DB[("Oracle Database 23 Free<br/>ACID, secuencias y schemas<br/>separados por módulo")]
+    Impresora["Impresora Térmica ESC/POS<br/>(Hardware 58mm/80mm Bluetooth/USB)"]
+    Sunat["Facturación Electrónica<br/>(externo, ej. SUNAT/OSE — desacoplado)"]
+
+    Cliente --> PortalPOS
+    Usuario --> PortalMenu
+    Proveedor -->|"sin login — lo registra"| Compras
+
+    PortalPOS -.-|"Web Bluetooth / Serial RAW"| Impresora
+    PortalPOS -.-|"HTTPS: cobro de venta y arqueo"| Ventas
+    PortalMenu -.-|"HTTPS: login y permisos"| Administracion
+    PortalMenu -.-|"HTTPS: llamada a módulo autorizado"| APP
+
+    Administracion --> DB
+    Compras --> DB
+    Inventario --> DB
+    Produccion --> DB
+    Ventas --> DB
+    Finanzas --> DB
+
+    Finanzas -.-|"opcional futuro, desacoplado"| Sunat
+
+    classDef portal fill:#4a1525,stroke:#f43f5e,stroke-width:2px,color:#fff;
+    classDef modulith fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#fff;
+    classDef module fill:#1e293b,stroke:#64748b,stroke-width:1.5px,color:#fff;
+    classDef finanzas fill:#0c2d48,stroke:#38bdf8,stroke-width:2px,color:#fff;
+    classDef ventas fill:#3b111e,stroke:#f43f5e,stroke-width:2px,color:#fff;
+    classDef produccion fill:#062e24,stroke:#10b981,stroke-width:2px,color:#fff;
+    classDef compras fill:#2b0d3e,stroke:#a855f7,stroke-width:2px,color:#fff;
+    classDef db fill:#3d2006,stroke:#f59e0b,stroke-width:2px,color:#fff;
+
+    class PortalPOS,PortalMenu portal;
+    class Administracion,Inventario module;
+    class Finanzas finanzas;
+    class Ventas ventas;
+    class Produccion produccion;
+    class Compras compras;
+    class DB db;
+            </pre>
+          </div>
+
+          <div class="code-view" id="code-c2">flowchart TB
+    Cliente(["Cliente / Consumidor&lt;br/&gt;(tienda física o delivery)"])
+    Usuario(["Usuario interno&lt;br/&gt;(Caja, Ventas, Planta,&lt;br/&gt;Compras, Gerencia)"])
+    Proveedor(["Proveedor&lt;br/&gt;(sin cuenta propia)"])
+
+    subgraph PORTAL["Portal Web &amp; POS (Angular 18 SPA / PWA — Despliegue Propio, por capas)"]
+        PortalPOS["Punto de Venta (POS)&lt;br/&gt;Venta ágil en ferias y tienda&lt;br/&gt;+ Web Bluetooth ESC/POS"]
+        PortalMenu["Login, Arqueo de Caja &amp;&lt;br/&gt;Menú de Módulos según Rol"]
+    end
+
+    subgraph APP["ERP Interno: Monolito Modular (Spring Boot 3 + Spring Modulith — 1 despliegue, 1 proceso)"]
+        Administracion["0. Administración &amp; Seguridad&lt;br/&gt;Usuarios, roles, sucursales&lt;br/&gt;y auditoría transversal"]
+        Compras["1. Compras &amp; Terceros&lt;br/&gt;(Nestor Huaylla)&lt;br/&gt;CRM Tercero, OC insumos"]
+        Produccion["2. Producción &amp; Catálogo&lt;br/&gt;(Isai Armuto)&lt;br/&gt;Recetas BOM cacao/coco"]
+        Inventario["3. Inventario &amp; Stock FEFO&lt;br/&gt;(Isai Armuto / Operaciones)&lt;br/&gt;Recepción, lotes, salidas"]
+        Ventas["4. Ventas &amp; Despacho&lt;br/&gt;(Zaggy Morales)&lt;br/&gt;Pedidos, tickets, delivery"]
+        Finanzas["5. Finanzas &amp; Reportes&lt;br/&gt;(Brandon Ccalla)&lt;br/&gt;SesionCaja, RN-FIN-01, POI/PDF"]
+
+        Compras --&gt;|"llamada Java directa: insumos"| Inventario
+        Produccion --&gt;|"llamada Java directa: consumo BOM"| Inventario
+        Inventario --&gt;|"llamada Java directa: producto terminado"| Produccion
+        Ventas --&gt;|"llamada Java directa: descuento FEFO"| Inventario
+        Compras --&gt;|"llamada Java directa: cuenta x pagar"| Finanzas
+        Ventas --&gt;|"llamada Java directa: FinanzasApi"| Finanzas
+
+        Compras --&gt; Administracion
+        Inventario --&gt; Administracion
+        Produccion --&gt; Administracion
+        Ventas --&gt; Administracion
+        Finanzas --&gt; Administracion
+    end
+
+    DB[("Oracle Database 23 Free&lt;br/&gt;ACID, secuencias y schemas&lt;br/&gt;separados por módulo")]
+    Impresora["Impresora Térmica ESC/POS&lt;br/&gt;(Hardware 58mm/80mm Bluetooth/USB)"]
+    Sunat["Facturación Electrónica&lt;br/&gt;(externo, ej. SUNAT/OSE — desacoplado)"]
+
+    Cliente --&gt; PortalPOS
+    Usuario --&gt; PortalMenu
+    Proveedor --&gt;|"sin login — lo registra"| Compras
+
+    PortalPOS -.-|"Web Bluetooth / Serial RAW"| Impresora
+    PortalPOS -.-|"HTTPS: cobro de venta y arqueo"| Ventas
+    PortalMenu -.-|"HTTPS: login y permisos"| Administracion
+    PortalMenu -.-|"HTTPS: llamada a módulo autorizado"| APP
+
+    Administracion --&gt; DB
+    Compras --&gt; DB
+    Inventario --&gt; DB
+    Produccion --&gt; DB
+    Ventas --&gt; DB
+    Finanzas --&gt; DB
+
+    Finanzas -.-|"opcional futuro, desacoplado"| Sunat</div>
+        </div>
+
+        <p><strong>Cómo leer el diagrama C2:</strong></p>
+        <ul>
+          <li><strong>Flecha sólida:</strong> Llamada Java directa en memoria (mismo proceso) — dentro del ERP interno, porque todos los módulos residen en el mismo monolito modular gobernado por Spring Modulith; también <code>Proveedor &rarr; Compras</code>, porque el proveedor agrícola no tiene cuenta en el sistema: el dato lo registra físicamente el personal de <code>Compras</code>.</li>
+          <li><strong>Flecha punteada:</strong> Protocolo de red HTTP/REST o Bluetooth (proceso distinto) — el <code>Portal Web & POS</code> comunicándose con la API del ERP mediante JSON seguro, y el driver de hardware comunicándose con la <code>Impresora Térmica ESC/POS</code> mediante comandos raw estándar.</li>
+        </ul>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECCIÓN INTERACTIVA: DIAGRAMA ESTRUCTURAL ANIMADO DEL MONOLITO MODULAR -->
+      <!-- ========================================================================= -->
+      <section id="c2-animado">
+        <h2>Diagrama Estructural Animado: Flujo e Interacción en el Monolito Modular</h2>
+        <p>El siguiente diagrama vectorial animado ilustra cómo fluyen los datos y las llamadas en memoria entre los <strong>4 frentes del Monolito Modular (Spring Modulith)</strong>, el <strong>Frontend PWA (Angular 18)</strong>, la base de datos <strong>Oracle 23 Free</strong> y la <strong>Impresora Térmica ESC/POS</strong>. Las flechas animadas representan llamadas sincronizadas en memoria (Java directo) y llamadas asíncronas de red.</p>
+
+        <div class="sim-card">
+          <div class="sim-header">
+            <div class="sim-title-group">
+              <h3>&#9889; Simulador Dinámico de Flujos BOMERP</h3>
+              <span class="sim-status-pill" id="sim-status-text">LISTO &middot; Selecciona un escenario</span>
+            </div>
+            <div class="sim-controls">
+              <button class="sim-btn" id="btn-sim-venta" onclick="runSimulation('venta')">&#9654; Simular Venta en POS</button>
+              <button class="sim-btn" id="btn-sim-produccion" onclick="runSimulation('produccion')">&#9654; Simular Producción BOM</button>
+              <button class="sim-btn" id="btn-sim-compra" onclick="runSimulation('compra')">&#9654; Simular Compra Insumos</button>
+              <button class="sim-btn danger-sim" id="btn-sim-bloqueo" onclick="runSimulation('bloqueo')">&#9888; Simular Bloqueo RN-FIN-01</button>
+              <button class="sim-btn" onclick="resetSimulation()">&#9632; Reset</button>
+            </div>
+          </div>
+
+          <!-- SVG ANIMADO INTERACTIVO -->
+          <svg class="anim-svg" viewBox="0 0 1180 660" id="svg-monolito">
+            <defs>
+              <linearGradient id="gAngular" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#4c0519"/>
+                <stop offset="100%" stop-color="#be123c"/>
+              </linearGradient>
+              <linearGradient id="gBackend" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#070c18"/>
+                <stop offset="100%" stop-color="#111c33"/>
+              </linearGradient>
+              <linearGradient id="gFin" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#082f49"/>
+                <stop offset="100%" stop-color="#0284c7"/>
+              </linearGradient>
+              <linearGradient id="gVen" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3b0718"/>
+                <stop offset="100%" stop-color="#e11d48"/>
+              </linearGradient>
+              <linearGradient id="gProd" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#022c22"/>
+                <stop offset="100%" stop-color="#059669"/>
+              </linearGradient>
+              <linearGradient id="gComp" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3b0764"/>
+                <stop offset="100%" stop-color="#7e22ce"/>
+              </linearGradient>
+              <linearGradient id="gDB" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#451a03"/>
+                <stop offset="100%" stop-color="#d97706"/>
+              </linearGradient>
+              <linearGradient id="gHw" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1e293b"/>
+                <stop offset="100%" stop-color="#475569"/>
+              </linearGradient>
+
+              <!-- Markers -->
+              <marker id="mBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+              </marker>
+              <marker id="mRose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+              </marker>
+              <marker id="mGreen" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981"/>
+              </marker>
+              <marker id="mPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#c084fc"/>
+              </marker>
+              <marker id="mAmber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
+              </marker>
+            </defs>
+
+            <!-- 1. CONTENEDOR EXTERNO: FRONTEND PWA -->
+            <g class="svg-node" id="sn-frontend" onclick="inspectModule('frontend')">
+              <rect class="node-bg" x="20" y="160" width="180" height="260" rx="12" fill="url(#gAngular)" stroke="#f43f5e" stroke-width="2"/>
+              <text x="110" y="195" fill="#fff" font-family="'Outfit'" font-size="15" font-weight="800" text-anchor="middle">Frontend PWA</text>
+              <text x="110" y="215" fill="#fecdd3" font-family="'JetBrains Mono'" font-size="10" text-anchor="middle">Angular 18 &middot; Signals</text>
+              
+              <rect x="35" y="235" width="150" height="42" rx="6" fill="rgba(0,0,0,0.3)"/>
+              <text x="45" y="255" fill="#fff" font-size="11" font-weight="600">POS Feria / Tienda</text>
+              <text x="45" y="268" fill="#fda4af" font-size="9">Venta en caliente</text>
+
+              <rect x="35" y="285" width="150" height="42" rx="6" fill="rgba(0,0,0,0.3)"/>
+              <text x="45" y="305" fill="#fff" font-size="11" font-weight="600">Arqueo de Turno</text>
+              <text x="45" y="318" fill="#fda4af" font-size="9">Apertura y Cierre</text>
+
+              <rect x="35" y="335" width="150" height="42" rx="6" fill="rgba(0,0,0,0.3)"/>
+              <text x="45" y="355" fill="#fff" font-size="11" font-weight="600">Web Bluetooth</text>
+              <text x="45" y="368" fill="#fda4af" font-size="9">Driver ESC/POS directo</text>
+            </g>
+
+            <!-- 2. BOUNDARY BACKEND: MONOLITO MODULAR -->
+            <rect x="250" y="30" width="680" height="580" rx="16" fill="url(#gBackend)" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6 6"/>
+            <text x="275" y="65" fill="#93c5fd" font-family="'JetBrains Mono'" font-size="12" font-weight="700">PROCESO MONOLITO MODULAR &middot; Spring Boot 3 + Spring Modulith (@ApplicationModule)</text>
+
+            <!-- NODO MONOLITO: FINANZAS & REPORTES (Brandon Ccalla) -->
+            <g class="svg-node" id="sn-finanzas" onclick="inspectModule('finanzas')">
+              <rect class="node-bg" x="280" y="90" width="290" height="210" rx="10" fill="url(#gFin)" stroke="#38bdf8" stroke-width="1.8"/>
+              <text x="295" y="118" fill="#fff" font-family="'Outfit'" font-size="14" font-weight="700">Finanzas & Reportes</text>
+              <text x="295" y="136" fill="#7dd3fc" font-family="'JetBrains Mono'" font-size="10">Brandon Ccalla &middot; @NamedInterface("api")</text>
+
+              <rect x="295" y="148" width="260" height="38" rx="6" fill="rgba(15,23,42,0.6)" stroke="#38bdf8" stroke-width="1"/>
+              <text x="305" y="165" fill="#38bdf8" font-size="10" font-weight="700">Puerto: FinanzasApi</text>
+              <text x="305" y="178" fill="#cbd5e1" font-size="9">registrarCobro() / obtenerSaldo()</text>
+
+              <rect x="295" y="194" width="260" height="42" rx="6" fill="rgba(15,23,42,0.6)"/>
+              <text x="305" y="211" fill="#fff" font-size="10" font-weight="600">SesionCaja & MovimientoCaja</text>
+              <text x="305" y="225" fill="#ef4444" font-size="9" font-weight="700">RN-FIN-01: Control Liquidez Efectivo</text>
+
+              <rect x="295" y="244" width="260" height="38" rx="6" fill="rgba(15,23,42,0.6)"/>
+              <text x="305" y="261" fill="#fff" font-size="10" font-weight="600">CierreCajaExporter (PDF/Excel)</text>
+              <text x="305" y="274" fill="#94a3b8" font-size="9">Apache POI 5.x & OpenPDF</text>
+            </g>
+
+            <!-- NODO MONOLITO: VENTAS & DESPACHO (Zaggy Morales) -->
+            <g class="svg-node" id="sn-ventas" onclick="inspectModule('ventas')">
+              <rect class="node-bg" x="610" y="90" width="290" height="210" rx="10" fill="url(#gVen)" stroke="#f43f5e" stroke-width="1.8"/>
+              <text x="625" y="118" fill="#fff" font-family="'Outfit'" font-size="14" font-weight="700">Ventas & Despacho</text>
+              <text x="625" y="136" fill="#fda4af" font-family="'JetBrains Mono'" font-size="10">Zaggy Morales &middot; POS & Delivery</text>
+
+              <rect x="625" y="148" width="260" height="38" rx="6" fill="rgba(15,23,42,0.6)" stroke="#f43f5e" stroke-width="1"/>
+              <text x="635" y="165" fill="#f43f5e" font-size="10" font-weight="700">Venta & DetalleVenta</text>
+              <text x="635" y="178" fill="#cbd5e1" font-size="9">Registro atómico de carrito POS</text>
+
+              <rect x="625" y="194" width="260" height="42" rx="6" fill="rgba(15,23,42,0.6)"/>
+              <text x="635" y="211" fill="#fff" font-size="10" font-weight="600">Comandos ESC/POS RAW</text>
+              <text x="635" y="225" fill="#fda4af" font-size="9">Trama binaria para ticket térmico</text>
+
+              <rect x="625" y="244" width="260" height="38" rx="6" fill="rgba(15,23,42,0.6)"/>
+              <text x="635" y="261" fill="#fff" font-size="10" font-weight="600">Canal de Delivery Local</text>
+              <text x="635" y="274" fill="#94a3b8" font-size="9">Despacho de pedidos a domicilio</text>
+            </g>
+
+            <!-- NODO MONOLITO: PRODUCCIÓN & INVENTARIO (Isai Armuto) -->
+            <g class="svg-node" id="sn-produccion" onclick="inspectModule('produccion')">
+              <rect class="node-bg" x="280" y="340" width="290" height="210" rx="10" fill="url(#gProd)" stroke="#10b981" stroke-width="1.8"/>
+              <text x="295" y="368" fill="#fff" font-family="'Outfit'" font-size="14" font-weight="700">Producción & Lotes FEFO</text>
+              <text x="295" y="386" fill="#6ee7b7" font-family="'JetBrains Mono'" font-size="10">Isai Armuto &middot; Recetas BOM Cacao/Coco</text>
+
+              <rect x="295" y="398" width="260" height="38" rx="6" fill="rgba(15,23,42,0.6)" stroke="#10b981" stroke-width="1"/>
+              <text x="305" y="415" fill="#34d399" font-size="10" font-weight="700">Algoritmo FEFO Atómico</text>
+              <text x="305" y="428" fill="#cbd5e1" font-size="9">Descuento de lote próximo a caducar</text>
+
+              <rect x="295" y="444" width="260" height="42" rx="6" fill="rgba(15,23,42,0.6)"/>
+              <text x="305" y="461" fill="#fff" font-size="10" font-weight="600">OrdenProduccion & Consumos</text>
+              <text x="305" y="475" fill="#6ee7b7" font-size="9">Receta BOM: Materia prima + Empaque</text>
+
+              <rect x="295" y="494" width="260" height="38" rx="6" fill="rgba(15,23,42,0.6)"/>
+              <text x="305" y="511" fill="#fff" font-size="10" font-weight="600">Trazabilidad de Lotes</text>
+              <text x="305" y="524" fill="#94a3b8" font-size="9">Fechas de envasado y expiración</text>
+            </g>
+
+            <!-- NODO MONOLITO: COMPRAS & TERCEROS (Nestor Huaylla) -->
+            <g class="svg-node" id="sn-compras" onclick="inspectModule('compras')">
+              <rect class="node-bg" x="610" y="340" width="290" height="210" rx="10" fill="url(#gComp)" stroke="#a855f7" stroke-width="1.8"/>
+              <text x="625" y="368" fill="#fff" font-family="'Outfit'" font-size="14" font-weight="700">Compras & Terceros</text>
+              <text x="625" y="386" fill="#d8b4fe" font-family="'JetBrains Mono'" font-size="10">Nestor Huaylla &middot; CRM & Materia Prima</text>
+
+              <rect x="625" y="398" width="260" height="38" rx="6" fill="rgba(15,23,42,0.6)" stroke="#a855f7" stroke-width="1"/>
+              <text x="635" y="415" fill="#c084fc" font-size="10" font-weight="700">CRM Tercero Polimórfico</text>
+              <text x="635" y="428" fill="#cbd5e1" font-size="9">Clientes, Proveedores con RUC/DNI</text>
+
+              <rect x="625" y="444" width="260" height="42" rx="6" fill="rgba(15,23,42,0.6)"/>
+              <text x="635" y="461" fill="#fff" font-size="10" font-weight="600">Compra & DetalleCompra</text>
+              <text x="635" y="475" fill="#d8b4fe" font-size="9">Ingreso de cacao en grano y coco</text>
+
+              <rect x="625" y="494" width="260" height="38" rx="6" fill="rgba(15,23,42,0.6)"/>
+              <text x="635" y="511" fill="#fff" font-size="10" font-weight="600">Cuenta x Pagar en Finanzas</text>
+              <text x="635" y="524" fill="#94a3b8" font-size="9">Compromiso financiero derivado</text>
+            </g>
+
+            <!-- 3. PERIFÉRICO DERECHA: IMPRESORA ESC/POS -->
+            <g class="svg-node" id="sn-impresora" onclick="inspectModule('impresora')">
+              <rect class="node-bg" x="970" y="160" width="190" height="150" rx="12" fill="url(#gHw)" stroke="#64748b" stroke-width="2"/>
+              <text x="1065" y="195" fill="#fff" font-family="'Outfit'" font-size="14" font-weight="700" text-anchor="middle">Impresora ESC/POS</text>
+              <text x="1065" y="215" fill="#94a3b8" font-family="'JetBrains Mono'" font-size="10" text-anchor="middle">Hardware Térmico 58/80mm</text>
+
+              <rect x="985" y="230" width="160" height="36" rx="6" fill="rgba(0,0,0,0.3)"/>
+              <text x="995" y="252" fill="#fff" font-size="10">Ticket de Venta Rápida</text>
+
+              <rect x="985" y="272" width="160" height="26" rx="6" fill="rgba(0,0,0,0.3)"/>
+              <text x="995" y="289" fill="#94a3b8" font-size="9">Ticket Arqueo Cierre</text>
+            </g>
+
+            <!-- 4. BASE DE DATOS: ORACLE 23 FREE -->
+            <g class="svg-node" id="sn-db" onclick="inspectModule('database')">
+              <rect class="node-bg" x="970" y="380" width="190" height="160" rx="12" fill="url(#gDB)" stroke="#f59e0b" stroke-width="2"/>
+              <text x="1065" y="415" fill="#fff" font-family="'Outfit'" font-size="14" font-weight="800" text-anchor="middle">Oracle DB 23 Free</text>
+              <text x="1065" y="435" fill="#fde68a" font-family="'JetBrains Mono'" font-size="10" text-anchor="middle">Esquema Relacional ACID</text>
+
+              <rect x="985" y="450" width="160" height="40" rx="6" fill="rgba(0,0,0,0.35)"/>
+              <text x="995" y="468" fill="#fff" font-size="10">Hikari Connection Pool</text>
+              <text x="995" y="482" fill="#fbbf24" font-size="9">Rollback en RN-FIN-01</text>
+
+              <rect x="985" y="496" width="160" height="30" rx="6" fill="rgba(0,0,0,0.35)"/>
+              <text x="995" y="515" fill="#94a3b8" font-size="9">Schemas x Módulo</text>
+            </g>
+
+            <!-- ================= FLECHAS Y CONECTORES ANIMADOS ================= -->
+
+            <!-- Path 1: Frontend -> Ventas (HTTPS REST) -->
+            <path id="path-fe-ventas" d="M 200 240 L 610 210" fill="none" stroke="#f43f5e" stroke-width="2.5" class="flow-line" marker-end="url(#mRose)"/>
+            <text x="400" y="215" fill="#fda4af" font-family="'JetBrains Mono'" font-size="10" font-weight="700">1. POST /api/ventas</text>
+
+            <!-- Path 2: Ventas -> Inventario (Llamada Java directa FEFO) -->
+            <path id="path-ventas-inv" d="M 720 300 C 720 330, 480 320, 480 340" fill="none" stroke="#10b981" stroke-width="2.5" class="flow-line" marker-end="url(#mGreen)"/>
+            <text x="610" y="325" fill="#6ee7b7" font-family="'JetBrains Mono'" font-size="10" font-weight="700">2. Descuento FEFO (Lote)</text>
+
+            <!-- Path 3: Ventas -> Finanzas (Llamada Java directa @NamedInterface) -->
+            <path id="path-ventas-fin" d="M 610 180 L 570 180" fill="none" stroke="#38bdf8" stroke-width="3" class="flow-line-fast" marker-end="url(#mBlue)"/>
+            <text x="590" y="165" fill="#7dd3fc" font-family="'JetBrains Mono'" font-size="10" font-weight="700" text-anchor="middle">3. FinanzasApi.cobro()</text>
+
+            <!-- Path 4: Compras -> Finanzas (Cuenta x pagar) -->
+            <path id="path-comp-fin" d="M 610 400 C 580 400, 560 310, 540 300" fill="none" stroke="#a855f7" stroke-width="2" class="flow-line" marker-end="url(#mPurple)"/>
+            <text x="575" y="380" fill="#d8b4fe" font-family="'JetBrains Mono'" font-size="9">Cta x Pagar</text>
+
+            <!-- Path 5: Compras -> Producción/Inventario (Entrada materia prima) -->
+            <path id="path-comp-prod" d="M 610 480 L 570 480" fill="none" stroke="#10b981" stroke-width="2.5" class="flow-line" marker-end="url(#mGreen)"/>
+            <text x="590" y="470" fill="#a7f3d0" font-family="'JetBrains Mono'" font-size="9" text-anchor="middle">Lotes Insumos</text>
+
+            <!-- Path 6: Monolito -> Oracle DB (JDBC ACID) -->
+            <path id="path-mono-db" d="M 900 450 L 970 450" fill="none" stroke="#f59e0b" stroke-width="2.5" class="flow-line" marker-end="url(#mAmber)"/>
+            <text x="935" y="440" fill="#fbbf24" font-family="'JetBrains Mono'" font-size="9" text-anchor="middle">JDBC / Commit</text>
+
+            <!-- Path 7: Frontend -> Impresora ESC/POS (Web Bluetooth RAW) -->
+            <path id="path-fe-hw" d="M 110 160 C 110 50, 1065 50, 1065 160" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6 6" class="flow-line"/>
+            <text x="590" y="40" fill="#7dd3fc" font-family="'JetBrains Mono'" font-size="10" text-anchor="middle">Web Bluetooth ESC/POS (Emisión directa sin driver)</text>
+
+            <!-- Animated Packet Particle 1 -->
+            <circle r="5" fill="#fff" filter="drop-shadow(0 0 6px #60a5fa)">
+              <animateMotion dur="3s" repeatCount="indefinite" path="M 200 240 L 610 210"/>
+            </circle>
+
+            <!-- Animated Packet Particle 2 -->
+            <circle r="4" fill="#38bdf8" filter="drop-shadow(0 0 6px #38bdf8)">
+              <animateMotion dur="1.8s" repeatCount="indefinite" path="M 610 180 L 570 180"/>
+            </circle>
+
+            <!-- Animated Packet Particle 3 -->
+            <circle r="4" fill="#10b981" filter="drop-shadow(0 0 6px #10b981)">
+              <animateMotion dur="2.4s" repeatCount="indefinite" path="M 720 300 C 720 330, 480 320, 480 340"/>
+            </circle>
+
+            <!-- Animated Packet Particle 4 (Print) -->
+            <circle r="4" fill="#fff" filter="drop-shadow(0 0 6px #fff)">
+              <animateMotion dur="4s" repeatCount="indefinite" path="M 110 160 C 110 50, 1065 50, 1065 160"/>
+            </circle>
+          </svg>
+
+          <!-- CONSOLA DE TRAZA TÉCNICA EN TIEMPO REAL -->
+          <div class="trace-terminal">
+            <div class="trace-header">
+              <span>&#128187; TRAZA DE EJECUCIÓN EN TIEMPO REAL (SPRING MODULITH & ORACLE ACID)</span>
+              <span id="trace-step-counter">PASO: 0 / 5</span>
+            </div>
+            <div class="trace-feed" id="trace-feed">
+              <div class="trace-line">
+                <span class="trace-time">[INIT]</span>
+                <span class="trace-info">Monolito Modular iniciado &middot; 4 módulos validados con ApplicationModules.of(...).verify()</span>
+              </div>
+              <div class="trace-line">
+                <span class="trace-time">[STANDBY]</span>
+                <span class="trace-ok">SesionCaja #104 ABIERTA en feria &middot; Saldo inicial efectivo: S/ 200.00 &middot; Esperando transacciones...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECCIÓN 3: ORGANIZACIÓN POR CAPAS -->
+      <!-- ========================================================================= -->
+      <section id="c2-capas">
+        <h2>Por capas: la misma organización interna en cada módulo</h2>
+        <p>Cada uno de los módulos de BOMERP se estructura con el patrón arquitectural clásico de <strong>capas desacopladas</strong>: es la solución más robusta y directa en el ecosistema Spring Boot, permitiendo validar las reglas de negocio en los servicios antes de tocar el repositorio persistente:</p>
+
+        <div class="diagram-card">
+          <div class="diagram-card-header">
+            <div class="diagram-caption">&#128506; Figura 3. Organización interna por capas en Spring Modulith</div>
+            <div class="diagram-tools">
+              <button class="btn-toggle-code" onclick="toggleCode('code-capas')">{ } Ver Mermaid</button>
+            </div>
+          </div>
+
+          <div class="mermaid-container">
+            <pre class="mermaid">
+flowchart TB
+    subgraph MOD["Cualquiera de los módulos del ERP (Finanzas, Ventas, Producción, Compras)"]
+        direction TB
+        CTRL["Controller / Endpoint REST<br/>(@RestController, DTO Request/Response, Jakarta Validation)"] 
+        --> SERV["Service / Casos de Uso & Lógica de Negocio<br/>(@Service, @Transactional, Validación RN-FIN-01 / FEFO)"] 
+        --> REPO["Repository / Persistencia JPA<br/>(Spring Data JPA, Hibernate, Consultas JPQL / Nativas)"]
+    end
+    classDef layer fill:#182238,stroke:#3b82f6,stroke-width:1.5px,color:#f8fafc;
+    class CTRL,SERV,REPO layer;
+            </pre>
+          </div>
+
+          <div class="code-view" id="code-capas">flowchart TB
+    subgraph MOD["Cualquiera de los módulos del ERP (Finanzas, Ventas, Producción, Compras)"]
+        direction TB
+        CTRL["Controller / Endpoint REST&lt;br/&gt;(@RestController, DTO Request/Response, Jakarta Validation)"] 
+        --&gt; SERV["Service / Casos de Uso &amp; Lógica de Negocio&lt;br/&gt;(@Service, @Transactional, Validación RN-FIN-01 / FEFO)"] 
+        --&gt; REPO["Repository / Persistencia JPA&lt;br/&gt;(Spring Data JPA, Hibernate, Consultas JPQL / Nativas)"]
+    end</div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECCIÓN 4: TABLA DE COMPONENTES -->
+      <!-- ========================================================================= -->
+      <section id="componentes-tabla">
+        <h2>Por qué cada componente va donde va</h2>
+        <p>A continuación se resume la justificación arquitectural de cada contenedor y módulo en BOMERP:</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Componente / Módulo</th>
+                <th>Responsable</th>
+                <th>Tipo de Despliegue</th>
+                <th>Justificación Arquitectural (Por qué va aquí)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Portal Web & POS (Angular 18)</strong></td>
+                <td>Frontend Team</td>
+                <td><span class="badge-frente badge-portal">Despliegue Propio (PWA)</span></td>
+                <td>Única capa de presentación táctil y responsiva. Corre en los dispositivos de feria/tienda, controla la impresión térmica directa vía Web Bluetooth y protege la red interna del ERP.</td>
+              </tr>
+              <tr>
+                <td><strong>Finanzas & Reportes</strong></td>
+                <td>Brandon Ccalla</td>
+                <td><span class="badge-frente badge-finanzas">ERP Interno (Modulith)</span></td>
+                <td>Gestiona <code>SesionCaja</code> y <code>MovimientoCaja</code>. Implementa la regla <code>RN-FIN-01</code> (bloqueo atómico de retiros sin efectivo disponible) y exportación polimórfica <code>CierreCajaExporter</code> (Apache POI para XLSX y OpenPDF para balances). Expone <code>FinanzasApi</code> con <code>@NamedInterface("api")</code> para cobros externos.</td>
+              </tr>
+              <tr>
+                <td><strong>Ventas & Despacho</strong></td>
+                <td>Zaggy Morales</td>
+                <td><span class="badge-frente badge-ventas">ERP Interno (Modulith)</span></td>
+                <td>Registra <code>Venta</code> y <code>DetalleVenta</code>, genera la trama térmica ESC/POS para la PWA y administra pedidos con despacho por delivery. Para registrar el ingreso monetario, invoca a <code>FinanzasApi</code> sin acoplarse a las entidades de caja.</td>
+              </tr>
+              <tr>
+                <td><strong>Producción & Catálogo</strong></td>
+                <td>Isai Armuto</td>
+                <td><span class="badge-frente badge-produccion">ERP Interno (Modulith)</span></td>
+                <td>Gestiona órdenes de producción (<code>OrdenProduccion</code>), recetas BOM de derivados de cacao (chocolates, manteca) y aceite de coco prensado, calculando mermas e insumos de empaque (tapas, envases de vidrio, etiquetas).</td>
+              </tr>
+              <tr>
+                <td><strong>Inventario & Lotes FEFO</strong></td>
+                <td>Isai Armuto / Almacén</td>
+                <td><span class="badge-frente badge-produccion">ERP Interno (Modulith)</span></td>
+                <td>Mantiene el inventario clasificado por lote, fecha de envasado y caducidad. Aplica la regla <strong>FEFO</strong> (*First Expired, First Out*): los despachos descuentan de forma atómica del lote con vencimiento más cercano.</td>
+              </tr>
+              <tr>
+                <td><strong>Compras & Terceros</strong></td>
+                <td>Nestor Huaylla</td>
+                <td><span class="badge-frente badge-compras">ERP Interno (Modulith)</span></td>
+                <td>Registra órdenes de compra a productores agrícolas de cacao y coco fresco, y gestiona el CRM unificado de <code>Tercero</code> (clientes, proveedores, RUC/DNI). Al recepcionar mercadería, alimenta los lotes de materia prima y notifica a Finanzas la cuenta por pagar.</td>
+              </tr>
+              <tr>
+                <td><strong>Administración & Seguridad</strong></td>
+                <td>Transversal</td>
+                <td><span class="badge-frente" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;">ERP Interno (Modulith)</span></td>
+                <td>Gestión de usuarios, roles, tiendas/sucursales y parámetros del sistema. El Portal Web le consulta los permisos del usuario para renderizar dinámicamente las opciones del menú.</td>
+              </tr>
+              <tr>
+                <td><strong>Oracle Database 23 Free</strong></td>
+                <td>Infraestructura / DBA</td>
+                <td><span class="badge-frente" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">Contenedor Persistencia</span></td>
+                <td>Persistencia relacional empresarial ACID. Garantiza integridad referencial estricta y aislamiento transaccional con rollback inmediato ante infracciones de reglas de negocio.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECCIÓN 5: DECISIÓN EN UNA FRASE -->
+      <!-- ========================================================================= -->
+      <section id="decision">
+        <h2>Decisión de Arquitectura en una Frase</h2>
+        <div class="admonition success">
+          <div class="admonition-title">&#9989; Resumen Ejecutivo de la Decisión</div>
+          El <strong>ERP interno de BOMERP</strong> es un <strong>monolito modular</strong> construido con <strong>Spring Modulith (Spring Boot 3)</strong> y organizado <strong>por capas</strong>, sin excepciones entre sus módulos; mientras que el <strong><code>Portal Web & POS</code></strong> es la única excepción del sistema completo — su <strong>propio despliegue en Angular 18 (SPA/PWA)</strong>, también por capas, porque a diferencia de los módulos internos sí tiene un argumento real de movilidad, interacción táctil en ferias y enlace directo con hardware periférico ESC/POS.
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECCIÓN 6: QUIÉN ES QUIÉN -->
+      <!-- ========================================================================= -->
+      <section id="quien-es-quien">
+        <h2>Quién es quién en BOMERP (4 Frentes y Responsabilidades)</h2>
+        <ul>
+          <li><strong><code>Finanzas y Reportes (Brandon Ccalla)</code>:</strong> Administra el ciclo transaccional de caja (apertura de turno con saldo inicial, movimientos de ingreso/egreso con la regla <code>RN-FIN-01</code> y cierre de turno con arqueo físico vs. saldo esperado del sistema). Expone el contrato público <code>FinanzasApi</code> con la anotación <code>@NamedInterface("api")</code> para que Ventas y Compras registren impactos financieros sin acoplar entidades. Genera los reportes analíticos con <code>CierreCajaExporter</code> en formato Excel (Apache POI) y PDF (OpenPDF).</li>
+          <li><strong><code>Ventas y Despacho (Zaggy Morales)</code>:</strong> Responsable de la creación de <code>Venta</code> y <code>DetalleVenta</code>, emisión ágil de comprobantes térmicos en comandos estándar ESC/POS y trazabilidad de pedidos de entrega a domicilio (delivery). Solicita a Inventario el descuento de existencias y a Finanzas el registro del cobro.</li>
+          <li><strong><code>Producción e Inventario (Isai Armuto)</code>:</strong> Administra el catálogo de productos y recetas BOM (Bill of Materials) para derivados de cacao y aceite de coco prensado, calculando el costo unitario exacto sumando insumos principales, materiales de empaque (envases de vidrio, tapas, precintos de seguridad, etiquetas) y merma estimada. Aplica el algoritmo <strong>FEFO</strong> en las salidas de inventario.</li>
+          <li><strong><code>Compras y Terceros (Nestor Huaylla)</code>:</strong> Gestiona la relación con productores agrícolas proveedores de granos de cacao y coco, compras de materiales de envasado y el CRM de personas (<code>Tercero</code> con roles diferenciados: Cliente, Proveedor o Ambos). Da entrada a los lotes iniciales de insumos.</li>
+          <li><strong><code>Portal Web & POS (Angular 18)</code>:</strong> Punto único de acceso para el cajero y personal. Maneja la venta rápida, captura los periféricos locales Bluetooth y consulta dinámicamente los módulos permitidos al backend.</li>
+          <li><strong><code>SUNAT / Facturación Electrónica</code>:</strong> Sistema externo desacoplado. Queda documentado como adaptador opcional para futuras fases; no se implementa en esta v1.</li>
+        </ul>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECCIÓN 7: EL FLUJO DE PUNTA A PUNTA -->
+      <!-- ========================================================================= -->
+      <section id="flujo-punta-a-punta">
+        <h2>El flujo funcional de negocio en Agro Peruvian Foods</h2>
+        <p>A continuación se presenta el <strong>diagrama de flujo funcional</strong> que modela las interacciones de negocio entre los 6 módulos del sistema, el Portal Web y el Cliente final para la elaboración y comercialización de derivados de cacao y aceite de coco prensado en frío:</p>
+
+        <!-- DIAGRAMA DE FLUJO FUNCIONAL INTEGRAL -->
+        <div class="diagram-card">
+          <div class="diagram-card-header">
+            <div class="diagram-caption">&#128506; Figura 4. Diagrama de Flujo Funcional Integral — BOMERP</div>
+            <div class="diagram-tools">
+              <button class="btn-toggle-code" onclick="toggleCode('code-fases')">{ } Ver Mermaid</button>
+            </div>
+          </div>
+          <div class="mermaid-container">
+            <pre class="mermaid">
+flowchart TB
+    Compras["1. COMPRAS & TERCEROS<br/>(Nestor Huaylla)<br/>proveedores agrícolas, cotizaciones,<br/>órdenes de compra (cacao, coco, empaques)"]
+    Admin["6. ADMINISTRACIÓN<br/>usuarios, roles, permisos,<br/>catálogos compartidos,<br/>auditoría transversal"]
+
+    Inventario["2. INVENTARIO & LOTES FEFO<br/>(Isai Armuto / Almacén)<br/>recepción (pesaje cacao, calidad, lotes),<br/>almacenes y existencias,<br/>despacho (picking, entrega)"]
+
+    Portal(["PORTAL WEB & POS<br/>(Angular 18 PWA)<br/>- anónimo: catálogo + contacto<br/>- con sesión: login + menú por rol"])
+
+    Produccion["3. PRODUCCIÓN & CATÁLOGO<br/>(Isai Armuto)<br/>recetas BOM (cacao y coco),<br/>órdenes, consumo, rendimiento, mermas"]
+
+    Ventas["4. VENTAS & DESPACHO<br/>(Zaggy Morales)<br/>clientes, pedidos POS, precios,<br/>tickets ESC/POS, delivery"]
+
+    Cliente(["CLIENTE / CONSUMIDOR<br/>(tienda física, feria o delivery)"])
+
+    Finanzas["5. FINANZAS & REPORTES<br/>(Brandon Ccalla)<br/>cuentas por pagar (Compras),<br/>cuentas por cobrar / cobro POS (Ventas),<br/>SesionCaja y regla RN-FIN-01"]
+
+    Compras -->|"orden de compra<br/>(recepción)"| Inventario
+    Compras -->|"cuenta por pagar"| Finanzas
+
+    Inventario -->|"disponibilidad de insumos"| Produccion
+    Produccion -->|"productos terminados,<br/>subproductos, mermas"| Inventario
+
+    Portal -->|"solicitud de<br/>contacto / pedido"| Ventas
+    Portal -.->|"apertura, arqueo<br/>y cierre caja"| Finanzas
+
+    Inventario -->|"disponibilidad<br/>(stock)"| Ventas
+    Ventas -->|"pedido aprobado<br/>(despacho)"| Inventario
+
+    Inventario -->|"entrega física de productos<br/>(aceite coco, chocolates)"| Cliente
+
+    Ventas -->|"cuenta por cobrar /<br/>cobro transaccional"| Finanzas
+
+    classDef erp fill:#1e293b,stroke:#3b82f6,stroke-width:1.8px,color:#f8fafc;
+    classDef portal fill:#4c0519,stroke:#f43f5e,stroke-width:2px,color:#fff;
+    classDef client fill:#062e24,stroke:#10b981,stroke-width:2px,color:#fff;
+    classDef admin fill:#111827,stroke:#64748b,stroke-width:1.5px,color:#cbd5e1;
+    classDef finanzas fill:#082f49,stroke:#38bdf8,stroke-width:2px,color:#fff;
+
+    class Compras,Inventario,Produccion,Ventas erp;
+    class Finanzas finanzas;
+    class Portal portal;
+    class Cliente client;
+    class Admin admin;
+            </pre>
+          </div>
+          <div class="code-view" id="code-fases">flowchart TB
+    Compras["1. COMPRAS &amp; TERCEROS&lt;br/&gt;(Nestor Huaylla)&lt;br/&gt;proveedores agrícolas, cotizaciones,&lt;br/&gt;órdenes de compra (cacao, coco, empaques)"]
+    Admin["6. ADMINISTRACIÓN&lt;br/&gt;usuarios, roles, permisos,&lt;br/&gt;catálogos compartidos,&lt;br/&gt;auditoría transversal"]
+
+    Inventario["2. INVENTARIO &amp; LOTES FEFO&lt;br/&gt;(Isai Armuto / Almacén)&lt;br/&gt;recepción (pesaje cacao, calidad, lotes),&lt;br/&gt;almacenes y existencias,&lt;br/&gt;despacho (picking, entrega)"]
+
+    Portal(["PORTAL WEB &amp; POS&lt;br/&gt;(Angular 18 PWA)&lt;br/&gt;- anónimo: catálogo + contacto&lt;br/&gt;- con sesión: login + menú por rol"])
+
+    Produccion["3. PRODUCCIÓN &amp; CATÁLOGO&lt;br/&gt;(Isai Armuto)&lt;br/&gt;recetas BOM (cacao y coco),&lt;br/&gt;órdenes, consumo, rendimiento, mermas"]
+
+    Ventas["4. VENTAS &amp; DESPACHO&lt;br/&gt;(Zaggy Morales)&lt;br/&gt;clientes, pedidos POS, precios,&lt;br/&gt;tickets ESC/POS, delivery"]
+
+    Cliente(["CLIENTE / CONSUMIDOR&lt;br/&gt;(tienda física, feria o delivery)"])
+
+    Finanzas["5. FINANZAS &amp; REPORTES&lt;br/&gt;(Brandon Ccalla)&lt;br/&gt;cuentas por pagar (Compras),&lt;br/&gt;cuentas por cobrar / cobro POS (Ventas),&lt;br/&gt;SesionCaja y regla RN-FIN-01"]
+
+    Compras --&gt;|"orden de compra&lt;br/&gt;(recepción)"| Inventario
+    Compras --&gt;|"cuenta por pagar"| Finanzas
+
+    Inventario --&gt;|"disponibilidad de insumos"| Produccion
+    Produccion --&gt;|"productos terminados,&lt;br/&gt;subproductos, mermas"| Inventario
+
+    Portal --&gt;|"solicitud de&lt;br/&gt;contacto / pedido"| Ventas
+    Portal -.-&gt;|"apertura, arqueo&lt;br/&gt;y cierre caja"| Finanzas
+
+    Inventario --&gt;|"disponibilidad&lt;br/&gt;(stock)"| Ventas
+    Ventas --&gt;|"pedido aprobado&lt;br/&gt;(despacho)"| Inventario
+
+    Inventario --&gt;|"entrega física de productos&lt;br/&gt;(aceite coco, chocolates)"| Cliente
+
+    Ventas --&gt;|"cuenta por cobrar /&lt;br/&gt;cobro transaccional"| Finanzas</div>
+        </div>
+
+        <ol>
+          <li><strong>Inicio de Turno en Caja:</strong> El cajero abre la PWA de Angular en la tablet de la feria o tienda, inicia sesión con sus credenciales y registra la apertura de caja indicando el saldo inicial en efectivo (<code>montoApertura</code>). El sistema crea una <code>SesionCaja</code> en estado <code>ABIERTA</code> en el módulo de <strong>Finanzas</strong>.</li>
+          <li><strong>Abastecimiento de Materia Prima:</strong> El encargado de <strong>Compras</strong> registra la compra de 500 kg de grano de cacao criollo a un agricultor local registrado en el CRM <code>Tercero</code>. Al confirmar la compra, se genera una cuenta por pagar programada en <strong>Finanzas</strong>.</li>
+          <li><strong>Recepción e Ingreso de Lotes:</strong> El personal de almacén e <strong>Inventario</strong> recibe el grano y los materiales de empaque (frascos de vidrio, etiquetas y precintos), verifica la calidad física y registra el ingreso generando los lotes con sus fechas de envasado y vencimiento correspondientes.</li>
+          <li><strong>Planificación y Ejecución de Producción (BOM):</strong> En la planta de Agro Peruvian Foods, el encargado de <strong>Producción</strong> lanza una <code>OrdenProduccion</code> para elaborar 200 frascos de aceite de coco prensado en frío (250 ml) y 100 barras de chocolate al 70%. Consulta con <strong>Inventario</strong> la disponibilidad real de insumos (receta BOM estándar con empaques y mermas), ejecuta la orden y entrega a Inventario los nuevos lotes de producto terminado con su fecha de caducidad calculada.</li>
+          <li><strong>Venta en Punto de Venta (POS):</strong> Un cliente se acerca al stand de la feria y pide 2 frascos de aceite de coco y 3 barras de chocolate. El cajero selecciona los productos en la PWA; el módulo de <strong>Ventas</strong> solicita a <strong>Inventario</strong> la reserva y descuento mediante el algoritmo <strong>FEFO</strong> (se consumen los lotes más próximos a caducar).</li>
+          <li><strong>Cobro Transaccional con Finanzas:</strong> El cliente paga en efectivo. El módulo de <strong>Ventas</strong> invoca a <code>FinanzasApi</code> para registrar el <code>MovimientoCaja</code> de tipo <code>INGRESO</code> en la <code>SesionCaja</code> activa. La PWA envía inmediatamente la trama binaria ESC/POS a la impresora térmica portátil por Bluetooth y entrega el ticket físico.</li>
+          <li><strong>Control de Retiro / Egreso (RN-FIN-01):</strong> Si a mitad del turno el cajero debe pagar S/ 30 en efectivo por flete local de emergencia, el sistema verifica antes que la sesión esté <code>ABIERTA</code> y que <code>saldoEsperadoEfectivo >= 30</code>. Si no hay suficiente dinero en la gaveta, la transacción es rechazada de forma atómica lanzando <code>ReglaNegocioFinanzasException</code> y generando rollback.</li>
+          <li><strong>Cierre de Caja y Arqueo:</strong> Al finalizar la feria, el cajero cuenta los billetes y monedas físicos e ingresa el monto real en el sistema. El módulo de <strong>Finanzas</strong> sella la <code>SesionCaja</code> como <code>CERRADA</code>, calcula la diferencia (sobrante o faltante) y genera los reportes de cierre con <code>CierreCajaExporter</code> en formato PDF y Excel para la gerencia.</li>
+        </ol>
+
+        <!-- DIAGRAMA DE SECUENCIA TRANSACCIONAL -->
+        <h3>Diagrama de Secuencia: Transacción de Venta en POS con Regla RN-FIN-01</h3>
+        <p>A nivel técnico, la siguiente secuencia ilustra la orquestación en memoria entre los módulos del monolito modular para una venta exitosa y para el rechazo de un egreso no autorizado:</p>
+
+        <div class="diagram-card">
+          <div class="diagram-card-header">
+            <div class="diagram-caption">&#128506; Figura 5. Secuencia de Venta en POS, Descuento FEFO, FinanzasApi y Validación RN-FIN-01</div>
+            <div class="diagram-tools">
+              <button class="btn-toggle-code" onclick="toggleCode('code-secuencia')">{ } Ver Mermaid</button>
+            </div>
+          </div>
+          <div class="mermaid-container">
+            <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Cajero as Cajero (Operador POS)
+    participant POS as Frontend PWA (Angular 18)
+    participant Ventas as Módulo Ventas (Zaggy)
+    participant Inv as Módulo Inventario (Isai)
+    participant Fin as Módulo Finanzas (Brandon)
+    participant DB as Oracle 23 Free (ACID)
+    participant Printer as Impresora ESC/POS (Hardware)
+
+    %% Escenario 1: Venta Exitosa
+    rect rgb(10, 35, 25)
+    note over Cajero, Printer: ESCENARIO 1: Cobro de Venta Presencial en Efectivo (Éxito)
+    Cajero->>POS: Selecciona productos y pulsa "Cobrar (Efectivo S/ 45.00)"
+    POS->>Ventas: POST /api/ventas (DTO VentaRequest)
+    
+    activate Ventas
+    Ventas->>Inv: Java directo: descontarStockFEFO(productoId, cantidad)
+    activate Inv
+    Inv-->>Ventas: OK: Lote LT-COC-2026-09 asignado (caducidad más cercana)
+    deactivate Inv
+
+    Ventas->>Fin: Java directo (@NamedInterface): FinanzasApi.registrarCobro(sesionId, S/ 45.00, EFECTIVO)
+    activate Fin
+    Fin->>Fin: Valida SesionCaja ABIERTA
+    Fin->>Fin: Actualiza saldoEsperadoEfectivo += S/ 45.00
+    Fin-->>Ventas: OK: MovimientoCaja #891 registrado
+    deactivate Fin
+
+    Ventas->>DB: @Transactional COMMIT (Venta + Detalle + MovimientoCaja + Lote)
+    Ventas-->>POS: 201 Created (VentaResponse con Trama ESC/POS)
+    deactivate Ventas
+
+    POS->>Printer: Web Bluetooth: writeValue(bytes ESC/POS)
+    Printer-->>Cajero: Emite Ticket Térmico Físico
+    end
+
+    %% Escenario 2: Bloqueo RN-FIN-01
+    rect rgb(45, 15, 20)
+    note over Cajero, DB: ESCENARIO 2: Intento de Retiro de Efectivo que supera Saldo Disponible (Bloqueo RN-FIN-01)
+    Cajero->>POS: Registra "EGRESO Efectivo: S/ 300.00" (Flete urgente)
+    POS->>Fin: POST /api/finanzas/movimientos (sesionId, EGRESO, S/ 300.00, EFECTIVO)
+    activate Fin
+    Fin->>Fin: Verifica saldoEsperadoEfectivo actual (S/ 245.00)
+    
+    critical Verificación RN-FIN-01
+        Fin->>Fin: ¿Monto (300.00) > saldoEsperadoEfectivo (245.00)? -> SÍ (Falta liquidez)
+        Fin->>DB: @Transactional ROLLBACK Inmediato
+        Fin-->>POS: 422 Unprocessable Entity (ReglaNegocioFinanzasException: "Saldo insuficiente en caja física")
+    end
+    deactivate Fin
+    POS-->>Cajero: Muestra Alerta Roja: "Retiro denegado por falta de efectivo disponible"
+    end
+            </pre>
+          </div>
+          <div class="code-view" id="code-secuencia">sequenceDiagram
+    autonumber
+    actor Cajero as Cajero (Operador POS)
+    participant POS as Frontend PWA (Angular 18)
+    participant Ventas as Módulo Ventas (Zaggy)
+    participant Inv as Módulo Inventario (Isai)
+    participant Fin as Módulo Finanzas (Brandon)
+    participant DB as Oracle 23 Free (ACID)
+    participant Printer as Impresora ESC/POS (Hardware)
+
+    rect rgb(10, 35, 25)
+    note over Cajero, Printer: ESCENARIO 1: Cobro de Venta Presencial en Efectivo (Éxito)
+    Cajero->>POS: Selecciona productos y pulsa "Cobrar (Efectivo S/ 45.00)"
+    POS->>Ventas: POST /api/ventas (DTO VentaRequest)
+    activate Ventas
+    Ventas->>Inv: Java directo: descontarStockFEFO(productoId, cantidad)
+    activate Inv
+    Inv-->>Ventas: OK: Lote LT-COC-2026-09 asignado (caducidad más cercana)
+    deactivate Inv
+    Ventas->>Fin: Java directo (@NamedInterface): FinanzasApi.registrarCobro(sesionId, S/ 45.00, EFECTIVO)
+    activate Fin
+    Fin->>Fin: Valida SesionCaja ABIERTA
+    Fin->>Fin: Actualiza saldoEsperadoEfectivo += S/ 45.00
+    Fin-->>Ventas: OK: MovimientoCaja #891 registrado
+    deactivate Fin
+    Ventas->>DB: @Transactional COMMIT (Venta + Detalle + MovimientoCaja + Lote)
+    Ventas-->>POS: 201 Created (VentaResponse con Trama ESC/POS)
+    deactivate Ventas
+    POS->>Printer: Web Bluetooth: writeValue(bytes ESC/POS)
+    Printer-->>Cajero: Emite Ticket Térmico Físico
+    end
+
+    rect rgb(45, 15, 20)
+    note over Cajero, DB: ESCENARIO 2: Intento de Retiro de Efectivo que supera Saldo Disponible (Bloqueo RN-FIN-01)
+    Cajero->>POS: Registra "EGRESO Efectivo: S/ 300.00" (Flete urgente)
+    POS->>Fin: POST /api/finanzas/movimientos (sesionId, EGRESO, S/ 300.00, EFECTIVO)
+    activate Fin
+    Fin->>Fin: Verifica saldoEsperadoEfectivo actual (S/ 245.00)
+    critical Verificación RN-FIN-01
+        Fin->>Fin: ¿Monto (300.00) > saldoEsperadoEfectivo (245.00)? -> SÍ (Falta liquidez)
+        Fin->>DB: @Transactional ROLLBACK Inmediato
+        Fin-->>POS: 422 Unprocessable Entity (ReglaNegocioFinanzasException: "Saldo insuficiente en caja física")
+    end
+    deactivate Fin
+    POS-->>Cajero: Muestra Alerta Roja: "Retiro denegado por falta de efectivo disponible"
+    end</div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- SECCIÓN 8: ACLARACIONES DE DISEÑO Y REGLAS CRÍTICAS -->
+      <!-- ========================================================================= -->
+      <section id="aclaraciones">
+        <h2>Aclaraciones de diseño y reglas críticas de negocio</h2>
+        <ul>
+          <li><strong>RN-FIN-01 (Control de Liquidez):</strong> Está prohibido permitir cualquier egreso en efectivo que sobrepase el saldo disponible en caja o si la sesión no está en estado <code>ABIERTA</code>. El backend ejecuta esta validación bajo <code>@Transactional</code> para asegurar rollback ante cualquier incoherencia.</li>
+          <li><strong>Regla FEFO (*First Expired, First Out*):</strong> Alimentos y derivados de cacao/coco poseen fechas de expiración sensibles. Toda salida o venta descuenta de forma determinista del lote con menor tiempo de vida restante.</li>
+          <li><strong>Estandarización BOM (Recetas con Insumos de Empaque):</strong> Ningún producto terminado se costea únicamente por su materia prima líquida o seca; se integran obligatoriamente el frasco, la tapa, la etiqueta termoencogible, el precinto y el porcentaje estándar de merma.</li>
+          <li><strong>Desacoplamiento Estricto con Spring Modulith:</strong> Ningún módulo puede inyectar repositorios de otro dominio. Toda llamada inter-modular se efectúa mediante contratos públicos <code>@NamedInterface("api")</code> y eventos de dominio (<code>ApplicationEventPublisher</code>), validados en los tests unitarios de modularidad.</li>
+          <li><strong>Límites Explícitos de Alcance (PROJECT_MEMORY.md):</strong> NO se incluye integración directa con WebServices de SUNAT en esta fase ni tienda virtual de autoservicio para el público consumidor (reservado para v2).</li>
+        </ul>
+      </section>
+
+      <!-- FOOTER -->
+      <footer>
+        <div>
+          <strong>BOMERP Architecture Guide</strong> &middot; C4 Model Nivel 1 (Contexto) y Nivel 2 (Contenedores)
+        </div>
+        <div>
+          Basado en la especificación de referencia para Monolitos Modulares &middot; 2026
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- MERMAID.JS VIA ESM -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#111726',
+        primaryColor: '#1e293b',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#3b82f6',
+        lineColor: '#60a5fa',
+        secondaryColor: '#182238',
+        tertiaryColor: '#0f172a'
+      }
+    });
+
+    window.toggleCode = function(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    };
+
+    // ==========================================
+    // SIMULADOR DE FLUJOS DEL MONOLITO MODULAR
+    // ==========================================
+    let simTimer = null;
+
+    const moduleData = {
+      frontend: {
+        name: "Frontend PWA (Angular 18)",
+        lead: "Frontend Team",
+        desc: "Interfaz táctil para cajeros en ferias y tienda. Registra pedidos y envía la trama ESC/POS por Bluetooth.",
+        tech: "Angular 18, Signals, Web Bluetooth API, PWA ServiceWorker",
+        rule: "Tiempo de respuesta en feria < 200ms al añadir productos."
+      },
+      finanzas: {
+        name: "Finanzas & Reportes",
+        lead: "Brandon Ccalla",
+        desc: "Control estricto de SesionCaja y MovimientoCaja. Puerto @NamedInterface('api') FinanzasApi para cobros y pagos.",
+        tech: "Spring Modulith, Apache POI (XLSX), OpenPDF, Jakarta Validation",
+        rule: "RN-FIN-01: Bloquea egresos en efectivo si el monto supera saldoEsperadoEfectivo o si la sesión no está ABIERTA."
+      },
+      ventas: {
+        name: "Ventas & Despacho",
+        lead: "Zaggy Morales",
+        desc: "Crea Venta y DetalleVenta. Genera tramas binarias térmicas ESC/POS y coordina despachos por delivery.",
+        tech: "Spring Modulith, ESC/POS Raw Driver, Eventos Asíncronos",
+        rule: "Desacoplamiento: No modifica cajas directamente; delega en FinanzasApi."
+      },
+      produccion: {
+        name: "Producción & Lotes FEFO",
+        lead: "Isai Armuto",
+        desc: "Órdenes de producción, recetas BOM (insumos + envases de vidrio, tapas, etiquetas) y descuento FEFO de lotes.",
+        tech: "BOM Costing Engine, Algoritmo FEFO Atómico, Spring Data JPA",
+        rule: "Regla FEFO: Descuenta atómicamente del lote con fecha de caducidad más cercana."
+      },
+      compras: {
+        name: "Compras & Terceros",
+        lead: "Nestor Huaylla",
+        desc: "CRM Tercero (clientes y proveedores de cacao/coco) y órdenes de compra que generan cuentas por pagar en Finanzas.",
+        tech: "CRM Polimórfico, RUC/DNI Validation, Spring Modulith",
+        rule: "Todo proveedor debe contar con documento válido registrado antes de ingresar insumos."
+      },
+      database: {
+        name: "Oracle Database 23 Free",
+        lead: "DBA / Core",
+        desc: "Motor de persistencia relacional empresarial ACID con esquemas separados por módulo.",
+        tech: "Oracle 23 Free, HikariCP, JDBC Thin Driver",
+        rule: "Atomicidad estricta: Cualquier excepción dispara ROLLBACK inmediato protegiendo el saldo financiero."
+      },
+      impresora: {
+        name: "Impresora Térmica ESC/POS",
+        lead: "Hardware POS",
+        desc: "Impresión de tickets de 58mm y 80mm vía Bluetooth Low Energy o USB desde el navegador.",
+        tech: "ESC/POS Binary Standard, Web Bluetooth BLE",
+        rule: "Emisión autónoma local sin necesidad de internet ni servidores de impresión."
+      }
+    };
+
+    function clearHighlights() {
+      document.querySelectorAll('.svg-node').forEach(n => n.classList.remove('active-highlight'));
+      document.querySelectorAll('.sim-btn').forEach(b => b.classList.remove('active'));
+    }
+
+    function addTrace(time, badgeClass, message) {
+      const feed = document.getElementById('trace-feed');
+      const row = document.createElement('div');
+      row.className = 'trace-line';
+      row.innerHTML = `<span class="trace-time">[${time}]</span><span class="${badgeClass}">${message}</span>`;
+      feed.appendChild(row);
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    window.inspectModule = function(modKey) {
+      const data = moduleData[modKey];
+      if (!data) return;
+      clearHighlights();
+      const nodeEl = document.getElementById(`sn-${modKey}`);
+      if (nodeEl) nodeEl.classList.add('active-highlight');
+
+      addTrace("INSPECT", "trace-info", `${data.name} (${data.lead}) &middot; ${data.rule}`);
+    };
+
+    window.resetSimulation = function() {
+      if (simTimer) clearTimeout(simTimer);
+      clearHighlights();
+      document.getElementById('sim-status-text').textContent = "LISTO \u00B7 Selecciona un escenario";
+      document.getElementById('trace-step-counter').textContent = "PASO: 0 / 5";
+      addTrace("RESET", "trace-warn", "Simulación reiniciada. Estado en reposo.");
+    };
+
+    window.runSimulation = function(scenario) {
+      resetSimulation();
+
+      if (scenario === 'venta') {
+        document.getElementById('btn-sim-venta').classList.add('active');
+        document.getElementById('sim-status-text').textContent = "SIMULANDO: Venta en Tienda/Feria...";
+
+        // Step 1: Frontend
+        addTrace("00:01", "trace-info", "Paso 1: POS Angular envía POST /api/ventas (2x Aceite Coco 250ml + 3x Chocolate 70%)");
+        document.getElementById('sn-frontend').classList.add('active-highlight');
+        document.getElementById('trace-step-counter').textContent = "PASO: 1 / 5";
+
+        simTimer = setTimeout(() => {
+          // Step 2: Ventas & Inventario FEFO
+          clearHighlights();
+          document.getElementById('sn-ventas').classList.add('active-highlight');
+          document.getElementById('sn-produccion').classList.add('active-highlight');
+          document.getElementById('trace-step-counter').textContent = "PASO: 2 / 5";
+          addTrace("00:03", "trace-ok", "Paso 2: Ventas consulta Inventario -> Regla FEFO reserva Lote LT-COC-2026-09 (vencimiento más cercano)");
+
+          simTimer = setTimeout(() => {
+            // Step 3: Ventas llama FinanzasApi
+            clearHighlights();
+            document.getElementById('sn-ventas').classList.add('active-highlight');
+            document.getElementById('sn-finanzas').classList.add('active-highlight');
+            document.getElementById('trace-step-counter').textContent = "PASO: 3 / 5";
+            addTrace("00:05", "trace-info", "Paso 3: Ventas invoca en memoria FinanzasApi.registrarMovimiento(INGRESO, S/ 45.00, EFECTIVO)");
+
+            simTimer = setTimeout(() => {
+              // Step 4: Finanzas valida y actualiza
+              clearHighlights();
+              document.getElementById('sn-finanzas').classList.add('active-highlight');
+              document.getElementById('sn-db').classList.add('active-highlight');
+              document.getElementById('trace-step-counter').textContent = "PASO: 4 / 5";
+              addTrace("00:07", "trace-ok", "Paso 4: Finanzas valida SesionCaja ABIERTA -> Nuevo saldo efectivo: S/ 245.00 -> COMMIT en Oracle DB");
+
+              simTimer = setTimeout(() => {
+                // Step 5: Impresora ESC/POS
+                clearHighlights();
+                document.getElementById('sn-frontend').classList.add('active-highlight');
+                document.getElementById('sn-impresora').classList.add('active-highlight');
+                document.getElementById('trace-step-counter').textContent = "PASO: 5 / 5";
+                addTrace("00:09", "trace-ok", "Paso 5: Frontend envía trama ESC/POS por Web Bluetooth -> Ticket #00124 impreso correctamente \u2705");
+                document.getElementById('sim-status-text').textContent = "COMPLETADO CON \u00C9XITO";
+              }, 2000);
+            }, 2000);
+          }, 2000);
+        }, 2000);
+
+      } else if (scenario === 'bloqueo') {
+        document.getElementById('btn-sim-bloqueo').classList.add('active');
+        document.getElementById('sim-status-text').textContent = "SIMULANDO: Bloqueo RN-FIN-01...";
+
+        addTrace("00:01", "trace-info", "Paso 1: Solicitud de retiro en efectivo: S/ 300.00 (Flete urgente)");
+        document.getElementById('sn-frontend').classList.add('active-highlight');
+        document.getElementById('trace-step-counter').textContent = "PASO: 1 / 2";
+
+        simTimer = setTimeout(() => {
+          clearHighlights();
+          document.getElementById('sn-finanzas').classList.add('active-highlight');
+          document.getElementById('trace-step-counter').textContent = "PASO: 2 / 2";
+          addTrace("00:03", "trace-err", "\u26A0 ALERTA RN-FIN-01: saldoEsperadoEfectivo (S/ 200.00) es MENOR al monto solicitado (S/ 300.00)");
+          addTrace("00:04", "trace-err", "\u274C ReglaNegocioFinanzasException lanzada -> ROLLBACK transaccional inmediato. Cero impacto en caja.");
+          document.getElementById('sim-status-text').textContent = "BLOQUEADO POR RN-FIN-01";
+        }, 2000);
+
+      } else if (scenario === 'produccion') {
+        document.getElementById('btn-sim-produccion').classList.add('active');
+        document.getElementById('sim-status-text').textContent = "SIMULANDO: Orden Producción BOM...";
+
+        addTrace("00:01", "trace-info", "Paso 1: Producción crea OrdenProduccion #45 (100 frascos Aceite Coco 250ml)");
+        document.getElementById('sn-produccion').classList.add('active-highlight');
+
+        simTimer = setTimeout(() => {
+          document.getElementById('sn-produccion').classList.add('active-highlight');
+          document.getElementById('sn-db').classList.add('active-highlight');
+          addTrace("00:03", "trace-ok", "Paso 2: Receta BOM descuenta 50kg pulpa coco + 100 frascos + 100 tapas + 100 etiquetas y mermas.");
+          addTrace("00:05", "trace-ok", "Paso 3: Nuevo lote LT-COC-2026-10 generado en Inventario con fecha caducidad 2027-09-12 \u2705");
+          document.getElementById('sim-status-text').textContent = "PRODUCCIÓN REGISTRADA";
+        }, 2000);
+
+      } else if (scenario === 'compra') {
+        document.getElementById('btn-sim-compra').classList.add('active');
+        document.getElementById('sim-status-text').textContent = "SIMULANDO: Abastecimiento & Compras...";
+
+        addTrace("00:01", "trace-info", "Paso 1: Compras registra ingreso de 500kg Grano Cacao Criollo de Tercero (Cooperativa Selva)");
+        document.getElementById('sn-compras').classList.add('active-highlight');
+
+        simTimer = setTimeout(() => {
+          clearHighlights();
+          document.getElementById('sn-compras').classList.add('active-highlight');
+          document.getElementById('sn-produccion').classList.add('active-highlight');
+          document.getElementById('sn-finanzas').classList.add('active-highlight');
+          addTrace("00:03", "trace-ok", "Paso 2: Inventario recibe materia prima -> Crea Lote Insumo LT-CAC-MAT-01");
+          addTrace("00:05", "trace-info", "Paso 3: Finanzas genera Cuenta por Pagar programada a 15 días por S/ 7,250.00 \u2705");
+          document.getElementById('sim-status-text').textContent = "COMPRA Y CUENTA X PAGAR REGISTRADAS";
+        }, 2000);
+      }
+    };
+  </script>
+</body>
+</html>

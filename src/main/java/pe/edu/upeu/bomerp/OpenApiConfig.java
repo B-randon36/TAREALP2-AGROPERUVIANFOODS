@@ -13,6 +13,7 @@ public class OpenApiConfig {
         return new OpenAPI().info(new Info()
                 .title("BomERP API")
                 .version("v1")
-                .description("Contrato REST del backend unico de LP2"));
+                .description("Contrato REST del backend unico de LP2.<br><br>" +
+                             "🚀 **[Iniciar pruebas demo (Consola Finanzas)](/finanzas-demo.html)**"));
     }
 }

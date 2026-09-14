@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BomERP - Diagrama de Arquitectura del Módulo Finanzas & Monolito Modular</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070a12;
+      --bg-panel: #0f172a;
+      --bg-card: #1e293b;
+      --border-color: #334155;
+      
+      --color-controller: #38bdf8;
+      --color-service: #a855f7;
+      --color-domain: #f59e0b;
+      --color-repo: #10b981;
+      --color-ext: #ec4899;
+      --color-db: #34d399;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: radial-gradient(circle at 50% 0%, #172033 0%, var(--bg-dark) 75%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* TOP BAR */
+    header {
+      padding: 1.2rem 2rem;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #4f46e5, #9333ea);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: white;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-view {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .btn-view:hover, .btn-view.active {
+      background: #4f46e5;
+      border-color: #6366f1;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+      color: white;
+    }
+
+    /* MAIN WORKSPACE */
+    .workspace {
+      display: flex;
+      flex: 1;
+      position: relative;
+      min-height: calc(100vh - 80px);
+    }
+
+    .canvas-container {
+      flex: 1;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: auto;
+    }
+
+    /* SVG DIAGRAM STYLES */
+    .diagram-svg {
+      width: 100%;
+      max-width: 1380px;
+      height: auto;
+      filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.6));
+      user-select: none;
+    }
+
+    /* SVG Interactive Nodes */
+    .node-group {
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .node-group:hover .node-rect {
+      filter: brightness(1.2);
+      stroke-width: 2.5px;
+    }
+
+    .node-rect {
+      transition: all 0.2s ease;
+    }
+
+    /* Animated connector paths */
+    .connector-line {
+      stroke-dasharray: 6 6;
+      animation: dashMove 1.5s linear infinite;
+    }
+
+    .connector-line-reverse {
+      stroke-dasharray: 6 6;
+      animation: dashMoveReverse 1.5s linear infinite;
+    }
+
+    @keyframes dashMove {
+      from { stroke-dashoffset: 24; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes dashMoveReverse {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: 24; }
+    }
+
+    /* DETAIL SIDEBAR PANEL */
+    .detail-panel {
+      width: 420px;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(15px);
+      border-left: 1px solid var(--border-color);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      overflow-y: auto;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @media (max-width: 1100px) {
+      .workspace {
+        flex-direction: column;
+      }
+      .detail-panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+      }
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+
+    .node-type-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .panel-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-top: 0.4rem;
+    }
+
+    .solid-tag-row {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .solid-badge-card {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid;
+    }
+
+    .badge-s { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: #38bdf8; }
+    .badge-o { background: rgba(74, 222, 128, 0.15); color: #4ade80; border-color: #4ade80; }
+    .badge-l { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: #fbbf24; }
+    .badge-i { background: rgba(192, 132, 252, 0.15); color: #c084fc; border-color: #c084fc; }
+    .badge-d { background: rgba(244, 114, 182, 0.15); color: #f472b6; border-color: #f472b6; }
+
+    .panel-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .code-preview {
+      background: #030712;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      overflow-x: auto;
+      max-height: 280px;
+    }
+
+    .highlight-kw { color: #c084fc; }
+    .highlight-fn { color: #38bdf8; }
+    .highlight-str { color: #4ade80; }
+    .highlight-cm { color: #64748b; font-style: italic; }
+
+    /* LEGEND FOOTER */
+    .legend-bar {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+      padding: 1rem 1.5rem;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 0.85rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="brand-badge">B</div>
+      <div>
+        <div class="brand-title">BomERP • Arquitectura del Módulo Finanzas</div>
+        <div class="brand-sub">Spring Modulith Monolith • Diagrama de Capas, Puertos y SOLID</div>
+      </div>
+    </div>
+
+    <div class="controls-bar">
+      <button class="btn-view active" id="btn-view-finanzas" onclick="filterView('all')">
+        🔍 Ver Todo el Módulo
+      </button>
+      <button class="btn-view" id="btn-view-flujo" onclick="filterView('reporte')">
+        📈 Flujo de Reportes & Transacciones
+      </button>
+      <button class="btn-view" id="btn-view-caja" onclick="filterView('caja')">
+        💵 Flujo de Caja Chica (RN-FIN-01)
+      </button>
+    </div>
+  </header>
+
+  <!-- WORKSPACE -->
+  <div class="workspace">
+    
+    <div class="canvas-container">
+
+      <!-- SVG ARCHITECTURAL BLUEPRINT -->
+      <svg class="diagram-svg" viewBox="0 0 1340 850" xmlns="http://www.w3.org/2000/svg">
+        
+        <defs>
+          <!-- GRADIENTS -->
+          <linearGradient id="grad-bg-modulith" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0f172a" stop-opacity="0.95" />
+            <stop offset="100%" stop-color="#111827" stop-opacity="0.95" />
+          </linearGradient>
+
+          <linearGradient id="grad-finanzas-box" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#1e1b4b" stop-opacity="0.4" />
+            <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8" />
+          </linearGradient>
+
+          <linearGradient id="grad-catalogo-box" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#451a03" stop-opacity="0.3" />
+            <stop offset="100%" stop-color="#0f172a" stop-opacity="0.8" />
+          </linearGradient>
+
+          <linearGradient id="grad-db-box" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#064e3b" stop-opacity="0.5" />
+            <stop offset="100%" stop-color="#022c22" stop-opacity="0.8" />
+          </linearGradient>
+
+          <!-- ARROW MARKERS -->
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+          </marker>
+          <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#a855f7" />
+          </marker>
+          <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+          </marker>
+          <marker id="arrow-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b" />
+          </marker>
+          <marker id="arrow-pink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#ec4899" />
+          </marker>
+        </defs>
+
+        <!-- EXTERNAL CLIENTS AREA -->
+        <g id="layer-clients">
+          <rect x="30" y="20" width="1280" height="70" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1.5" stroke-dasharray="6 6" />
+          <text x="50" y="58" fill="#94a3b8" font-size="14" font-weight="700" letter-spacing="1">CONSUMIDORES EXTERNOS (HTTP REST):</text>
+          
+          <rect x="360" y="32" width="220" height="46" rx="8" fill="#0f172a" stroke="#64748b" />
+          <text x="380" y="60" fill="#f8fafc" font-size="13" font-weight="600">💻 Web ERP Frontend</text>
+
+          <rect x="620" y="32" width="280" height="46" rx="8" fill="#0f172a" stroke="#64748b" />
+          <text x="640" y="60" fill="#f8fafc" font-size="13" font-weight="600">📑 Swagger UI / OpenAPI 3.0</text>
+
+          <rect x="940" y="32" width="200" height="46" rx="8" fill="#0f172a" stroke="#64748b" />
+          <text x="960" y="60" fill="#f8fafc" font-size="13" font-weight="600">🚀 Postman / HTTP Client</text>
+        </g>
+
+        <!-- MONOLITH BOUNDARY (SPRING MODULITH CONTAINER) -->
+        <g id="monolith-container">
+          <rect x="30" y="115" width="1280" height="570" rx="18" fill="url(#grad-bg-modulith)" stroke="#4338ca" stroke-width="2.5" />
+          <text x="60" y="145" fill="#818cf8" font-size="15" font-weight="800" letter-spacing="1.5">SPRING BOOT 4 • BOMERP-BACKEND (UNIDAD ÚNICA DE DESPLIEGUE JVM)</text>
+          <rect x="1100" y="128" width="180" height="26" rx="6" fill="#312e81" />
+          <text x="1115" y="145" fill="#c7d2fe" font-size="11" font-weight="700">SPRING MODULITH</text>
+        </g>
+
+        <!-- ========================================================== -->
+        <!-- MODULO: FINANZAS (BOUNDED CONTEXT) -->
+        <!-- ========================================================== -->
+        <g id="module-finanzas">
+          <rect x="55" y="170" width="870" height="495" rx="14" fill="url(#grad-finanzas-box)" stroke="#6366f1" stroke-width="1.8" />
+          <text x="80" y="200" fill="#a5b4fc" font-size="16" font-weight="800">MODULE: pe.edu.upeu.bomerp.finanzas</text>
+          
+          <!-- LAYER 1: CONTROLLERS (REST ADAPTERS) -->
+          <g id="sublayer-controllers">
+            <rect x="75" y="225" width="830" height="75" rx="10" fill="#0b0f19" stroke="#334155" />
+            <text x="95" y="248" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">1. CONTROLADORES REST (WEB ADAPTERS) — [S] SRP</text>
+            
+            <!-- Node: TransaccionFinancieraController -->
+            <g class="node-group" onclick="showDetails('TransaccionFinancieraController')">
+              <rect class="node-rect" x="95" y="255" width="375" height="36" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
+              <circle cx="115" cy="273" r="5" fill="#38bdf8" />
+              <text x="130" y="278" fill="#f8fafc" font-size="12" font-weight="600">TransaccionFinancieraController (Reportes)</text>
+            </g>
+
+            <!-- Node: RendicionCajaChicaController -->
+            <g class="node-group" onclick="showDetails('RendicionCajaChicaController')">
+              <rect class="node-rect" x="490" y="255" width="395" height="36" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
+              <circle cx="510" cy="273" r="5" fill="#38bdf8" />
+              <text x="525" y="278" fill="#f8fafc" font-size="12" font-weight="600">RendicionCajaChicaController (Cajas Chicas)</text>
+            </g>
+          </g>
+
+          <!-- LAYER 2: APPLICATION SERVICES (PORTS & INTERFACES) -->
+          <g id="sublayer-services">
+            <rect x="75" y="325" width="830" height="155" rx="10" fill="#0b0f19" stroke="#334155" />
+            <text x="95" y="348" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">2. CAPA DE APLICACIÓN & CASOS DE USO — [D] DIP, [I] ISP, [L] LSP</text>
+
+            <!-- Node: FinanzasService (Interface) -->
+            <g class="node-group" onclick="showDetails('FinanzasService')">
+              <rect class="node-rect" x="95" y="360" width="375" height="36" rx="6" fill="#1e1b4b" stroke="#a855f7" stroke-width="1.5" />
+              <text x="115" y="383" fill="#e9d5ff" font-size="12" font-weight="700">&lt;&lt;interface&gt;&gt; FinanzasService</text>
+            </g>
+
+            <!-- Node: FinanzasServiceImpl -->
+            <g class="node-group" onclick="showDetails('FinanzasServiceImpl')">
+              <rect class="node-rect" x="95" y="405" width="375" height="60" rx="6" fill="#0f172a" stroke="#a855f7" stroke-width="1.2" stroke-dasharray="4 2" />
+              <text x="115" y="426" fill="#f8fafc" font-size="12" font-weight="600">FinanzasServiceImpl</text>
+              <text x="115" y="445" fill="#94a3b8" font-size="11">📊 obtenerResumenFlujoCaja()</text>
+              <text x="115" y="458" fill="#94a3b8" font-size="11">🗂️ listarTransacciones(tipo, estado)</text>
+            </g>
+
+            <!-- Node: RendicionCajaChicaService (Interface) -->
+            <g class="node-group" onclick="showDetails('RendicionCajaChicaService')">
+              <rect class="node-rect" x="490" y="360" width="395" height="36" rx="6" fill="#1e1b4b" stroke="#a855f7" stroke-width="1.5" />
+              <text x="510" y="383" fill="#e9d5ff" font-size="12" font-weight="700">&lt;&lt;interface&gt;&gt; RendicionCajaChicaService</text>
+            </g>
+
+            <!-- Node: RendicionCajaChicaServiceImpl -->
+            <g class="node-group" onclick="showDetails('RendicionCajaChicaServiceImpl')">
+              <rect class="node-rect" x="490" y="405" width="395" height="60" rx="6" fill="#0f172a" stroke="#a855f7" stroke-width="1.2" stroke-dasharray="4 2" />
+              <text x="510" y="426" fill="#f8fafc" font-size="12" font-weight="600">RendicionCajaChicaServiceImpl</text>
+              <text x="510" y="445" fill="#fbbf24" font-size="11">⚡ RN-FIN-01: Control de Solvencia</text>
+              <text x="510" y="458" fill="#94a3b8" font-size="11">🔒 Transacción atómica de saldo</text>
+            </g>
+          </g>
+
+          <!-- LAYER 3: DOMAIN ENTITIES & REPOSITORIES (JPA / DATA) -->
+          <g id="sublayer-domain-data">
+            <rect x="75" y="505" width="830" height="140" rx="10" fill="#0b0f19" stroke="#334155" />
+            <text x="95" y="528" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">3. DOMINIO & PERSISTENCIA JPA — [S] SRP, [O] OCP</text>
+
+            <!-- Left: Domain & Repos for Transacciones -->
+            <g class="node-group" onclick="showDetails('TransaccionFinancieraEntity')">
+              <rect class="node-rect" x="95" y="540" width="180" height="42" rx="6" fill="#1c1917" stroke="#f59e0b" stroke-width="1.5" />
+              <text x="110" y="566" fill="#fef3c7" font-size="11" font-weight="600">📦 TransaccionFinanciera</text>
+            </g>
+            <g class="node-group" onclick="showDetails('TransaccionFinancieraRepository')">
+              <rect class="node-rect" x="95" y="590" width="180" height="42" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5" />
+              <text x="105" y="616" fill="#a7f3d0" font-size="11" font-weight="600">🗄️ TransaccionRepository</text>
+            </g>
+
+            <!-- Center: Categoria Financiera -->
+            <g class="node-group" onclick="showDetails('CategoriaFinancieraEntity')">
+              <rect class="node-rect" x="290" y="540" width="180" height="42" rx="6" fill="#1c1917" stroke="#f59e0b" stroke-width="1.5" />
+              <text x="305" y="566" fill="#fef3c7" font-size="11" font-weight="600">📦 CategoriaFinanciera</text>
+            </g>
+            <g class="node-group" onclick="showDetails('CategoriaFinancieraRepository')">
+              <rect class="node-rect" x="290" y="590" width="180" height="42" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5" />
+              <text x="300" y="616" fill="#a7f3d0" font-size="11" font-weight="600">🗄️ CategoriaRepository</text>
+            </g>
+
+            <!-- Right: Caja Chica Entities & Repos -->
+            <g class="node-group" onclick="showDetails('CajaChicaEntity')">
+              <rect class="node-rect" x="490" y="540" width="190" height="42" rx="6" fill="#1c1917" stroke="#f59e0b" stroke-width="1.5" />
+              <text x="505" y="566" fill="#fef3c7" font-size="11" font-weight="600">📦 CajaChica & Rendicion</text>
+            </g>
+            <g class="node-group" onclick="showDetails('CajaChicaRepository')">
+              <rect class="node-rect" x="490" y="590" width="190" height="42" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5" />
+              <text x="505" y="616" fill="#a7f3d0" font-size="11" font-weight="600">🗄️ CajaChicaRepository</text>
+            </g>
+
+            <g class="node-group" onclick="showDetails('DetalleRendicionEntity')">
+              <rect class="node-rect" x="695" y="540" width="190" height="42" rx="6" fill="#1c1917" stroke="#f59e0b" stroke-width="1.5" />
+              <text x="705" y="566" fill="#fef3c7" font-size="11" font-weight="600">📦 DetalleRendicion</text>
+            </g>
+            <g class="node-group" onclick="showDetails('RendicionRepository')">
+              <rect class="node-rect" x="695" y="590" width="190" height="42" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5" />
+              <text x="710" y="616" fill="#a7f3d0" font-size="11" font-weight="600">🗄️ RendicionRepository</text>
+            </g>
+          </g>
+        </g>
+
+        <!-- ========================================================== -->
+        <!-- MODULO: CATALOGO (EXTERNAL BOUNDED CONTEXT) -->
+        <!-- ========================================================== -->
+        <g id="module-catalogo">
+          <rect x="950" y="170" width="335" height="495" rx="14" fill="url(#grad-catalogo-box)" stroke="#f59e0b" stroke-width="1.8" />
+          <text x="975" y="200" fill="#fde68a" font-size="16" font-weight="800">MODULE: catalogo</text>
+
+          <!-- Public Exported Port -->
+          <g class="node-group" onclick="showDetails('ProductoService')">
+            <rect class="node-rect" x="975" y="360" width="285" height="75" rx="8" fill="#78350f" stroke="#fbbf24" stroke-width="2" />
+            <text x="995" y="388" fill="#ffffff" font-size="12" font-weight="800">🌟 CONTRATO PÚBLICO EXPORTADO</text>
+            <text x="995" y="410" fill="#fef3c7" font-size="13" font-weight="700">&lt;&lt;interface&gt;&gt; ProductoService</text>
+            <text x="995" y="425" fill="#fde68a" font-size="11">obtener(Long productoId)</text>
+          </g>
+
+          <!-- Internal private elements -->
+          <rect x="975" y="460" width="285" height="185" rx="8" fill="#0b0f19" stroke="#78350f" stroke-dasharray="5 5" />
+          <text x="995" y="485" fill="#f59e0b" font-size="11" font-weight="700">🔒 INTERNO PRIVADO DE CATÁLOGO</text>
+          <text x="995" y="505" fill="#94a3b8" font-size="10">(Bloqueado por Spring Modulith)</text>
+
+          <rect x="995" y="525" width="245" height="34" rx="4" fill="#1c1917" stroke="#451a03" />
+          <text x="1010" y="547" fill="#cbd5e1" font-size="11">ProductoServiceImpl</text>
+
+          <rect x="995" y="570" width="245" height="34" rx="4" fill="#1c1917" stroke="#451a03" />
+          <text x="1010" y="592" fill="#cbd5e1" font-size="11">ProductoRepository (Privado)</text>
+        </g>
+
+        <!-- ========================================================== -->
+        <!-- DATABASE INFRASTRUCTURE TIER -->
+        <!-- ========================================================== -->
+        <g id="layer-database">
+          <rect x="30" y="720" width="1280" height="95" rx="14" fill="url(#grad-db-box)" stroke="#10b981" stroke-width="2" />
+          <text x="60" y="755" fill="#6ee7b7" font-size="15" font-weight="800">💾 INFRAESTRUCTURA DE DATOS: ORACLE 23 FREE DATABASE (CONTAINER DEV)</text>
+          <text x="60" y="775" fill="#a7f3d0" font-size="12">Esquema: BOMERP_APP @ FREEPDB1:1521 • Dialecto Oracle 23ai • Driver JDBC Oracle UCP</text>
+
+          <rect x="750" y="740" width="160" height="32" rx="6" fill="#022c22" stroke="#10b981" />
+          <text x="765" y="762" fill="#86efac" font-size="11" font-weight="600">TRANSACCIONES_FIN</text>
+
+          <rect x="925" y="740" width="140" height="32" rx="6" fill="#022c22" stroke="#10b981" />
+          <text x="945" y="762" fill="#86efac" font-size="11" font-weight="600">CAJAS_CHICAS</text>
+
+          <rect x="1080" y="740" width="210" height="32" rx="6" fill="#022c22" stroke="#10b981" />
+          <text x="1095" y="762" fill="#86efac" font-size="11" font-weight="600">RENDICIONES_CAJA_CHICA</text>
+        </g>
+
+        <!-- ========================================================== -->
+        <!-- CONNECTORS / DATA FLOW LINES -->
+        <!-- ========================================================== -->
+        
+        <!-- HTTP -> Controllers -->
+        <path d="M 470 78 L 280 255" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-blue)" class="connector-line" />
+        <path d="M 760 78 L 680 255" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-blue)" class="connector-line" />
+
+        <!-- Controller -> Service Interfaces -->
+        <path d="M 280 291 L 280 360" fill="none" stroke="#a855f7" stroke-width="2" marker-end="url(#arrow-purple)" />
+        <path d="M 680 291 L 680 360" fill="none" stroke="#a855f7" stroke-width="2" marker-end="url(#arrow-purple)" />
+
+        <!-- Service Impl -> Repositories -->
+        <path d="M 185 465 L 185 590" fill="none" stroke="#10b981" stroke-width="1.8" marker-end="url(#arrow-green)" />
+        <path d="M 585 465 L 585 590" fill="none" stroke="#10b981" stroke-width="1.8" marker-end="url(#arrow-green)" />
+        <path d="M 790 465 L 790 590" fill="none" stroke="#10b981" stroke-width="1.8" marker-end="url(#arrow-green)" />
+
+        <!-- INTER-MODULE BRIDGE: RendicionCajaChicaServiceImpl -> ProductoService (Catálogo) -->
+        <path id="path-intermodule" d="M 885 435 L 975 397" fill="none" stroke="#fbbf24" stroke-width="3" marker-end="url(#arrow-amber)" class="connector-line" />
+        <text x="870" y="415" fill="#fde68a" font-size="11" font-weight="700">DIP: Invocación Java Directa</text>
+
+        <!-- Repositories -> Oracle DB -->
+        <path d="M 185 632 L 185 720" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)" />
+        <path d="M 585 632 L 585 720" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)" />
+        <path d="M 790 632 L 790 720" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)" />
+
+      </svg>
+
+      <!-- LEGEND -->
+      <div class="legend-bar">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#38bdf8;"></div>
+          <span>Capa Web / REST Controller [SRP]</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#a855f7;"></div>
+          <span>Capa de Aplicación / Servicios [DIP / ISP]</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#f59e0b;"></div>
+          <span>Capa de Dominio & Reglas de Negocio [OCP]</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#10b981;"></div>
+          <span>Capa de Persistencia JPA & Repositorios</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#fbbf24;"></div>
+          <span>Contrato Público Inter-modular (Spring Modulith)</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DETAIL SIDEBAR PANEL -->
+    <aside class="detail-panel" id="detail-panel">
+      
+      <div class="panel-header">
+        <div>
+          <span class="node-type-pill" id="panel-type" style="background:rgba(99,102,241,0.2); color:#818cf8;">
+            COMPONENTE ARQUITECTÓNICO
+          </span>
+          <h3 class="panel-title" id="panel-title">TransaccionFinancieraController</h3>
+        </div>
+      </div>
+
+      <div class="solid-tag-row" id="panel-solid">
+        <span class="solid-badge-card badge-s">[S] Single Responsibility</span>
+        <span class="solid-badge-card badge-d">[D] Dependency Inversion</span>
+      </div>
+
+      <div>
+        <h4 style="font-size:0.85rem; color:#94a3b8; text-transform:uppercase; margin-bottom:0.4rem;">Función en la Arquitectura:</h4>
+        <p class="panel-desc" id="panel-desc">
+          Punto de entrada REST para el recurso de transacciones financieras y el reporte de Flujo de Caja.
+        </p>
+      </div>
+
+      <div>
+        <h4 style="font-size:0.85rem; color:#94a3b8; text-transform:uppercase; margin-bottom:0.4rem;">Ubicación en el Monolito:</h4>
+        <p style="font-family:'JetBrains Mono', monospace; font-size:0.8rem; color:#a5b4fc;" id="panel-file">
+          pe.edu.upeu.bomerp.finanzas.controller.TransaccionFinancieraController
+        </p>
+      </div>
+
+      <div>
+        <h4 style="font-size:0.85rem; color:#94a3b8; text-transform:uppercase; margin-bottom:0.4rem;">Código Representativo:</h4>
+        <div class="code-preview" id="panel-code">
+<span class="highlight-kw">@GetMapping</span>(<span class="highlight-str">"/resumen-flujo-caja"</span>)
+<span class="highlight-kw">public</span> ResponseEntity&lt;FlujoCajaResumenResponse&gt; <span class="highlight-fn">obtenerResumenFlujoCaja</span>() {
+    <span class="highlight-kw">return</span> ResponseEntity.ok(finanzasService.obtenerResumenFlujoCaja());
+}
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:8px; padding:0.9rem;">
+        <h5 style="color:#e2e8f0; font-size:0.85rem; margin-bottom:0.3rem;">💡 Principio SOLID Destacado:</h5>
+        <p style="font-size:0.85rem; color:var(--text-muted);" id="panel-solid-tip">
+          <strong>Single Responsibility (SRP):</strong> No realiza sumas, agrupaciones SQL ni persistencia. Solo atiende solicitudes HTTP y mapea la respuesta con códigos de estado limpios.
+        </p>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- JAVASCRIPT DATA & LOGIC -->
+  <script>
+    const COMPONENT_DATA = {
+      'TransaccionFinancieraController': {
+        type: 'Capa Web / REST Controller',
+        title: 'TransaccionFinancieraController',
+        typeColor: 'background:rgba(56, 189, 248, 0.2); color:#38bdf8;',
+        solid: ['badge-s', 'badge-d'],
+        solidNames: ['[S] Single Responsibility', '[D] Dependency Inversion'],
+        file: 'pe.edu.upeu.bomerp.finanzas.controller.TransaccionFinancieraController',
+        desc: 'Expone endpoints REST para transacciones financieras y el reporte consolidado de Flujo de Caja. Controla la navegación paginada y filtrada por tipo, estado o categoría.',
+        code: `@Operation(summary = "Obtiene el reporte consolidado de Flujo de Caja")
+@GetMapping("/resumen-flujo-caja")
+public ResponseEntity<FlujoCajaResumenResponse> obtenerResumenFlujoCaja() {
+    return ResponseEntity.ok(finanzasService.obtenerResumenFlujoCaja());
+}`,
+        tip: '<b>Single Responsibility (SRP):</b> Se encarga únicamente del protocolo de transporte HTTP. Desacoplado totalmente de sentencias SQL.'
+      },
+      'FinanzasService': {
+        type: 'Puerto de Servicio (Interface)',
+        title: 'FinanzasService',
+        typeColor: 'background:rgba(168, 85, 247, 0.2); color:#c084fc;',
+        solid: ['badge-d', 'badge-i', 'badge-l'],
+        solidNames: ['[D] Dependency Inversion', '[I] Interface Segregation', '[L] Liskov'],
+        file: 'pe.edu.upeu.bomerp.finanzas.service.FinanzasService',
+        desc: 'Contrato abstracto que define las capacidades del caso de uso de finanzas: transacciones, categorías y analítica de flujo de caja.',
+        code: `public interface FinanzasService {
+    List<TransaccionFinancieraResponse> listarTransacciones(TipoFinanciero tipo, EstadoFinanciero estado, Long categoriaId);
+    FlujoCajaResumenResponse obtenerResumenFlujoCaja();
+}`,
+        tip: '<b>Dependency Inversion (DIP):</b> Los controladores de alto nivel dependen de esta interfaz, nunca de la clase de implementación concreta.'
+      },
+      'FinanzasServiceImpl': {
+        type: 'Servicio de Dominio / Lógica de Negocio',
+        title: 'FinanzasServiceImpl (Reportes)',
+        typeColor: 'background:rgba(168, 85, 247, 0.2); color:#c084fc;',
+        solid: ['badge-s', 'badge-o'],
+        solidNames: ['[S] Single Responsibility', '[O] Open/Closed'],
+        file: 'pe.edu.upeu.bomerp.finanzas.service.FinanzasServiceImpl',
+        desc: 'Implementación del caso de uso. Ejecuta los algoritmos de acumulación y consolidación de ingresos, egresos, cuentas por cobrar/pagar y balance neto.',
+        code: `public FlujoCajaResumenResponse obtenerResumenFlujoCaja() {
+    List<TransaccionFinanciera> todas = transaccionRepository.findAll();
+    BigDecimal totalIngresos = todas.stream()
+        .filter(t -> t.getTipo() == TipoFinanciero.INGRESO && t.getEstado() == EstadoFinanciero.PAGADO)
+        .map(TransaccionFinanciera::getMonto)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    
+    BigDecimal totalEgresos = todas.stream()
+        .filter(t -> t.getTipo() == TipoFinanciero.EGRESO && t.getEstado() == EstadoFinanciero.PAGADO)
+        .map(TransaccionFinanciera::getMonto)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    
+    BigDecimal balanceNeto = totalIngresos.subtract(totalEgresos);
+    return FlujoCajaResumenResponse.builder().totalIngresos(totalIngresos)...build();
+}`,
+        tip: '<b>Single Responsibility (SRP):</b> Centraliza el cálculo de métricas financieras sin delegarlo al cliente ni al controlador.'
+      },
+      'RendicionCajaChicaController': {
+        type: 'Capa Web / REST Controller',
+        title: 'RendicionCajaChicaController',
+        typeColor: 'background:rgba(56, 189, 248, 0.2); color:#38bdf8;',
+        solid: ['badge-s', 'badge-i'],
+        solidNames: ['[S] Single Responsibility', '[I] Interface Segregation'],
+        file: 'pe.edu.upeu.bomerp.finanzas.controller.RendicionCajaChicaController',
+        desc: 'Controlador enfocado exclusivamente en la gestión de Cajas Chicas y el registro de rendiciones de gastos menores.',
+        code: `@PostMapping("/rendiciones")
+public ResponseEntity<RendicionCajaChicaResponse> registrarRendicion(
+    @Valid @RequestBody RendicionCajaChicaRequest request) {
+    RendicionCajaChicaResponse response = rendicionService.registrarRendicion(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+}`,
+        tip: '<b>Interface Segregation (ISP):</b> No se mezcla con transacciones bancarias ni flujos de caja; inyecta solo RendicionCajaChicaService.'
+      },
+      'RendicionCajaChicaService': {
+        type: 'Puerto de Servicio (Interface)',
+        title: 'RendicionCajaChicaService',
+        typeColor: 'background:rgba(168, 85, 247, 0.2); color:#c084fc;',
+        solid: ['badge-d', 'badge-i'],
+        solidNames: ['[D] Dependency Inversion', '[I] Interface Segregation'],
+        file: 'pe.edu.upeu.bomerp.finanzas.service.RendicionCajaChicaService',
+        desc: 'Interfaz segregada para rendiciones y saldos disponibles de caja chica.',
+        code: `public interface RendicionCajaChicaService {
+    CajaChicaResponse crearCajaChica(String codigo, String responsable, BigDecimal limite, BigDecimal saldo);
+    RendicionCajaChicaResponse registrarRendicion(RendicionCajaChicaRequest request);
+    RendicionCajaChicaResponse obtenerRendicion(Long id);
+}`,
+        tip: '<b>Liskov Substitution (LSP):</b> Permite inyectar simulaciones (mocks) en TransaccionFinancieraControllerTest sin alterar la funcionalidad.'
+      },
+      'RendicionCajaChicaServiceImpl': {
+        type: 'Lógica Transaccional & RN',
+        title: 'RendicionCajaChicaServiceImpl',
+        typeColor: 'background:rgba(168, 85, 247, 0.2); color:#c084fc;',
+        solid: ['badge-s', 'badge-o', 'badge-d'],
+        solidNames: ['[S] SRP', '[O] Open/Closed', '[D] Dependency Inversion'],
+        file: 'pe.edu.upeu.bomerp.finanzas.service.RendicionCajaChicaServiceImpl',
+        desc: 'Contiene la Regla de Negocio RN-FIN-01 (Solvencia de Caja Chica). Comunica de forma desacoplada con el módulo de Catálogo.',
+        code: `// Regla de Negocio RN-FIN-01: Control de Liquidez
+rendicion.calcularTotal();
+if (rendicion.getMontoTotal().compareTo(cajaChica.getSaldoDisponible()) > 0) {
+    throw new SolvenciaInsuficienteException(
+        "RN-FIN-01: El monto total (S/ " + rendicion.getMontoTotal() +
+        ") supera el saldo disponible (S/ " + cajaChica.getSaldoDisponible() + ")"
+    );
+}
+// Transacción atómica:
+cajaChica.setSaldoDisponible(cajaChica.getSaldoDisponible().subtract(rendicion.getMontoTotal()));
+cajaChicaRepository.save(cajaChica);`,
+        tip: '<b>Open/Closed (OCP):</b> Lanza excepciones de dominio específicas capturadas por el GlobalExceptionHandler sin alterar el código base.'
+      },
+      'ProductoService': {
+        type: 'Contrato Público Exportado (Módulo Catálogo)',
+        title: 'ProductoService (Módulo Catálogo)',
+        typeColor: 'background:rgba(245, 158, 11, 0.2); color:#fbbf24;',
+        solid: ['badge-d', 'badge-o', 'badge-i'],
+        solidNames: ['[D] DIP', '[O] OCP', '[I] ISP'],
+        file: 'pe.edu.upeu.bomerp.catalogo.producto.service.ProductoService',
+        desc: 'Único punto de contacto entre el módulo de Finanzas y el módulo de Catálogo. Spring Modulith garantiza que Finanzas no acceda a ProductoRepository directamente.',
+        code: `// En RendicionCajaChicaServiceImpl:
+private final ProductoService productoService; // Inyección de interfaz pública
+
+if (detReq.getProductoId() != null) {
+    productoService.obtener(detReq.getProductoId()); // Validación intermodular
+}`,
+        tip: '<b>Spring Modulith Boundary:</b> Permite acoplamiento débil entre módulos dentro de la misma aplicación monolítica.'
+      },
+      'TransaccionFinancieraEntity': {
+        type: 'Entidad de Dominio JPA',
+        title: 'TransaccionFinanciera (Entity)',
+        typeColor: 'background:rgba(245, 158, 11, 0.2); color:#fbbf24;',
+        solid: ['badge-s'],
+        solidNames: ['[S] Single Responsibility'],
+        file: 'pe.edu.upeu.bomerp.finanzas.entity.TransaccionFinanciera',
+        desc: 'Mapeo objeto-relacional de la tabla TRANSACCIONES_FINANCIERAS con sus enums TipoFinanciero y EstadoFinanciero.',
+        code: `@Entity
+@Table(name = "TRANSACCIONES_FINANCIERAS")
+public class TransaccionFinanciera {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String codigo;
+    private BigDecimal monto;
+    @Enumerated(EnumType.STRING)
+    private TipoFinanciero tipo;
+    @Enumerated(EnumType.STRING)
+    private EstadoFinanciero estado;
+}`,
+        tip: '<b>Responsabilidad Única (SRP):</b> Representa el modelo relacional y las restricciones de base de datos.'
+      },
+      'TransaccionFinancieraRepository': {
+        type: 'Adaptador de Persistencia JPA',
+        title: 'TransaccionFinancieraRepository',
+        typeColor: 'background:rgba(16, 185, 129, 0.2); color:#34d399;',
+        solid: ['badge-o', 'badge-l'],
+        solidNames: ['[O] Open/Closed', '[L] Liskov'],
+        file: 'pe.edu.upeu.bomerp.finanzas.repository.TransaccionFinancieraRepository',
+        desc: 'Interfaz Spring Data JPA que provee consultas derivadas como findByTipoAndEstado y navegación por categoría.',
+        code: `public interface TransaccionFinancieraRepository extends JpaRepository<TransaccionFinanciera, Long> {
+    List<TransaccionFinanciera> findByTipoAndEstado(TipoFinanciero tipo, EstadoFinanciero estado);
+    List<TransaccionFinanciera> findByCategoriaFinancieraId(Long categoriaFinancieraId);
+}`,
+        tip: '<b>Open/Closed (OCP):</b> Se agregan nuevas consultas derivadas sin modificar el motor de persistencia.'
+      },
+      'CajaChicaEntity': {
+        type: 'Entidad de Dominio JPA',
+        title: 'CajaChica & RendicionCajaChica',
+        typeColor: 'background:rgba(245, 158, 11, 0.2); color:#fbbf24;',
+        solid: ['badge-s'],
+        solidNames: ['[S] Single Responsibility'],
+        file: 'pe.edu.upeu.bomerp.finanzas.entity.RendicionCajaChica',
+        desc: 'Agregado de dominio que administra el saldo y calcula automáticamente el subtotal sumando los detalles.',
+        code: `public void calcularTotal() {
+    this.montoTotal = this.detalles.stream()
+        .map(DetalleRendicionCajaChica::getSubtotal)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+}`,
+        tip: '<b>Single Responsibility (SRP):</b> La entidad es la responsable directa de calcular su propio monto acumulado.'
+      }
+    };
+
+    function showDetails(key) {
+      const data = COMPONENT_DATA[key];
+      if (!data) return;
+
+      const typePill = document.getElementById('panel-type');
+      typePill.textContent = data.type;
+      typePill.style = data.typeColor;
+
+      document.getElementById('panel-title').textContent = data.title;
+      document.getElementById('panel-file').textContent = data.file;
+      document.getElementById('panel-desc').textContent = data.desc;
+      document.getElementById('panel-code').innerHTML = data.code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      document.getElementById('panel-solid-tip').innerHTML = data.tip;
+
+      const solidContainer = document.getElementById('panel-solid');
+      solidContainer.innerHTML = '';
+      data.solid.forEach((cls, idx) => {
+        const span = document.createElement('span');
+        span.className = `solid-badge-card ${cls}`;
+        span.textContent = data.solidNames[idx];
+        solidContainer.appendChild(span);
+      });
+    }
+
+    function filterView(mode) {
+      document.querySelectorAll('.btn-view').forEach(b => b.classList.remove('active'));
+      
+      const bridge = document.getElementById('path-intermodule');
+      
+      if (mode === 'reporte') {
+        document.getElementById('btn-view-flujo').classList.add('active');
+        showDetails('TransaccionFinancieraController');
+      } else if (mode === 'caja') {
+        document.getElementById('btn-view-caja').classList.add('active');
+        showDetails('RendicionCajaChicaServiceImpl');
+      } else {
+        document.getElementById('btn-view-finanzas').classList.add('active');
+        showDetails('TransaccionFinancieraController');
+      }
+    }
+  </script>
+</body>
+</html>

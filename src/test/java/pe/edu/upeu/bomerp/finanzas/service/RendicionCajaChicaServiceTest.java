@@ -30,8 +30,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
+import org.springframework.test.context.TestPropertySource;
+
 @SpringBootTest
 @Transactional
+@TestPropertySource(properties = "app.init.demo-data=false")
 class RendicionCajaChicaServiceTest {
 
     @Autowired
@@ -253,6 +256,195 @@ class RendicionCajaChicaServiceTest {
             assertThat(detalleRepository.count()).isEqualTo(detallesAntes);
             BigDecimal saldoDespues = cajaChicaRepository.findById(cajaChicaId).orElseThrow().getSaldoDisponible();
             assertThat(saldoDespues).isEqualByComparingTo(saldoAntes);
+        }
+    }
+
+    @Nested
+    @DisplayName("4. Filtros Combinados y Ordenamiento")
+    class FiltrosCombinadosYOrdenamientoTests {
+
+        @BeforeEach
+        void poblarDatosParaFiltros() {
+            // Rendición 1: Carlos M. - S/ 100.00
+            rendicionService.registrarRendicion(RendicionCajaChicaRequest.builder()
+                    .codigo("REND-FILT-01")
+                    .responsable("Carlos Mendoza")
+                    .cajaChicaId(cajaChicaId)
+                    .detalles(List.of(DetalleRendicionRequest.builder()
+                            .concepto("Gasto 1")
+                            .cantidad(1)
+                            .precioUnitario(new BigDecimal("100.00"))
+                            .build()))
+                    .build());
+
+            // Rendición 2: Carlos M. - S/ 300.00
+            rendicionService.registrarRendicion(RendicionCajaChicaRequest.builder()
+                    .codigo("REND-FILT-02")
+                    .responsable("Carlos Mendoza")
+                    .cajaChicaId(cajaChicaId)
+                    .detalles(List.of(DetalleRendicionRequest.builder()
+                            .concepto("Gasto 2")
+                            .cantidad(3)
+                            .precioUnitario(new BigDecimal("100.00"))
+                            .build()))
+                    .build());
+
+            // Rendición 3: Beatriz Flores - S/ 200.00
+            rendicionService.registrarRendicion(RendicionCajaChicaRequest.builder()
+                    .codigo("REND-FILT-03")
+                    .responsable("Beatriz Flores")
+                    .cajaChicaId(cajaChicaId)
+                    .detalles(List.of(DetalleRendicionRequest.builder()
+                            .concepto("Gasto 3")
+                            .cantidad(2)
+                            .precioUnitario(new BigDecimal("100.00"))
+                            .build()))
+                    .build());
+        }
+
+        @Test
+        @DisplayName("Combinación 1: Filtrar por responsable 'Carlos' + estado APROBADO ordenado por montoTotal DESC")
+        void filtroCombinado1_responsableYEstado_ordenDesc() {
+            org.springframework.data.domain.Pageable pageable =
+                    org.springframework.data.domain.PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("montoTotal").descending());
+
+            org.springframework.data.domain.Page<RendicionCajaChicaResponse> resultado =
+                    rendicionService.buscarConFiltros(null, pe.edu.upeu.bomerp.finanzas.entity.EstadoRendicion.APROBADO, "Carlos", null, null, null, null, pageable);
+
+            assertThat(resultado.getContent()).hasSize(2);
+            assertThat(resultado.getContent().get(0).getCodigo()).isEqualTo("REND-FILT-02");
+            assertThat(resultado.getContent().get(0).getMontoTotal()).isEqualByComparingTo(new BigDecimal("300.00"));
+            assertThat(resultado.getContent().get(1).getCodigo()).isEqualTo("REND-FILT-01");
+            assertThat(resultado.getContent().get(1).getMontoTotal()).isEqualByComparingTo(new BigDecimal("100.00"));
+        }
+
+        @Test
+        @DisplayName("Combinación 2: Filtrar por cajaChicaId + rango de montos (S/ 150.00 a S/ 350.00) ordenado por montoTotal ASC")
+        void filtroCombinado2_cajaYRangoMontos_ordenAsc() {
+            org.springframework.data.domain.Pageable pageable =
+                    org.springframework.data.domain.PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("montoTotal").ascending());
+
+            org.springframework.data.domain.Page<RendicionCajaChicaResponse> resultado =
+                    rendicionService.buscarConFiltros(cajaChicaId, null, null, null, null, new BigDecimal("150.00"), new BigDecimal("350.00"), pageable);
+
+            assertThat(resultado.getContent()).hasSize(2);
+            assertThat(resultado.getContent().get(0).getCodigo()).isEqualTo("REND-FILT-03"); // 200.00
+            assertThat(resultado.getContent().get(1).getCodigo()).isEqualTo("REND-FILT-02"); // 300.00
+        }
+
+        @Test
+        @DisplayName("Combinación 3: Filtrar por rango de fechas + estado APROBADO ordenado por responsable ASC")
+        void filtroCombinado3_fechasYEstado_ordenResponsableAsc() {
+            org.springframework.data.domain.Pageable pageable =
+                    org.springframework.data.domain.PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("responsable").ascending());
+
+            java.time.LocalDate hoy = java.time.LocalDate.now();
+            org.springframework.data.domain.Page<RendicionCajaChicaResponse> resultado =
+                    rendicionService.buscarConFiltros(null, pe.edu.upeu.bomerp.finanzas.entity.EstadoRendicion.APROBADO, null, hoy.minusDays(1), hoy.plusDays(1), null, null, pageable);
+
+            assertThat(resultado.getContent()).hasSize(3);
+            assertThat(resultado.getContent().get(0).getResponsable()).isEqualTo("Beatriz Flores");
+            assertThat(resultado.getContent().get(1).getResponsable()).isEqualTo("Carlos Mendoza");
+        }
+
+        @Test
+        @DisplayName("Cambio de orden: Misma consulta ordenada DESC vs ASC por montoTotal")
+        void cambioDeOrden_montoTotal() {
+            org.springframework.data.domain.Pageable pageDesc =
+                    org.springframework.data.domain.PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("montoTotal").descending());
+            org.springframework.data.domain.Pageable pageAsc =
+                    org.springframework.data.domain.PageRequest.of(0, 10, org.springframework.data.domain.Sort.by("montoTotal").ascending());
+
+            org.springframework.data.domain.Page<RendicionCajaChicaResponse> resDesc =
+                    rendicionService.buscarConFiltros(cajaChicaId, null, null, null, null, null, null, pageDesc);
+            org.springframework.data.domain.Page<RendicionCajaChicaResponse> resAsc =
+                    rendicionService.buscarConFiltros(cajaChicaId, null, null, null, null, null, null, pageAsc);
+
+            assertThat(resDesc.getContent().get(0).getMontoTotal()).isEqualByComparingTo(new BigDecimal("300.00"));
+            assertThat(resAsc.getContent().get(0).getMontoTotal()).isEqualByComparingTo(new BigDecimal("100.00"));
+        }
+    }
+
+    @Nested
+    @DisplayName("5. Proyección de Resumen (Expresión de Constructor JPQL)")
+    class ProyeccionResumenTests {
+
+        @Test
+        @DisplayName("Debe instanciar directamente RendicionResumenDto con campos y conteo de detalles (SIZE)")
+        void debeObtenerResumenProyectado() {
+            rendicionService.registrarRendicion(RendicionCajaChicaRequest.builder()
+                    .codigo("REND-PROY-01")
+                    .responsable("Elena Ramos")
+                    .cajaChicaId(cajaChicaId)
+                    .detalles(List.of(
+                            DetalleRendicionRequest.builder().concepto("D1").cantidad(1).precioUnitario(new BigDecimal("50.00")).build(),
+                            DetalleRendicionRequest.builder().concepto("D2").cantidad(1).precioUnitario(new BigDecimal("50.00")).build()
+                    ))
+                    .build());
+
+            List<pe.edu.upeu.bomerp.finanzas.dto.RendicionResumenDto> resumenes = rendicionService.obtenerResumen(cajaChicaId);
+
+            assertThat(resumenes).isNotEmpty();
+            pe.edu.upeu.bomerp.finanzas.dto.RendicionResumenDto item = resumenes.stream()
+                    .filter(r -> "REND-PROY-01".equals(r.getCodigo()))
+                    .findFirst()
+                    .orElseThrow();
+
+            assertThat(item.getResponsable()).isEqualTo("Elena Ramos");
+            assertThat(item.getMontoTotal()).isEqualByComparingTo(new BigDecimal("100.00"));
+            assertThat(item.getCodigoCajaChica()).isEqualTo("CC-001");
+            assertThat(item.getCantidadDetalles()).isEqualTo(2);
+        }
+    }
+
+    @Nested
+    @DisplayName("6. Reporte Agregado (Caso con resultados y caso sin resultados: 0 en vez de null)")
+    class ReporteAgregadoTests {
+
+        @Test
+        @DisplayName("Caso CON resultados: Devuelve suma, promedio, max, min y conteo calculados correctamente")
+        void reporteConResultados() {
+            rendicionService.registrarRendicion(RendicionCajaChicaRequest.builder()
+                    .codigo("REND-REP-01")
+                    .responsable("Rendidor 1")
+                    .cajaChicaId(cajaChicaId)
+                    .detalles(List.of(DetalleRendicionRequest.builder().concepto("G1").cantidad(1).precioUnitario(new BigDecimal("200.00")).build()))
+                    .build());
+
+            rendicionService.registrarRendicion(RendicionCajaChicaRequest.builder()
+                    .codigo("REND-REP-02")
+                    .responsable("Rendidor 2")
+                    .cajaChicaId(cajaChicaId)
+                    .detalles(List.of(DetalleRendicionRequest.builder().concepto("G2").cantidad(1).precioUnitario(new BigDecimal("400.00")).build()))
+                    .build());
+
+            pe.edu.upeu.bomerp.finanzas.dto.ReporteRendicionesAgregadoDto reporte = rendicionService.obtenerReporteAgregado(cajaChicaId);
+
+            assertThat(reporte).isNotNull();
+            assertThat(reporte.getTotalMonto()).isEqualByComparingTo(new BigDecimal("600.00"));
+            assertThat(reporte.getPromedioMonto()).isEqualTo(300.0);
+            assertThat(reporte.getMontoMaximo()).isEqualByComparingTo(new BigDecimal("400.00"));
+            assertThat(reporte.getMontoMinimo()).isEqualByComparingTo(new BigDecimal("200.00"));
+            assertThat(reporte.getCantidadRendiciones()).isEqualTo(2L);
+        }
+
+        @Test
+        @DisplayName("Caso SIN resultados: Devuelve monto y promedio en 0 (0.00, 0.0, 0) y NUNCA null")
+        void reporteSinResultados_devuelveCerosNoNull() {
+            // Creamos una nueva caja chica vacía (sin rendiciones asociadas)
+            pe.edu.upeu.bomerp.finanzas.dto.CajaChicaResponse nuevaCaja =
+                    rendicionService.crearCajaChica("CC-VACIA", "Admin", new BigDecimal("1000.00"), new BigDecimal("1000.00"));
+
+            pe.edu.upeu.bomerp.finanzas.dto.ReporteRendicionesAgregadoDto reporte =
+                    rendicionService.obtenerReporteAgregado(nuevaCaja.getId());
+
+            assertThat(reporte).isNotNull();
+            // Verificación estricta: NO es null y sus valores son 0
+            assertThat(reporte.getTotalMonto()).isNotNull().isEqualByComparingTo(BigDecimal.ZERO);
+            assertThat(reporte.getPromedioMonto()).isNotNull().isEqualTo(0.0);
+            assertThat(reporte.getMontoMaximo()).isNotNull().isEqualByComparingTo(BigDecimal.ZERO);
+            assertThat(reporte.getMontoMinimo()).isNotNull().isEqualByComparingTo(BigDecimal.ZERO);
+            assertThat(reporte.getCantidadRendiciones()).isNotNull().isEqualTo(0L);
         }
     }
 }

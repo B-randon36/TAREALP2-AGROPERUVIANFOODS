@@ -5,8 +5,12 @@ import org.springframework.data.domain.Pageable;
 import pe.edu.upeu.bomerp.finanzas.dto.CajaChicaResponse;
 import pe.edu.upeu.bomerp.finanzas.dto.RendicionCajaChicaRequest;
 import pe.edu.upeu.bomerp.finanzas.dto.RendicionCajaChicaResponse;
+import pe.edu.upeu.bomerp.finanzas.dto.RendicionResumenDto;
+import pe.edu.upeu.bomerp.finanzas.dto.ReporteRendicionesAgregadoDto;
+import pe.edu.upeu.bomerp.finanzas.entity.EstadoRendicion;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface RendicionCajaChicaService {
@@ -17,4 +21,20 @@ public interface RendicionCajaChicaService {
     RendicionCajaChicaResponse obtenerRendicion(Long id);
     List<RendicionCajaChicaResponse> listarRendicionesPorCaja(Long cajaChicaId);
     Page<RendicionCajaChicaResponse> listarPaginado(Pageable pageable);
+
+    Page<RendicionCajaChicaResponse> buscarConFiltros(
+            Long cajaChicaId,
+            EstadoRendicion estado,
+            String responsable,
+            LocalDate fechaInicio,
+            LocalDate fechaFin,
+            BigDecimal montoMin,
+            BigDecimal montoMax,
+            Pageable pageable
+    );
+
+    List<RendicionResumenDto> obtenerResumen(Long cajaChicaId);
+
+    ReporteRendicionesAgregadoDto obtenerReporteAgregado(Long cajaChicaId);
 }
+

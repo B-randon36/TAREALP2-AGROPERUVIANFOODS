@@ -1,0 +1,17 @@
+{
+  "agent": {
+    "name": "BOMERP AI Assistant",
+    "mode": "strict-context",
+    "rules": [
+      "CRÍTICO: Antes de ejecutar cualquier comando, analizar carpetas o modificar código, debes leer obligatoriamente el archivo 'PROJECT_MEMORY.md' en la raíz.",
+      "Respeta estrictamente la división de módulos: Finanzas y Reportes (Brandon), Ventas (Zaggy), Producción/Catálogo (Isai), Compras/CRM (Nestor). No mezcles entidades ni repositorios entre ellos.",
+      "En el módulo de Finanzas, respeta la regla de negocio RN-FIN-01 (Control de Liquidez) y la transacción atómica cabecera-detalle (SesionCaja / MovimientoCaja).",
+      "Garantiza el desacoplamiento modular usando Spring Modulith (@NamedInterface) y pruebas ModularityTests en verde.",
+      "No asumas módulos de e-commerce ni integración activa con SUNAT; ambos están fuera del alcance actual.",
+      "Si alguna instrucción del usuario contradice los límites establecidos en PROJECT_MEMORY.md, adviértelo antes de proceder."
+    ],
+    "contextFiles": [
+      "PROJECT_MEMORY.md"
+    ]
+  }
+}

@@ -2,10 +2,13 @@ package pe.edu.upeu.bomerp.finanzas.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 import pe.edu.upeu.bomerp.finanzas.dto.CajaChicaResponse;
 import pe.edu.upeu.bomerp.finanzas.dto.RendicionCajaChicaRequest;
 import pe.edu.upeu.bomerp.finanzas.dto.RendicionCajaChicaResponse;
+import pe.edu.upeu.bomerp.finanzas.dto.RendicionResumenDto;
+import pe.edu.upeu.bomerp.finanzas.dto.ReporteRendicionesAgregadoDto;
+import pe.edu.upeu.bomerp.finanzas.entity.EstadoRendicion;
 import pe.edu.upeu.bomerp.finanzas.service.RendicionCajaChicaService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @CrossOrigin(originPatterns = "*")
@@ -67,4 +74,58 @@ public class RendicionCajaChicaController {
             @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
         return ResponseEntity.ok(rendicionService.listarPaginado(pageable));
     }
+
+    /**
+     * 1. ENDPOINT DE FILTROS COMBINADOS Y ORDENAMIENTO
+     * Permite múltiples combinaciones de parámetros de búsqueda y ordenamiento dinámico.
+     * Soporta tanto ?ordenarPor=montoTotal&direccion=ASC como ?sort=montoTotal,asc.
+     * Rutas compatibles: GET /api/v1/finanzas/rendiciones o GET /api/v1/finanzas/rendiciones/filtros
+     */
+    @GetMapping({"/rendiciones", "/rendiciones/filtros"})
+    public ResponseEntity<Page<RendicionCajaChicaResponse>> buscarRendicionesConFiltros(
+            @RequestParam(required = false) Long cajaChicaId,
+            @RequestParam(required = false) EstadoRendicion estado,
+            @RequestParam(required = false) String responsable,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
+            @RequestParam(required = false) BigDecimal montoMin,
+            @RequestParam(required = false) BigDecimal montoMax,
+            @RequestParam(required = false) String ordenarPor,
+            @RequestParam(required = false) String direccion,
+            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
+
+        Pageable effectivePageable = pageable;
+        if (ordenarPor != null && !ordenarPor.isBlank()) {
+            Sort.Direction dir = "DESC".equalsIgnoreCase(direccion) ? Sort.Direction.DESC : Sort.Direction.ASC;
+            effectivePageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(dir, ordenarPor));
+        }
+
+        return ResponseEntity.ok(rendicionService.buscarConFiltros(
+                cajaChicaId, estado, responsable, fechaInicio, fechaFin, montoMin, montoMax, effectivePageable
+        ));
+    }
+
+    /**
+     * 2. ENDPOINT DE PROYECCIÓN DE RESUMEN
+     * Devuelve DTOs planos optimizados construidos mediante JPQL constructor expression.
+     * Ejemplo: GET /api/v1/finanzas/rendiciones/resumen?cajaChicaId=1
+     */
+    @GetMapping("/rendiciones/resumen")
+    public ResponseEntity<List<RendicionResumenDto>> obtenerResumen(
+            @RequestParam(required = false) Long cajaChicaId) {
+        return ResponseEntity.ok(rendicionService.obtenerResumen(cajaChicaId));
+    }
+
+    /**
+     * 3. ENDPOINT DE REPORTE AGREGADO
+     * Devuelve agregaciones matemáticas (SUM, AVG, MAX, MIN, COUNT).
+     * Garantiza valores numéricos en 0 / 0.00 en vez de null si no hay registros.
+     * Ejemplo: GET /api/v1/finanzas/rendiciones/reporte-agregado?cajaChicaId=1
+     */
+    @GetMapping("/rendiciones/reporte-agregado")
+    public ResponseEntity<ReporteRendicionesAgregadoDto> obtenerReporteAgregado(
+            @RequestParam(required = false) Long cajaChicaId) {
+        return ResponseEntity.ok(rendicionService.obtenerReporteAgregado(cajaChicaId));
+    }
 }
+

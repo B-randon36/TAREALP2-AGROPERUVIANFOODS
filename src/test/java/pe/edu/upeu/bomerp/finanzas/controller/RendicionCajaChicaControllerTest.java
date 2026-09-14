@@ -146,4 +146,77 @@ class RendicionCajaChicaControllerTest {
                 .andExpect(jsonPath("$.content[0].codigo").value("REND-2026-PAG"))
                 .andExpect(jsonPath("$.totalElements").value(1));
     }
+
+    @Test
+    @DisplayName("GET /rendiciones/filtros responde 200 OK con resultados según combinación de filtros")
+    void buscarRendicionesConFiltros_exito() throws Exception {
+        RendicionCajaChicaResponse item = RendicionCajaChicaResponse.builder()
+                .id(1L)
+                .codigo("REND-FILTROS")
+                .responsable("Carlos M.")
+                .fecha(LocalDate.now())
+                .montoTotal(new BigDecimal("250.00"))
+                .estado(EstadoRendicion.APROBADO)
+                .cajaChicaId(1L)
+                .build();
+
+        org.springframework.data.domain.Page<RendicionCajaChicaResponse> page =
+                new org.springframework.data.domain.PageImpl<>(List.of(item));
+
+        when(rendicionService.buscarConFiltros(any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(page);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/v1/finanzas/rendiciones/filtros")
+                        .param("cajaChicaId", "1")
+                        .param("estado", "APROBADO")
+                        .param("responsable", "Carlos")
+                        .param("sort", "montoTotal,desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].codigo").value("REND-FILTROS"))
+                .andExpect(jsonPath("$.content[0].montoTotal").value(250.00));
+    }
+
+    @Test
+    @DisplayName("GET /rendiciones/resumen responde 200 OK con lista de DTOs proyectados")
+    void obtenerResumen_exito() throws Exception {
+        pe.edu.upeu.bomerp.finanzas.dto.RendicionResumenDto resumen = pe.edu.upeu.bomerp.finanzas.dto.RendicionResumenDto.builder()
+                .id(1L)
+                .codigo("REND-RESUMEN")
+                .responsable("Carlos M.")
+                .fecha(LocalDate.now())
+                .montoTotal(new BigDecimal("300.00"))
+                .estado(EstadoRendicion.APROBADO)
+                .codigoCajaChica("CC-001")
+                .cantidadDetalles(3)
+                .build();
+
+        when(rendicionService.obtenerResumen(any())).thenReturn(List.of(resumen));
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/v1/finanzas/rendiciones/resumen")
+                        .param("cajaChicaId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].codigo").value("REND-RESUMEN"))
+                .andExpect(jsonPath("$[0].codigoCajaChica").value("CC-001"))
+                .andExpect(jsonPath("$[0].cantidadDetalles").value(3));
+    }
+
+    @Test
+    @DisplayName("GET /rendiciones/reporte-agregado responde 200 OK con totales y promedio (no null)")
+    void obtenerReporteAgregado_exito() throws Exception {
+        pe.edu.upeu.bomerp.finanzas.dto.ReporteRendicionesAgregadoDto reporte = pe.edu.upeu.bomerp.finanzas.dto.ReporteRendicionesAgregadoDto.builder()
+                .totalMonto(new BigDecimal("500.00"))
+                .promedioMonto(250.0)
+                .montoMaximo(new BigDecimal("300.00"))
+                .montoMinimo(new BigDecimal("200.00"))
+                .cantidadRendiciones(2L)
+                .build();
+
+        when(rendicionService.obtenerReporteAgregado(any())).thenReturn(reporte);
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/v1/finanzas/rendiciones/reporte-agregado")
+                        .param("cajaChicaId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalMonto").value(500.00))
+                .andExpect(jsonPath("$.promedioMonto").value(250.0))
+                .andExpect(jsonPath("$.cantidadRendiciones").value(2));
+    }
 }
