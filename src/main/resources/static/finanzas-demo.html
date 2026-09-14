@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consola API - Finanzas | Producto U1 - LP2</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Consola API & Test Suite CRUD | BOMERP - Agro Peruvian Foods</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --header-bg: #071e3d;
@@ -15,12 +15,17 @@
             --text-muted: #64748b;
             --primary: #1e40af;
             --primary-hover: #1d4ed8;
+            --secondary: #0f766e;
+            --secondary-hover: #115e59;
             --danger: #991b1b;
             --danger-hover: #b91c1c;
+            --warning: #b45309;
+            --success: #15803d;
             --info: #0284c7;
             --info-hover: #0369a1;
             --terminal-bg: #0b1329;
             --terminal-text: #38bdf8;
+            --amber-highlight: #fef3c7;
         }
 
         * {
@@ -38,12 +43,17 @@
             flex-direction: column;
         }
 
-        /* HEADER BANNER */
+        /* HEADER */
         header {
             background-color: var(--header-bg);
             color: white;
-            padding: 32px 48px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 24px 36px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         .header-tag {
@@ -52,14 +62,17 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             color: #93c5fd;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .header-title {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 800;
             letter-spacing: -0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .header-subtitle {
@@ -68,15 +81,111 @@
             font-weight: 400;
         }
 
+        .server-config {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 10px 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .server-config label {
+            font-size: 12px;
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+
+        .server-config input {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #38bdf8;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            width: 175px;
+        }
+
+        .server-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(22, 101, 52, 0.3);
+            color: #4ade80;
+            border: 1px solid #22c55e;
+        }
+        .server-status.offline {
+            background: rgba(153, 27, 27, 0.3);
+            color: #f87171;
+            border-color: #ef4444;
+        }
+
+        /* NAVIGATION TABS */
+        .tabs-nav {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 36px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 16px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+            background: #f1f5f9;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: #eff6ff;
+        }
+
         /* MAIN WRAPPER */
         main {
-            max-width: 1200px;
+            max-width: 1320px;
             width: 100%;
             margin: 0 auto;
-            padding: 28px 24px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             gap: 24px;
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .tab-content.active {
+            display: flex;
         }
 
         /* CARDS GRID */
@@ -86,8 +195,14 @@
             gap: 24px;
         }
 
-        @media (max-width: 868px) {
-            .grid-two-cols {
+        .grid-three-cols {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 992px) {
+            .grid-two-cols, .grid-three-cols {
                 grid-template-columns: 1fr;
             }
         }
@@ -95,22 +210,44 @@
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
         }
 
         .card-title {
             font-size: 16px;
             font-weight: 700;
             color: #0f172a;
-            margin-bottom: 18px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        /* FORM ELEMENTS */
+        .card-badge-method {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .method-post { background: #dbeafe; color: #1e40af; }
+        .method-get { background: #dcfce7; color: #166534; }
+        .method-put { background: #fef3c7; color: #92400e; }
+        .method-patch { background: #e0e7ff; color: #4338ca; }
+        .method-delete { background: #fee2e2; color: #991b1b; }
+
+        /* FORM CONTROLS */
         .form-group {
             margin-bottom: 14px;
         }
@@ -120,13 +257,19 @@
             font-size: 13px;
             font-weight: 600;
             color: #334155;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
+        }
+
+        .form-group .form-hint {
+            font-size: 11.5px;
+            color: #64748b;
+            margin-top: 3px;
         }
 
         .form-control {
             width: 100%;
-            padding: 10px 12px;
-            font-size: 14px;
+            padding: 9px 12px;
+            font-size: 13.5px;
             font-family: inherit;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
@@ -141,19 +284,28 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
 
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+
         /* BUTTONS */
         .btn-group {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            margin-top: 18px;
+            margin-top: 16px;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 10px 18px;
+            gap: 6px;
+            padding: 9px 16px;
             font-size: 13.5px;
             font-weight: 600;
             border-radius: 6px;
@@ -164,96 +316,98 @@
             text-decoration: none;
         }
 
-        .btn-primary {
-            background-color: var(--primary);
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+
+        .btn-secondary { background-color: var(--secondary); color: white; }
+        .btn-secondary:hover { background-color: var(--secondary-hover); }
+
+        .btn-blue { background-color: #1e3a8a; color: white; }
+        .btn-blue:hover { background-color: #172554; }
+
+        .btn-cyan { background-color: #0284c7; color: white; }
+        .btn-cyan:hover { background-color: #0369a1; }
+
+        .btn-danger { background-color: #991b1b; color: white; }
+        .btn-danger:hover { background-color: #b91c1c; }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+        }
+        .btn-outline:hover {
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .btn-rn {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
             color: white;
-            width: 100%;
+            box-shadow: 0 2px 6px rgba(185, 28, 28, 0.3);
+        }
+        .btn-rn:hover {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
         }
 
-        .btn-primary:hover {
-            background-color: var(--primary-hover);
+        .btn-success { background-color: #166534; color: white; }
+        .btn-success:hover { background-color: #15803d; }
+
+        /* ITEM ROWS DYNAMIC FOR RENDICION DETALLES */
+        .detalle-item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1.2fr auto;
+            gap: 8px;
+            align-items: center;
+            background: #f8fafc;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 8px;
         }
 
-        .btn-blue {
-            background-color: #1e3a8a;
-            color: white;
+        .btn-delete-row {
+            background: #fee2e2;
+            color: #991b1b;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .btn-delete-row:hover {
+            background: #fecaca;
         }
 
-        .btn-blue:hover {
-            background-color: #172554;
-        }
-
-        .btn-cyan {
-            background-color: #0284c7;
-            color: white;
-        }
-
-        .btn-cyan:hover {
-            background-color: #0369a1;
-        }
-
-        .btn-danger {
-            background-color: #881337;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #9f1239;
-        }
-
-        /* TERMINAL / RESPONSE BOX */
-        .terminal-container {
-            background-color: var(--terminal-bg);
-            border-radius: 8px;
-            padding: 20px;
-            border: 1px solid #1e293b;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .terminal-output {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13.5px;
-            line-height: 1.6;
-            color: #7dd3fc;
-            white-space: pre-wrap;
-            word-break: break-all;
-            max-height: 380px;
-            overflow-y: auto;
-        }
-
-        .terminal-output::-webkit-scrollbar {
-            width: 6px;
-        }
-        .terminal-output::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 3px;
-        }
-
-        /* TABLE */
+        /* TABLES */
         .table-responsive {
             overflow-x: auto;
             margin-top: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13.5px;
+            font-size: 13px;
             text-align: left;
         }
 
         th {
-            background-color: #eff6ff;
+            background-color: #f1f5f9;
             color: #1e3a8a;
             font-weight: 700;
-            padding: 12px 16px;
-            border-bottom: 2px solid #dbeafe;
+            padding: 11px 14px;
+            border-bottom: 2px solid #cbd5e1;
+            white-space: nowrap;
         }
 
         td {
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-bottom: 1px solid #f1f5f9;
             color: #334155;
+            vertical-align: middle;
         }
 
         tr:hover td {
@@ -262,58 +416,184 @@
 
         .badge {
             display: inline-block;
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 700;
+            text-transform: uppercase;
         }
-
-        .badge-success {
-            background-color: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-warning {
-            background-color: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-danger {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
+        .badge-success { background-color: #dcfce7; color: #166534; }
+        .badge-warning { background-color: #fef3c7; color: #92400e; }
+        .badge-danger { background-color: #fee2e2; color: #991b1b; }
+        .badge-info { background-color: #e0f2fe; color: #0369a1; }
+        .badge-purple { background-color: #f3e8ff; color: #6b21a8; }
 
         .btn-table {
-            padding: 5px 12px;
-            font-size: 12px;
+            padding: 4px 9px;
+            font-size: 11.5px;
             border-radius: 4px;
             background-color: #1e3a8a;
             color: white;
             cursor: pointer;
             border: none;
             font-weight: 600;
+            margin-right: 4px;
+        }
+        .btn-table:hover { background-color: #1d4ed8; }
+        .btn-table.danger { background-color: #991b1b; }
+        .btn-table.danger:hover { background-color: #b91c1c; }
+        .btn-table.edit { background-color: #d97706; }
+        .btn-table.edit:hover { background-color: #b45309; }
+
+        /* KPI STATS CARDS */
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .stat-card .stat-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .stat-card .stat-hint {
+            font-size: 11.5px;
+            color: #94a3b8;
         }
 
-        .btn-table:hover {
-            background-color: #1d4ed8;
+        /* TERMINAL / RESPONSE DOCK */
+        .terminal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
         }
-        
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
         .status-pill {
             font-size: 12px;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 14px;
+            font-weight: 700;
             background: #e2e8f0;
             color: #475569;
-            float: right;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
         }
-        .status-pill.ok {
-            background: #dcfce7;
-            color: #15803d;
+        .status-pill.ok { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        .status-pill.error { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+
+        .terminal-container {
+            background-color: var(--terminal-bg);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #1e293b;
+            position: relative;
         }
-        .status-pill.error {
-            background: #fee2e2;
-            color: #b91c1c;
+
+        .terminal-output {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+            color: #7dd3fc;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .terminal-output::-webkit-scrollbar { width: 6px; }
+        .terminal-output::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+        .terminal-meta {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ACCORDION GUÍA TEÓRICA */
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+        .accordion-header {
+            padding: 16px 20px;
+            background: #f8fafc;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #1e3a8a;
+        }
+        .accordion-header:hover {
+            background: #f1f5f9;
+        }
+        .accordion-body {
+            padding: 18px 20px;
+            font-size: 13.5px;
+            line-height: 1.65;
+            color: #334155;
+            border-top: 1px solid var(--border-color);
+            background: #ffffff;
+            display: none;
+        }
+        .accordion-item.active .accordion-body {
+            display: block;
+        }
+
+        /* MODAL SIMPLE */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal-card {
+            background: #ffffff;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
     </style>
 </head>
@@ -321,270 +601,1232 @@
 
     <!-- HEADER DE LA CONSOLA -->
     <header>
-        <div class="header-tag">PRODUCTO U1 - LP2</div>
-        <h1 class="header-title">Consola API - Finanzas</h1>
-        <div class="header-subtitle">Simulación y comprobación del backend REST modular — Agro Peruvian Foods (Brandon Ccalla)</div>
+        <div>
+            <div class="header-tag">EVALUACIÓN UNIDAD 1 — LP2 (BOMERP)</div>
+            <h1 class="header-title">
+                🏢 Consola de Validación API REST & CRUDS
+            </h1>
+            <div class="header-subtitle">
+                Agro Peruvian Foods — Arquitectura Monolito Modular con Spring Modulith (Brandon Ccalla)
+            </div>
+        </div>
+
+        <div class="server-config">
+            <div>
+                <label>Backend URL:</label><br>
+                <input type="text" id="apiBaseInput" value="http://localhost:8080" onchange="actualizarBaseUrl()">
+            </div>
+            <div>
+                <button class="btn btn-outline" style="padding: 5px 10px; font-size: 12px; color: #fff; border-color: #64748b;" onclick="verificarConexion()">Ping</button>
+            </div>
+            <div id="server-status" class="server-status">
+                <span style="font-size: 8px;">●</span> En línea
+            </div>
+        </div>
     </header>
 
+    <!-- TABS DE NAVEGACIÓN ENTRE MÓDULOS -->
+    <nav class="tabs-nav">
+        <button class="tab-btn active" onclick="cambiarPestaña('tab-rendiciones', this)">
+            🪙 1. Rendiciones de Caja Chica (Cabecera-Detalle & RN-FIN-01)
+        </button>
+        <button class="tab-btn" onclick="cambiarPestaña('tab-transacciones', this)">
+            💳 2. Transacciones Financieras (CRUD Completo & Flujo)
+        </button>
+        <button class="tab-btn" onclick="cambiarPestaña('tab-categorias-fin', this)">
+            🏷️ 3. Categorías Financieras (CRUD & Navegación)
+        </button>
+        <button class="tab-btn" onclick="cambiarPestaña('tab-catalogo', this)">
+            📦 4. Catálogo de Productos y Categorías
+        </button>
+        <button class="tab-btn" onclick="cambiarPestaña('tab-cajas', this)">
+            🏦 5. Cajas Chicas
+        </button>
+        <button class="tab-btn" onclick="cambiarPestaña('tab-guia', this)">
+            🎓 6. Guía Teórica de Sustentación
+        </button>
+    </nav>
+
     <main>
-        <!-- GRID DE 2 COLUMNAS (FORMULARIOS) -->
-        <div class="grid-two-cols">
+
+        <!-- ========================================================================================= -->
+        <!-- PESTAÑA 1: RENDICIONES DE CAJA CHICA (CABECERA-DETALLE, RN-FIN-01, REPORTES AGREGADOS)   -->
+        <!-- ========================================================================================= -->
+        <div id="tab-rendiciones" class="tab-content active">
             
-            <!-- TARJETA 1: POST /api/v1/finanzas/rendiciones -->
+            <div class="grid-two-cols">
+                <!-- FORMULARIO CABECERA-DETALLE -->
+                <div class="card">
+                    <div class="card-header-flex">
+                        <span class="card-title">
+                            1. Registrar Rendición (Cabecera y Detalle)
+                        </span>
+                        <span class="card-badge-method method-post">POST /api/v1/finanzas/rendiciones</span>
+                    </div>
+
+                    <form id="formPostRendicion" onsubmit="event.preventDefault(); registrarRendicion();">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Código Rendición</label>
+                                <div style="display: flex; gap: 6px;">
+                                    <input type="text" id="post_rend_codigo" class="form-control" value="RND-2026-004" required>
+                                    <button type="button" class="btn btn-outline" style="padding: 6px 10px;" onclick="generarNuevoCodigoRendicion()">Autogen</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Responsable</label>
+                                <input type="text" id="post_rend_responsable" class="form-control" value="Brandon Ccalla" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Caja Chica Asignada (ID)</label>
+                                <input type="number" id="post_rend_cajaId" class="form-control" value="1" required>
+                                <div class="form-hint" id="hint-caja-saldo">Caja 1: Saldo disp. actual ~ S/ 475.00</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de Rendición</label>
+                                <input type="date" id="post_rend_fecha" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div style="margin: 14px 0 8px 0; display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-size: 13px; font-weight: 700; color: #1e3a8a;">Detalles / Ítems de Gasto (DetalleRendicion):</label>
+                            <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="agregarFilaDetalle()">+ Agregar Ítem</button>
+                        </div>
+
+                        <!-- CONTENEDOR DE ÍTEMS DINÁMICOS -->
+                        <div id="contenedor-detalles">
+                            <div class="detalle-item-row">
+                                <input type="text" class="form-control det-concepto" placeholder="Concepto (ej. Envases de vidrio)" value="Envases de vidrio 250ml" required>
+                                <input type="number" class="form-control det-cantidad" placeholder="Cant." value="2" min="1" oninput="calcularTotalEstimado()" required>
+                                <input type="number" step="0.10" class="form-control det-precio" placeholder="Precio S/" value="18.50" min="0.10" oninput="calcularTotalEstimado()" required>
+                                <button type="button" class="btn-delete-row" onclick="eliminarFilaDetalle(this)">×</button>
+                            </div>
+                        </div>
+
+                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 14px; border-radius: 6px; margin: 12px 0; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 13px; font-weight: 600; color: #1e40af;">Total Calculado por el Backend (Cabecera):</span>
+                            <span style="font-size: 16px; font-weight: 800; color: #1e3a8a;" id="totalEstimadoLabel">S/ 37.00</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 6px;" id="btn-submit-post">
+                            💾 Registrar Rendición (Cabecera-Detalle Atómica)
+                        </button>
+                    </form>
+
+                    <!-- BOTONES DE PRUEBA DE CASOS DE NEGOCIO (RÚBRICA LP2) -->
+                    <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed #cbd5e1;">
+                        <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 8px;">
+                            🧪 Pruebas Rápidas de Dominio y Rúbrica:
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-rn" onclick="probarCasoErrorRNFIN01()">
+                                ⚡ Probar RN-FIN-01 (Caso Error & Rollback S/ 1500)
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="cargarCasoExito()">
+                                ✔️ Cargar Rendición Válida (S/ 60.00)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONSULTAS, FILTROS Y ORDENAMIENTO -->
+                <div class="card">
+                    <div class="card-header-flex">
+                        <span class="card-title">
+                            2. Consultas Empresariales y Filtros Dinámicos
+                        </span>
+                        <span class="card-badge-method method-get">GET /api/v1/finanzas/rendiciones</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <select id="get_estado" class="form-control">
+                                <option value="">TODAS</option>
+                                <option value="APROBADO">APROBADO</option>
+                                <option value="PENDIENTE">PENDIENTE</option>
+                                <option value="RECHAZADO">RECHAZADO</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ordenar Por</label>
+                            <select id="get_orden" class="form-control">
+                                <option value="id,desc">ID (Descendente)</option>
+                                <option value="id,asc">ID (Ascendente)</option>
+                                <option value="montoTotal,desc">Monto Total (Mayor a menor)</option>
+                                <option value="montoTotal,asc">Monto Total (Menor a mayor)</option>
+                                <option value="responsable,asc">Responsable (A - Z)</option>
+                                <option value="fecha,desc">Fecha más reciente</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Responsable (Filtro ILIKE)</label>
+                            <input type="text" id="get_responsable" class="form-control" placeholder="Ej. Brandon">
+                        </div>
+                        <div class="form-group">
+                            <label>Caja Chica ID (Filtro)</label>
+                            <input type="number" id="get_cajaId" class="form-control" placeholder="1 (Opcional)">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Monto Mínimo (S/)</label>
+                            <input type="number" id="get_montoMin" class="form-control" placeholder="Ej. 100.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Monto Máximo (S/)</label>
+                            <input type="number" id="get_montoMax" class="form-control" placeholder="Ej. 400.00">
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-blue" onclick="consultarRendiciones()">
+                            🔍 Consultar Paginado / Filtros
+                        </button>
+                        <button type="button" class="btn btn-cyan" onclick="obtenerResumen()">
+                            📊 Resumen DTO (Constructor Expr.)
+                        </button>
+                        <button type="button" class="btn btn-cyan" onclick="obtenerReporteAgregado()">
+                            📈 Reporte Agregado (COALESCE Math)
+                        </button>
+                        <button type="button" class="btn btn-outline" onclick="limpiarFiltrosRendicion()">
+                            Limpiar
+                        </button>
+                    </div>
+
+                    <!-- CAJA CHICA INFO LIVE -->
+                    <div id="box-caja-status" style="margin-top: 18px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12.5px;">
+                        <strong>Estado de Caja Chica #1:</strong>
+                        <span id="label-saldo-caja">Consultando saldo disponible...</span>
+                        <button class="btn btn-outline" style="padding: 2px 8px; font-size: 11px; float: right;" onclick="actualizarSaldoCajaInfo(1)">Refrescar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA DE RENDICIONES PERSISTIDAS -->
             <div class="card">
-                <div class="card-title">1. POST /api/v1/finanzas/rendiciones</div>
-                
-                <form id="formPost" onsubmit="event.preventDefault(); registrarRendicion();">
-                    <div class="form-group">
-                        <label>Responsable</label>
-                        <input type="text" id="post_responsable" class="form-control" value="Carlos Quispe" required>
+                <div class="card-header-flex">
+                    <span class="card-title">
+                        📋 Rendiciones Persistidas en Base de Datos
+                    </span>
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="total-records">0 registros</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Código</th>
+                                <th>Responsable</th>
+                                <th>Fecha</th>
+                                <th>Detalles / Concepto</th>
+                                <th>Total Cabecera</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaCuerpo">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: #94a3b8; padding: 24px;">
+                                    Cargando datos...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================================================================= -->
+        <!-- PESTAÑA 2: TRANSACCIONES FINANCIERAS (CRUD COMPLETO & FLUJO DE CAJA)                      -->
+        <!-- ========================================================================================= -->
+        <div id="tab-transacciones" class="tab-content">
+            
+            <!-- TARJETAS DE MÉTRICAS DE FLUJO DE CAJA -->
+            <div class="grid-three-cols" id="metricas-flujo-caja">
+                <div class="stat-card" style="border-left: 4px solid #16a34a;">
+                    <div class="stat-title">Total Ingresos (Cobrados)</div>
+                    <div class="stat-value" style="color: #16a34a;" id="kpi-ingresos">S/ 0.00</div>
+                    <div class="stat-hint">Ventas de derivados y aceite</div>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid #dc2626;">
+                    <div class="stat-title">Total Egresos (Pagados)</div>
+                    <div class="stat-value" style="color: #dc2626;" id="kpi-egresos">S/ 0.00</div>
+                    <div class="stat-hint">Insumos, frascos y servicios</div>
+                </div>
+                <div class="stat-card" style="border-left: 4px solid #2563eb;">
+                    <div class="stat-title">Balance Neto en Caja</div>
+                    <div class="stat-value" style="color: #1d4ed8;" id="kpi-balance">S/ 0.00</div>
+                    <div class="stat-hint">Ingresos menos Egresos</div>
+                </div>
+            </div>
+
+            <div class="grid-two-cols">
+                <!-- FORMULARIO CREAR / EDITAR TRANSACCIÓN -->
+                <div class="card">
+                    <div class="card-header-flex">
+                        <span class="card-title" id="titulo-form-trx">
+                            Registrar Transacción Financiera
+                        </span>
+                        <span class="card-badge-method method-post" id="badge-form-trx">POST /api/v1/finanzas/transacciones</span>
+                    </div>
+
+                    <form id="formTrx" onsubmit="event.preventDefault(); guardarTransaccion();">
+                        <input type="hidden" id="trx_id">
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Código Transacción</label>
+                                <input type="text" id="trx_codigo" class="form-control" value="TRX-2026-006" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Movimiento</label>
+                                <select id="trx_tipo" class="form-control" required>
+                                    <option value="INGRESO">🟢 INGRESO (Entrada de dinero)</option>
+                                    <option value="EGRESO">🔴 EGRESO (Salida de dinero)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Concepto / Glosa</label>
+                            <input type="text" id="trx_concepto" class="form-control" value="Venta al por mayor de pasta pura de cacao 500g" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Monto (S/)</label>
+                                <input type="number" step="0.50" id="trx_monto" class="form-control" value="380.00" min="0.50" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de Operación</label>
+                                <input type="date" id="trx_fecha" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Categoría Financiera</label>
+                                <select id="trx_categoriaId" class="form-control" required>
+                                    <option value="1">1 - Ventas de Derivados de Cacao</option>
+                                    <option value="2">2 - Ventas de Aceite de Coco</option>
+                                    <option value="3">3 - Insumos y Envases de Producción</option>
+                                    <option value="4">4 - Servicios Operativos y Logísticos</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Estado Inicial</label>
+                                <select id="trx_estado" class="form-control">
+                                    <option value="PAGADO">PAGADO (Efectivo / Transferido)</option>
+                                    <option value="PENDIENTE">PENDIENTE (Por cobrar/pagar)</option>
+                                    <option value="ANULADO">ANULADO</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tipo Comprobante</label>
+                                <select id="trx_tipoComp" class="form-control">
+                                    <option value="FACTURA">FACTURA</option>
+                                    <option value="BOLETA">BOLETA</option>
+                                    <option value="RECIBO">RECIBO</option>
+                                    <option value="TICKET">TICKET</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Nro. Comprobante</label>
+                                <input type="text" id="trx_nroComp" class="form-control" value="F001-00150">
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary" id="btn-guardar-trx" style="flex: 1;">
+                                💾 Guardar Transacción
+                            </button>
+                            <button type="button" class="btn btn-outline" onclick="cancelarEdicionTrx()">
+                                Cancelar / Nuevo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- FILTROS Y ACCIONES DE FLUJO DE CAJA -->
+                <div class="card">
+                    <div class="card-header-flex">
+                        <span class="card-title">
+                            Filtros de Transacciones & Flujo de Caja
+                        </span>
+                        <span class="card-badge-method method-get">GET /api/v1/finanzas/transacciones</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Filtrar por Tipo</label>
+                            <select id="filtro_trx_tipo" class="form-control">
+                                <option value="">TODOS</option>
+                                <option value="INGRESO">INGRESO</option>
+                                <option value="EGRESO">EGRESO</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Filtrar por Estado</label>
+                            <select id="filtro_trx_estado" class="form-control">
+                                <option value="">TODOS</option>
+                                <option value="PAGADO">PAGADO</option>
+                                <option value="PENDIENTE">PENDIENTE</option>
+                                <option value="ANULADO">ANULADO</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Concepto / Insumo</label>
-                        <select id="post_concepto" class="form-control">
-                            <option value="Envases de vidrio 250ml">Envases de vidrio 250ml</option>
-                            <option value="Etiquetas para frasco aceite de coco">Etiquetas para frasco aceite de coco</option>
-                            <option value="Tapas con precinto de seguridad">Tapas con precinto de seguridad</option>
-                            <option value="Cajas de embalaje y cinta">Cajas de embalaje y cinta</option>
+                        <label>Filtrar por Categoría Financiera</label>
+                        <select id="filtro_trx_categoria" class="form-control">
+                            <option value="">TODAS LAS CATEGORÍAS</option>
                         </select>
                     </div>
 
-                    <div style="display: flex; gap: 12px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Cantidad</label>
-                            <input type="number" id="post_cantidad" class="form-control" value="2" min="1" required>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-blue" onclick="listarTransacciones()">
+                            🔍 Filtrar Transacciones
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="cargarFlujoCaja()">
+                            💰 Actualizar Flujo de Caja
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 18px; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12.5px;">
+                        <strong>Operaciones CRUD soportadas en este controlador:</strong>
+                        <ul style="margin-left: 18px; margin-top: 6px; color: #475569;">
+                            <li><code>GET /transacciones</code>: Listado con filtros combinados.</li>
+                            <li><code>POST /transacciones</code>: Creación con validaciones @Valid.</li>
+                            <li><code>PUT /transacciones/{id}</code>: Actualización de datos completa.</li>
+                            <li><code>PATCH /transacciones/{id}/estado</code>: Cambio de estado sin tocar el monto.</li>
+                            <li><code>DELETE /transacciones/{id}</code>: Eliminación con HTTP 204 No Content.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA DE TRANSACCIONES -->
+            <div class="card">
+                <div class="card-header-flex">
+                    <span class="card-title">
+                        📊 Transacciones Financieras Registradas
+                    </span>
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="total-trx-records">0 transacciones</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Código</th>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Concepto</th>
+                                <th>Categoría</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                                <th>Comprobante</th>
+                                <th>Acciones CRUD</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaTrxCuerpo">
+                            <tr>
+                                <td colspan="10" style="text-align:center; color:#94a3b8; padding: 24px;">
+                                    Cargando transacciones...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================================================================= -->
+        <!-- PESTAÑA 3: CATEGORÍAS FINANCIERAS (CRUD & NAVEGACIÓN CONTROLADA)                          -->
+        <!-- ========================================================================================= -->
+        <div id="tab-categorias-fin" class="tab-content">
+            
+            <div class="grid-two-cols">
+                <!-- FORMULARIO CREAR / EDITAR CATEGORÍA FINANCIERA -->
+                <div class="card">
+                    <div class="card-header-flex">
+                        <span class="card-title" id="titulo-form-catfin">
+                            Registrar Categoría Financiera
+                        </span>
+                        <span class="card-badge-method method-post" id="badge-form-catfin">POST /api/v1/finanzas/categorias</span>
+                    </div>
+
+                    <form id="formCatFin" onsubmit="event.preventDefault(); guardarCategoriaFinanciera();">
+                        <input type="hidden" id="catfin_id">
+
+                        <div class="form-group">
+                            <label>Nombre de Categoría</label>
+                            <input type="text" id="catfin_nombre" class="form-control" placeholder="Ej. Venta de Merchandising y Regalos" required>
                         </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Precio Unitario (S/)</label>
-                            <input type="number" step="0.50" id="post_precio" class="form-control" value="18.50" min="0.50" required>
+
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <textarea id="catfin_descripcion" class="form-control" rows="2" placeholder="Detalle de los conceptos clasificados en este rubro..."></textarea>
                         </div>
+
+                        <div class="form-group">
+                            <label>Tipo Predeterminado</label>
+                            <select id="catfin_tipo" class="form-control" required>
+                                <option value="INGRESO">INGRESO</option>
+                                <option value="EGRESO">EGRESO</option>
+                            </select>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary" id="btn-guardar-catfin" style="flex: 1;">
+                                💾 Guardar Categoría
+                            </button>
+                            <button type="button" class="btn btn-outline" onclick="cancelarEdicionCatFin()">
+                                Cancelar / Nuevo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- FILTRO Y NAVEGACIÓN CONTROLADA -->
+                <div class="card">
+                    <div class="card-header-flex">
+                        <span class="card-title">
+                            Consultar & Navegación Controlada
+                        </span>
+                        <span class="card-badge-method method-get">GET /api/v1/finanzas/categorias</span>
                     </div>
 
                     <div class="form-group">
-                        <label>Caja Chica Asignada (ID)</label>
-                        <input type="number" id="post_cajaId" class="form-control" value="1" required>
+                        <label>Filtrar por Tipo Predeterminado</label>
+                        <select id="filtro_catfin_tipo" class="form-control" onchange="listarCategoriasFinancieras()">
+                            <option value="">TODOS</option>
+                            <option value="INGRESO">INGRESO</option>
+                            <option value="EGRESO">EGRESO</option>
+                        </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" id="btn-submit-post">
-                        Registrar rendición
-                    </button>
-                </form>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-blue" onclick="listarCategoriasFinancieras()">
+                            🔍 Listar Categorías
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 20px; padding: 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 13px; color: #1e40af;">
+                        <strong>💡 Navegación Controlada (Criterio de Rúbrica):</strong>
+                        <p style="margin-top: 4px; color: #1e3a8a;">
+                            El botón <strong>"Ver Transacciones"</strong> en la tabla consume el endpoint especializado:
+                            <code>GET /api/v1/finanzas/categorias/{id}/transacciones</code>, permitiendo listar los recursos secundarios a partir del recurso principal sin saltar capas ni exponer IDs crudos.
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <!-- TARJETA 2: GET /api/v1/finanzas/rendiciones -->
+            <!-- TABLA DE CATEGORÍAS FINANCIERAS -->
             <div class="card">
-                <div class="card-title">2. GET /api/v1/finanzas/rendiciones</div>
-                
-                <div class="form-group">
-                    <label>Estado</label>
-                    <select id="get_estado" class="form-control">
-                        <option value="">TODAS</option>
-                        <option value="ABIERTA">ABIERTA</option>
-                        <option value="CERRADA">CERRADA</option>
-                        <option value="RECHAZADA">RECHAZADA</option>
-                    </select>
+                <div class="card-header-flex">
+                    <span class="card-title">
+                        🏷️ Categorías Financieras en el Sistema
+                    </span>
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="total-catfin-records">0 categorías</span>
                 </div>
 
-                <div class="form-group">
-                    <label>Ordenar Por</label>
-                    <select id="get_orden" class="form-control">
-                        <option value="id,desc">ID (Descendente)</option>
-                        <option value="montoTotal,desc">Monto Total (Mayor a menor)</option>
-                        <option value="montoTotal,asc">Monto Total (Menor a mayor)</option>
-                        <option value="responsable,asc">Responsable (A - Z)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Caja Chica ID (Filtro)</label>
-                    <input type="number" id="get_cajaId" class="form-control" placeholder="1 (Opcional)">
-                </div>
-
-                <div class="btn-group">
-                    <button type="button" class="btn btn-blue" onclick="consultarRendiciones()">Consultar</button>
-                    <button type="button" class="btn btn-cyan" onclick="obtenerResumen()">Resumen DTO</button>
-                    <button type="button" class="btn btn-cyan" onclick="obtenerReporteAgregado()">Reporte Agregado</button>
-                    <button type="button" class="btn btn-danger" onclick="limpiarConsola()">Limpiar</button>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre de Categoría</th>
+                                <th>Descripción</th>
+                                <th>Tipo Predeterminado</th>
+                                <th>Acciones CRUD & Navegación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaCatFinCuerpo">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: #94a3b8; padding: 24px;">
+                                    Cargando categorías...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
         </div>
 
-        <!-- TARJETA DE RESPUESTA API -->
-        <div class="card">
-            <div class="card-title">
-                Respuesta API
-                <span id="status-pill" class="status-pill">Esperando solicitud</span>
-            </div>
-            <div class="terminal-container">
-                <pre class="terminal-output" id="outputJson">// Presiona "Consultar" o "Registrar rendición" para interactuar con la API REST.</pre>
-            </div>
-        </div>
-
-        <!-- TARJETA DE RENDICIONES PERSISTIDAS (TABLA) -->
-        <div class="card">
-            <div class="card-title" style="justify-content: space-between;">
-                <span>Rendiciones persistidas</span>
-                <span style="font-size: 13px; font-weight: 500; color: #64748b;" id="total-records">0 registros</span>
-            </div>
+        <!-- ========================================================================================= -->
+        <!-- PESTAÑA 4: CATÁLOGO DE PRODUCTOS Y CATEGORÍAS (MÓDULO CATÁLOGO)                          -->
+        <!-- ========================================================================================= -->
+        <div id="tab-catalogo" class="tab-content">
             
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID / Código</th>
-                            <th>Responsable</th>
-                            <th>Detalles / Concepto</th>
-                            <th>Total</th>
-                            <th>Estado</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaCuerpo">
-                        <tr>
-                            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 24px;">
-                                No hay datos cargados aún. Haz clic en <strong>Consultar</strong>.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="grid-two-cols">
+                <!-- PRODUCTOS CRUD FORM -->
+                <div class="card">
+                    <div class="card-header-flex">
+                        <span class="card-title" id="titulo-form-prod">
+                            Registrar Producto
+                        </span>
+                        <span class="card-badge-method method-post" id="badge-form-prod">POST /api/v1/productos</span>
+                    </div>
+
+                    <form id="formProd" onsubmit="event.preventDefault(); guardarProducto();">
+                        <input type="hidden" id="prod_id">
+
+                        <div class="form-group">
+                            <label>Nombre del Producto</label>
+                            <input type="text" id="prod_nombre" class="form-control" placeholder="Ej. Aceite de Coco Extra Virgen 500ml" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Precio Unitario (S/)</label>
+                                <input type="number" step="0.50" id="prod_precio" class="form-control" value="28.50" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Stock Disponible</label>
+                                <input type="number" id="prod_stock" class="form-control" value="50" min="0" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Categoría del Catálogo</label>
+                            <select id="prod_categoriaId" class="form-control" required>
+                                <option value="1">1 - Derivados de Cacao</option>
+                                <option value="2">2 - Aceites Prensados</option>
+                                <option value="3">3 - Empaques e Insumos</option>
+                            </select>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary" id="btn-guardar-prod" style="flex: 1;">
+                                💾 Guardar Producto
+                            </button>
+                            <button type="button" class="btn btn-outline" onclick="cancelarEdicionProd()">
+                                Cancelar / Nuevo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- CATEGORÍAS DE CATÁLOGO FORM -->
+                <div class="card">
+                    <div class="card-header-flex">
+                        <span class="card-title" id="titulo-form-catprod">
+                            Registrar Categoría de Catálogo
+                        </span>
+                        <span class="card-badge-method method-post" id="badge-form-catprod">POST /api/v1/categorias</span>
+                    </div>
+
+                    <form id="formCatProd" onsubmit="event.preventDefault(); guardarCategoriaProducto();">
+                        <input type="hidden" id="catprod_id">
+
+                        <div class="form-group">
+                            <label>Nombre de Categoría</label>
+                            <input type="text" id="catprod_nombre" class="form-control" placeholder="Ej. Chocolatería Fina" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <input type="text" id="catprod_descripcion" class="form-control" placeholder="Barras al 70%, bombones artesanales...">
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-secondary" id="btn-guardar-catprod" style="flex: 1;">
+                                💾 Guardar Categoría
+                            </button>
+                            <button type="button" class="btn btn-outline" onclick="cancelarEdicionCatProd()">
+                                Cancelar / Nuevo
+                            </button>
+                        </div>
+                    </form>
+
+                    <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid #e2e8f0; display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-blue" onclick="listarProductos()">
+                            🔍 Consultar Todos los Productos
+                        </button>
+                        <button type="button" class="btn btn-cyan" onclick="listarCategoriasProducto()">
+                            🏷️ Listar Categorías
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA PRODUCTOS -->
+            <div class="card">
+                <div class="card-header-flex">
+                    <span class="card-title">
+                        📦 Catálogo de Productos Registrados
+                    </span>
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="total-prod-records">0 productos</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre de Producto</th>
+                                <th>Categoría</th>
+                                <th>Precio (S/)</th>
+                                <th>Stock</th>
+                                <th>Acciones CRUD</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaProdCuerpo">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: #94a3b8; padding: 24px;">
+                                    Cargando productos...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TABLA CATEGORÍAS CATÁLOGO -->
+            <div class="card">
+                <div class="card-header-flex">
+                    <span class="card-title">
+                        🏷️ Categorías del Catálogo de Productos
+                    </span>
+                    <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="total-catprod-records">0 categorías</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Acciones CRUD & Navegación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaCatProdCuerpo">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: #94a3b8; padding: 24px;">
+                                    Cargando categorías de catálogo...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================================================================= -->
+        <!-- PESTAÑA 5: CAJAS CHICAS                                                                   -->
+        <!-- ========================================================================================= -->
+        <div id="tab-cajas" class="tab-content">
+            
+            <div class="grid-two-cols">
+                <!-- CREAR CAJA CHICA -->
+                <div class="card">
+                    <div class="card-header-flex">
+                        <span class="card-title">Crear Nueva Caja Chica</span>
+                        <span class="card-badge-method method-post">POST /api/v1/finanzas/cajas-chicas</span>
+                    </div>
+
+                    <form id="formCajaChica" onsubmit="event.preventDefault(); crearCajaChica();">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Código Caja</label>
+                                <input type="text" id="caja_codigo" class="form-control" value="CCH-003" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Responsable</label>
+                                <input type="text" id="caja_responsable" class="form-control" value="Brandon Ccalla" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Límite Máximo (S/)</label>
+                                <input type="number" step="10.00" id="caja_limite" class="form-control" value="800.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Saldo Inicial (S/)</label>
+                                <input type="number" step="10.00" id="caja_saldo" class="form-control" value="800.00" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+                            🏦 Crear Caja Chica
+                        </button>
+                    </form>
+                </div>
+
+                <!-- CONSULTAR CAJA CHICA POR ID -->
+                <div class="card">
+                    <div class="card-header-flex">
+                        <span class="card-title">Consultar Caja Chica por ID</span>
+                        <span class="card-badge-method method-get">GET /api/v1/finanzas/cajas-chicas/{id}</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>ID de Caja Chica</label>
+                            <input type="number" id="consulta_caja_id" class="form-control" value="1">
+                        </div>
+                        <div class="form-group" style="align-self: flex-end;">
+                            <button type="button" class="btn btn-blue" style="width: 100%;" onclick="consultarCajaChicaPorId()">
+                                🔍 Consultar Caja
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="caja-detalle-box" style="margin-top: 14px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <h4 style="color: #1e3a8a; margin-bottom: 8px;" id="caja-det-codigo">CCH-001 (Caja Principal)</h4>
+                        <div style="font-size: 13px; line-height: 1.6; color: #475569;">
+                            <div><strong>Responsable:</strong> <span id="caja-det-resp">Brandon Ccalla</span></div>
+                            <div><strong>Límite Asignado:</strong> <span id="caja-det-limite">S/ 1,000.00</span></div>
+                            <div><strong>Saldo Disponible:</strong> <span id="caja-det-saldo" style="font-weight: 700; color: #166534;">S/ 475.00</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================================================================= -->
+        <!-- PESTAÑA 6: GUÍA TEÓRICA DE SUSTENTACIÓN (RESPUESTAS A PREGUNTAS CLAVE DEL DOCENTE)        -->
+        <!-- ========================================================================================= -->
+        <div id="tab-guia" class="tab-content">
+            
+            <div class="card">
+                <div class="card-header-flex">
+                    <span class="card-title">
+                        🎓 Balotario y Respuestas Técnicas para Sustentación con el Profesor
+                    </span>
+                    <span class="badge badge-info">Rúbrica Oficial LP2</span>
+                </div>
+
+                <p style="font-size: 13.5px; color: #64748b; margin-bottom: 16px;">
+                    Estas son las 5 preguntas fundamentales de teoría y arquitectura que el docente suele evaluar durante la defensa técnica de los CRUDs y del monolito modular:
+                </p>
+
+                <!-- PREGUNTA 1 -->
+                <div class="accordion-item active">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>1. ¿Por qué usamos DTOs en lugar de exponer directamente las entidades JPA en los controladores?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <strong>Respuesta para el docente:</strong>
+                        <ul style="margin-left: 18px; margin-top: 6px;">
+                            <li><strong>Seguridad y Encapsulamiento:</strong> Evitamos el ataque de <em>Mass Assignment</em> y no exponemos campos internos sensibles o IDs autoincrementales que no corresponden al contrato público.</li>
+                            <li><strong>Prevención de Recursión Infinita:</strong> En relaciones bidireccionales de base de datos (<code>@OneToMany</code> y <code>@ManyToOne</code>), Jackson serializa cíclicamente provocando un desbordamiento de memoria (<code>StackOverflowError</code>). Los DTOs planos resuelven esto al desacoplar el contrato REST del modelo relacional.</li>
+                            <li><strong>Evolución del Contrato y Proyecciones:</strong> Permite utilizar consultas ligeras como <code>SELECT new RendicionResumenDto(...)</code>, trayendo de la BD únicamente los campos indispensables sin saturar memoria ni disparar consultas lentas (evita el problema <em>N+1 queries</em>).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- PREGUNTA 2 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>2. ¿Cómo garantiza <code>@Transactional</code> la atomicidad en la operación Cabecera-Detalle?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <strong>Respuesta para el docente:</strong>
+                        <p>
+                            <code>@Transactional</code> enmarca todas las operaciones de la función dentro de una única transacción ACID a nivel de base de datos.
+                        </p>
+                        <p style="margin-top: 6px;">
+                            Al registrar una Rendición, ocurren tres operaciones:
+                            <strong>1.</strong> Descuento del saldo en la Caja Chica.
+                            <strong>2.</strong> Inserción de la cabecera en <code>RENDICIONES_CAJA_CHICA</code>.
+                            <strong>3.</strong> Inserción en lote de los detalles en <code>DETALLES_RENDICION_CAJA_CHICA</code>.
+                        </p>
+                        <p style="margin-top: 6px;">
+                            Si se viola la regla <code>RN-FIN-01</code> (monto total &gt; saldo disponible), se lanza una <code>SolvenciaInsuficienteException</code>. Spring intercepta la excepción no verificada (Runtime) mediante AOP y emite automáticamente una orden de <strong>ROLLBACK</strong> al motor de base de datos, garantizando que <em>o se guardan todos los registros o no se guarda ninguno</em>, manteniendo el saldo y las tablas 100% íntegros.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- PREGUNTA 3 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>3. ¿Por qué es fundamental que un reporte financiero retorne 0 o 0.00 en vez de null?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <strong>Respuesta para el docente:</strong>
+                        <p>
+                            En el dominio contable y financiero de Agro Peruvian Foods, no tener movimientos en una caja o periodo significa <strong>cero transacciones (S/ 0.00)</strong>, nunca un valor indeterminado o nulo.
+                        </p>
+                        <p style="margin-top: 6px;">
+                            Técnicamente, si SQL retornara <code>null</code> en funciones de agregación (como <code>SUM</code> o <code>AVG</code> sobre tablas vacías), el cliente frontend o servicios downstream lanzarían errores <code>NullPointerException</code> o mostrarían interfaces rotas con valores <em>"NaN"</em>.
+                        </p>
+                        <p style="margin-top: 6px;">
+                            Para blindar esto, en el repositorio JPA usamos <strong><code>COALESCE(SUM(r.montoTotal), 0)</code></strong>, garantizando que la API siempre responda con números reales estructurados.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- PREGUNTA 4 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>4. ¿Qué es CORS y en qué capa del sistema se ejecuta la restricción?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <strong>Respuesta para el docente:</strong>
+                        <p>
+                            <strong>CORS</strong> (<em>Cross-Origin Resource Sharing</em>) es una política de seguridad ejecutada exclusivamente por los <strong>Navegadores Web</strong> (no por Postman, cURL ni por el servidor backend).
+                        </p>
+                        <p style="margin-top: 6px;">
+                            Bajo la regla <em>Same-Origin Policy</em>, un script ejecutándose en un origen (por ejemplo <code>http://localhost:5173</code> o un archivo local) tiene prohibido leer datos de otro origen (como <code>http://localhost:8080</code>).
+                        </p>
+                        <p style="margin-top: 6px;">
+                            En nuestro proyecto configuramos <code>WebConfig.java</code> implementando <code>WebMvcConfigurer</code> con cabeceras <code>allowedOriginPatterns("*")</code>, métodos <code>GET, POST, PUT, DELETE, OPTIONS, PATCH</code> y <code>allowCredentials(true)</code>, permitiendo que cualquier frontend autorizado consuma la API con pre-vuelos <code>OPTIONS</code> exitosos.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- PREGUNTA 5 -->
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>5. ¿Cómo ayuda Spring Modulith a mantener los límites en este monolito modular?</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <strong>Respuesta para el docente:</strong>
+                        <p>
+                            Spring Modulith divide el backend en módulos de dominio de primer nivel: <code>finanzas</code>, <code>catalogo</code>, <code>ventas</code> y <code>compras</code>.
+                        </p>
+                        <p style="margin-top: 6px;">
+                            Aplica encapsulamiento estricto: ninguna clase o repositorio interno de un módulo puede ser importado o inyectado directamente por otro módulo. La única vía permitida es a través de puertos públicos declarados con <strong><code>@NamedInterface("api")</code></strong> en el <code>package-info.java</code> del módulo exportador.
+                        </p>
+                        <p style="margin-top: 6px;">
+                            Además, la prueba automática <strong><code>ModularityTests.java</code></strong> ejecuta ArchUnit en tiempo de compilación para verificar que no existan acoplamientos prohibidos ni ciclos de dependencias, garantizando la arquitectura limpia de microservicios con la simplicidad de un único monolito desplegable.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================================================================= -->
+        <!-- TERMINAL DE RESPUESTA API (UNIVERSAL / SIEMPRE VISIBLE)                                   -->
+        <!-- ========================================================================================= -->
+        <div class="terminal-card">
+            <div class="terminal-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-weight: 700; font-size: 15px; color: #0f172a;">🖥️ Consola de Respuesta API REST</span>
+                    <span id="terminal-endpoint" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #64748b;">[Esperando solicitud]</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="status-pill" class="status-pill">ESPERANDO</span>
+                    <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11.5px;" onclick="copiarJsonRespuesta()">Copiar JSON</button>
+                    <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11.5px;" onclick="limpiarConsola()">Limpiar</button>
+                </div>
+            </div>
+
+            <div class="terminal-container">
+                <pre class="terminal-output" id="outputJson">// Presiona cualquier botón de acción para ejecutar y visualizar las respuestas HTTP del backend en tiempo real.</pre>
+            </div>
+
+            <div class="terminal-meta">
+                <span id="terminal-time">Tiempo de respuesta: -- ms</span>
+                <span id="terminal-regla">Regla de Negocio: Ninguna violada</span>
             </div>
         </div>
+
     </main>
 
+    <!-- JAVASCRIPT CLIENT LOGIC -->
     <script>
-        const API_BASE = 'http://localhost:8080/api/v1/finanzas';
+        // CONFIGURACIÓN DE BASE URL
+        let API_ROOT = 'http://localhost:8080';
+        if (window.location.port === '8080' || window.location.hostname === 'localhost') {
+            API_ROOT = window.location.origin;
+        }
 
-        function showResponse(status, ok, data) {
+        function actualizarBaseUrl() {
+            API_ROOT = document.getElementById('apiBaseInput').value.replace(/\/$/, '');
+            verificarConexion();
+        }
+
+        // TABS NAVIGATION
+        function cambiarPestaña(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) targetTab.classList.add('active');
+            if (btnElement) btnElement.classList.add('active');
+
+            // Carga diferida según la pestaña seleccionada
+            if (tabId === 'tab-rendiciones') {
+                consultarRendiciones();
+                actualizarSaldoCajaInfo(1);
+            } else if (tabId === 'tab-transacciones') {
+                listarTransacciones();
+                cargarFlujoCaja();
+                cargarCategoriasParaSelectorTrx();
+            } else if (tabId === 'tab-categorias-fin') {
+                listarCategoriasFinancieras();
+            } else if (tabId === 'tab-catalogo') {
+                listarProductos();
+                listarCategoriasProducto();
+            } else if (tabId === 'tab-cajas') {
+                consultarCajaChicaPorId();
+            }
+        }
+
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            item.classList.toggle('active');
+        }
+
+        // MOSTRAR RESPUESTA EN TERMINAL
+        function showResponse(method, endpoint, status, ok, data, elapsedMs) {
             const pill = document.getElementById('status-pill');
             const output = document.getElementById('outputJson');
+            const endpointLabel = document.getElementById('terminal-endpoint');
+            const timeLabel = document.getElementById('terminal-time');
+            const reglaLabel = document.getElementById('terminal-regla');
 
+            endpointLabel.innerText = `${method} ${endpoint}`;
             pill.innerText = `${status} ${ok ? 'OK' : 'ERROR'}`;
             pill.className = `status-pill ${ok ? 'ok' : 'error'}`;
 
             output.innerText = JSON.stringify(data, null, 2);
+            timeLabel.innerText = `Tiempo de respuesta: ${elapsedMs || 0} ms`;
+
+            if (data && data.reglaNegocio) {
+                reglaLabel.innerText = `Regla de Negocio: ${data.reglaNegocio}`;
+                reglaLabel.style.color = '#ef4444';
+            } else if (status === 400 && data && data.message && data.message.includes('RN-FIN-01')) {
+                reglaLabel.innerText = `Regla de Negocio: RN-FIN-01 (Solvencia de Caja Insuficiente)`;
+                reglaLabel.style.color = '#ef4444';
+            } else {
+                reglaLabel.innerText = `Regla de Negocio: Ninguna violada`;
+                reglaLabel.style.color = '#94a3b8';
+            }
+        }
+
+        async function fetchApi(method, endpoint, body = null) {
+            const start = performance.now();
+            const url = `${API_ROOT}${endpoint}`;
+            const options = {
+                method: method,
+                headers: { 'Content-Type': 'application/json' }
+            };
+            if (body) options.body = JSON.stringify(body);
+
+            try {
+                const res = await fetch(url, options);
+                const elapsed = Math.round(performance.now() - start);
+
+                let data = null;
+                const contentType = res.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    data = await res.json();
+                } else {
+                    const text = await res.text();
+                    data = text ? { responseText: text } : { status: res.status, message: "Operación ejecutada con éxito (Sin contenido en body)" };
+                }
+
+                showResponse(method, endpoint, res.status, res.ok, data, elapsed);
+                return { status: res.status, ok: res.ok, data: data };
+            } catch (err) {
+                const elapsed = Math.round(performance.now() - start);
+                const errData = {
+                    error: err.toString(),
+                    ayuda: "Verifica que el backend de Spring Boot esté encendido en " + API_ROOT
+                };
+                showResponse(method, endpoint, 500, false, errData, elapsed);
+                return { status: 500, ok: false, data: errData };
+            }
+        }
+
+        async function verificarConexion() {
+            const statusBadge = document.getElementById('server-status');
+            try {
+                const res = await fetch(`${API_ROOT}/api/v1/finanzas/cajas-chicas/1`);
+                if (res.ok || res.status === 404) {
+                    statusBadge.className = "server-status";
+                    statusBadge.innerHTML = `<span style="font-size: 8px;">●</span> Conectado`;
+                } else {
+                    statusBadge.className = "server-status offline";
+                    statusBadge.innerHTML = `<span style="font-size: 8px;">●</span> Error HTTP ${res.status}`;
+                }
+            } catch (e) {
+                statusBadge.className = "server-status offline";
+                statusBadge.innerHTML = `<span style="font-size: 8px;">●</span> Desconectado`;
+            }
+        }
+
+        function limpiarConsola() {
+            document.getElementById('outputJson').innerText = '// Consola limpia esperando solicitudes REST.';
+            document.getElementById('status-pill').innerText = 'ESPERANDO';
+            document.getElementById('status-pill').className = 'status-pill';
+            document.getElementById('terminal-endpoint').innerText = '[Esperando solicitud]';
+            document.getElementById('terminal-time').innerText = 'Tiempo de respuesta: -- ms';
+            document.getElementById('terminal-regla').innerText = 'Regla de Negocio: Ninguna violada';
+        }
+
+        function copiarJsonRespuesta() {
+            const text = document.getElementById('outputJson').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("JSON copiado al portapapeles con éxito.");
+            });
+        }
+
+        // =========================================================================
+        // MÓDULO 1: RENDICIONES DE CAJA CHICA (CABECERA Y DETALLE)
+        // =========================================================================
+        function generarNuevoCodigoRendicion() {
+            const rnd = Math.floor(100 + Math.random() * 900);
+            document.getElementById('post_rend_codigo').value = `RND-2026-${rnd}`;
+        }
+
+        function agregarFilaDetalle(concepto = '', cantidad = 1, precio = 10.0) {
+            const container = document.getElementById('contenedor-detalles');
+            const row = document.createElement('div');
+            row.className = 'detalle-item-row';
+            row.innerHTML = `
+                <input type="text" class="form-control det-concepto" placeholder="Concepto del gasto" value="${concepto}" required>
+                <input type="number" class="form-control det-cantidad" placeholder="Cant." value="${cantidad}" min="1" oninput="calcularTotalEstimado()" required>
+                <input type="number" step="0.10" class="form-control det-precio" placeholder="Precio S/" value="${precio.toFixed(2)}" min="0.10" oninput="calcularTotalEstimado()" required>
+                <button type="button" class="btn-delete-row" onclick="eliminarFilaDetalle(this)">×</button>
+            `;
+            container.appendChild(row);
+            calcularTotalEstimado();
+        }
+
+        function eliminarFilaDetalle(btn) {
+            const container = document.getElementById('contenedor-detalles');
+            if (container.children.length <= 1) {
+                alert("Debe existir al menos un detalle en la rendición.");
+                return;
+            }
+            btn.closest('.detalle-item-row').remove();
+            calcularTotalEstimado();
+        }
+
+        function calcularTotalEstimado() {
+            let total = 0;
+            const rows = document.querySelectorAll('.detalle-item-row');
+            rows.forEach(r => {
+                const cant = parseFloat(r.querySelector('.det-cantidad').value) || 0;
+                const prec = parseFloat(r.querySelector('.det-precio').value) || 0;
+                total += cant * prec;
+            });
+            document.getElementById('totalEstimadoLabel').innerText = `S/ ${total.toFixed(2)}`;
+            return total;
         }
 
         async function registrarRendicion() {
-            const responsable = document.getElementById('post_responsable').value;
-            const concepto = document.getElementById('post_concepto').value;
-            const cantidad = parseInt(document.getElementById('post_cantidad').value) || 1;
-            const precio = parseFloat(document.getElementById('post_precio').value) || 1.0;
-            const cajaId = parseInt(document.getElementById('post_cajaId').value) || 1;
+            const codigo = document.getElementById('post_rend_codigo').value;
+            const responsable = document.getElementById('post_rend_responsable').value;
+            const cajaId = parseInt(document.getElementById('post_rend_cajaId').value) || 1;
+            const fecha = document.getElementById('post_rend_fecha').value || new Date().toISOString().split('T')[0];
 
-            const randomCode = 'REND-' + Date.now().toString().slice(-6);
+            const rows = document.querySelectorAll('.detalle-item-row');
+            const detalles = [];
+            rows.forEach(r => {
+                detalles.push({
+                    productoId: 1,
+                    concepto: r.querySelector('.det-concepto').value,
+                    cantidad: parseInt(r.querySelector('.det-cantidad').value) || 1,
+                    precioUnitario: parseFloat(r.querySelector('.det-precio').value) || 1.0
+                });
+            });
 
             const payload = {
-                codigo: randomCode,
+                codigo: codigo,
                 cajaChicaId: cajaId,
                 responsable: responsable,
-                fecha: new Date().toISOString().split('T')[0],
-                detalles: [
-                    {
-                        productoId: 1,
-                        concepto: concepto,
-                        cantidad: cantidad,
-                        precioUnitario: precio
-                    }
-                ]
+                fecha: fecha,
+                detalles: detalles
             };
 
-            try {
-                const response = await fetch(`${API_BASE}/rendiciones`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-                showResponse(response.status, response.ok, {
-                    status: response.status,
-                    ok: response.ok,
-                    data: data
-                });
-
-                if (response.ok) {
-                    consultarRendiciones();
-                }
-            } catch (err) {
-                showResponse(500, false, { error: err.toString(), message: "Verifica que el backend esté encendido." });
+            const result = await fetchApi('POST', '/api/v1/finanzas/rendiciones', payload);
+            if (result.ok) {
+                consultarRendiciones();
+                actualizarSaldoCajaInfo(cajaId);
+                generarNuevoCodigoRendicion();
             }
+        }
+
+        // CASO ERROR RN-FIN-01 (Demostración de Rollback y Solvencia Insuficiente)
+        function probarCasoErrorRNFIN01() {
+            document.getElementById('post_rend_codigo').value = `RND-FAIL-999`;
+            document.getElementById('post_rend_responsable').value = 'Test Rollback (Monto Excesivo)';
+            document.getElementById('post_rend_cajaId').value = '1';
+
+            const container = document.getElementById('contenedor-detalles');
+            container.innerHTML = '';
+            // Crear gasto de S/ 1,500.00 cuando la caja solo tiene S/ 475.00
+            agregarFilaDetalle("Compra masiva de barriles de acero inoxidable (Excede saldo)", 3, 500.00);
+
+            alert("⚡ Se ha cargado una Rendición por S/ 1,500.00 en la Caja 1 (Saldo ~ S/ 475.00).\nPresiona 'Registrar Rendición' para verificar en la consola el rechazo 400 Bad Request y el Rollback.");
+        }
+
+        function cargarCasoExito() {
+            generarNuevoCodigoRendicion();
+            document.getElementById('post_rend_responsable').value = 'Brandon Ccalla';
+            document.getElementById('post_rend_cajaId').value = '1';
+
+            const container = document.getElementById('contenedor-detalles');
+            container.innerHTML = '';
+            agregarFilaDetalle("Tapas con precinto inviolable para aceite", 2, 15.00);
+            agregarFilaDetalle("Cajas de cartón corrugado para transporte", 3, 10.00);
         }
 
         async function consultarRendiciones() {
             const estado = document.getElementById('get_estado').value;
             const ordenRaw = document.getElementById('get_orden').value.split(',');
             const cajaId = document.getElementById('get_cajaId').value;
+            const responsable = document.getElementById('get_responsable').value;
+            const montoMin = document.getElementById('get_montoMin').value;
+            const montoMax = document.getElementById('get_montoMax').value;
 
-            let url = new URL(`${API_BASE}/rendiciones`);
-            if (estado) url.searchParams.append('estado', estado);
-            if (cajaId) url.searchParams.append('cajaChicaId', cajaId);
-            if (ordenRaw[0]) url.searchParams.append('ordenarPor', ordenRaw[0]);
-            if (ordenRaw[1]) url.searchParams.append('direccion', ordenRaw[1].toUpperCase());
+            const params = new URLSearchParams();
+            if (estado) params.append('estado', estado);
+            if (cajaId) params.append('cajaChicaId', cajaId);
+            if (responsable) params.append('responsable', responsable);
+            if (montoMin) params.append('montoMin', montoMin);
+            if (montoMax) params.append('montoMax', montoMax);
+            if (ordenRaw[0]) params.append('ordenarPor', ordenRaw[0]);
+            if (ordenRaw[1]) params.append('direccion', ordenRaw[1].toUpperCase());
 
-            try {
-                const response = await fetch(url.toString());
-                const data = await response.json();
+            const endpoint = `/api/v1/finanzas/rendiciones${params.toString() ? '?' + params.toString() : ''}`;
+            const res = await fetchApi('GET', endpoint);
 
-                showResponse(response.status, response.ok, {
-                    status: response.status,
-                    ok: response.ok,
-                    totalElements: data.totalElements !== undefined ? data.totalElements : (Array.isArray(data) ? data.length : 1),
-                    content: data.content || data
-                });
-
-                const items = data.content || (Array.isArray(data) ? data : [data]);
-                renderTable(items);
-            } catch (err) {
-                showResponse(500, false, { error: err.toString() });
+            if (res.ok && res.data) {
+                const items = res.data.content || (Array.isArray(res.data) ? res.data : [res.data]);
+                renderTablaRendiciones(items);
             }
         }
 
-        async function obtenerResumen() {
-            const cajaId = document.getElementById('get_cajaId').value;
-            let url = new URL(`${API_BASE}/rendiciones/resumen`);
-            if (cajaId) url.searchParams.append('cajaChicaId', cajaId);
-
-            try {
-                const response = await fetch(url.toString());
-                const data = await response.json();
-                showResponse(response.status, response.ok, {
-                    endpoint: "GET /rendiciones/resumen (Proyección DTO)",
-                    status: response.status,
-                    data: data
-                });
-            } catch (err) {
-                showResponse(500, false, { error: err.toString() });
-            }
-        }
-
-        async function obtenerReporteAgregado() {
-            const cajaId = document.getElementById('get_cajaId').value || '1';
-            let url = new URL(`${API_BASE}/rendiciones/reporte-agregado`);
-            url.searchParams.append('cajaChicaId', cajaId);
-
-            try {
-                const response = await fetch(url.toString());
-                const data = await response.json();
-                showResponse(response.status, response.ok, {
-                    endpoint: "GET /rendiciones/reporte-agregado (Agregaciones Math)",
-                    cajaChicaId: cajaId,
-                    status: response.status,
-                    data: data
-                });
-            } catch (err) {
-                showResponse(500, false, { error: err.toString() });
-            }
-        }
-
-        function renderTable(items) {
+        function renderTablaRendiciones(items) {
             const tbody = document.getElementById('tablaCuerpo');
             const totalLabel = document.getElementById('total-records');
             tbody.innerHTML = '';
 
             if (!items || items.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding:24px;">No se encontraron registros.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#94a3b8; padding:24px;">No se encontraron rendiciones registradas con los filtros seleccionados.</td></tr>`;
                 totalLabel.innerText = '0 registros';
                 return;
             }
@@ -595,47 +1837,599 @@
                 const tr = document.createElement('tr');
                 const codigo = item.codigo || `ID-${item.id}`;
                 const total = item.montoTotal !== undefined ? parseFloat(item.montoTotal).toFixed(2) : '0.00';
-                const detalles = item.detalles && item.detalles.length > 0 
-                    ? `${item.detalles[0].concepto} × ${item.detalles[0].cantidad}`
-                    : (item.cantidadDetalles !== undefined ? `${item.cantidadDetalles} ítem(s)` : 'Sin detalles');
+                
+                let conceptoText = 'Sin detalles';
+                if (item.detalles && item.detalles.length > 0) {
+                    conceptoText = item.detalles.map(d => `${d.concepto} (×${d.cantidad})`).join(', ');
+                } else if (item.cantidadDetalles !== undefined) {
+                    conceptoText = `${item.cantidadDetalles} ítem(s) rendido(s)`;
+                }
 
-                const estado = item.estado || 'ABIERTA';
-                const badgeClass = estado === 'ABIERTA' ? 'badge-success' : (estado === 'CERRADA' ? 'badge-warning' : 'badge-danger');
+                const estado = item.estado || 'APROBADO';
+                const badgeClass = estado === 'APROBADO' ? 'badge-success' : (estado === 'PENDIENTE' ? 'badge-warning' : 'badge-danger');
 
                 tr.innerHTML = `
-                    <td style="font-weight:600; color:#1e40af;">${codigo}</td>
+                    <td style="font-weight:700; color:#64748b;">#${item.id}</td>
+                    <td style="font-weight:700; color:#1e40af; font-family:'JetBrains Mono',monospace;">${codigo}</td>
                     <td>${item.responsable || 'N/A'}</td>
-                    <td>${detalles}</td>
-                    <td style="font-weight:600;">S/ ${total}</td>
+                    <td>${item.fecha || 'N/A'}</td>
+                    <td style="max-width: 280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${conceptoText}">${conceptoText}</td>
+                    <td style="font-weight:800; color:#0f172a;">S/ ${total}</td>
                     <td><span class="badge ${badgeClass}">${estado}</span></td>
-                    <td><button class="btn-table" onclick="verDetalle(${item.id})">Consultar</button></td>
+                    <td>
+                        <button class="btn-table" onclick="verDetalleRendicion(${item.id})">👁️ Ver Detalle</button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        async function verDetalle(id) {
-            try {
-                const response = await fetch(`${API_BASE}/rendiciones/${id}`);
-                const data = await response.json();
-                showResponse(response.status, response.ok, {
-                    endpoint: `GET /rendiciones/${id}`,
-                    data: data
-                });
-            } catch (err) {
-                showResponse(500, false, { error: err.toString() });
+        async function verDetalleRendicion(id) {
+            await fetchApi('GET', `/api/v1/finanzas/rendiciones/${id}`);
+        }
+
+        async function obtenerResumen() {
+            const cajaId = document.getElementById('get_cajaId').value;
+            const endpoint = cajaId ? `/api/v1/finanzas/rendiciones/resumen?cajaChicaId=${cajaId}` : `/api/v1/finanzas/rendiciones/resumen`;
+            const res = await fetchApi('GET', endpoint);
+            if (res.ok && res.data) {
+                renderTablaRendiciones(res.data);
             }
         }
 
-        function limpiarConsola() {
-            document.getElementById('outputJson').innerText = '// Consola limpia.';
-            document.getElementById('status-pill').innerText = 'Esperando solicitud';
-            document.getElementById('status-pill').className = 'status-pill';
+        async function obtenerReporteAgregado() {
+            const cajaId = document.getElementById('get_cajaId').value || '1';
+            await fetchApi('GET', `/api/v1/finanzas/rendiciones/reporte-agregado?cajaChicaId=${cajaId}`);
         }
 
-        // Cargar automáticamente las rendiciones al abrir
-        window.onload = () => {
+        function limpiarFiltrosRendicion() {
+            document.getElementById('get_estado').value = '';
+            document.getElementById('get_responsable').value = '';
+            document.getElementById('get_cajaId').value = '';
+            document.getElementById('get_montoMin').value = '';
+            document.getElementById('get_montoMax').value = '';
             consultarRendiciones();
+        }
+
+        async function actualizarSaldoCajaInfo(id) {
+            const res = await fetch(`${API_ROOT}/api/v1/finanzas/cajas-chicas/${id}`);
+            if (res.ok) {
+                const caja = await res.json();
+                document.getElementById('label-saldo-caja').innerHTML = 
+                    `<strong style="color:#15803d;">S/ ${parseFloat(caja.saldoDisponible).toFixed(2)}</strong> (Límite: S/ ${parseFloat(caja.limiteMaximo).toFixed(2)}) — Responsable: ${caja.responsable}`;
+                document.getElementById('hint-caja-saldo').innerText = `Caja ${caja.codigo}: Saldo disponible S/ ${parseFloat(caja.saldoDisponible).toFixed(2)}`;
+            }
+        }
+
+        // =========================================================================
+        // MÓDULO 2: TRANSACCIONES FINANCIERAS (CRUD COMPLETO & FLUJO DE CAJA)
+        // =========================================================================
+        async function listarTransacciones() {
+            const tipo = document.getElementById('filtro_trx_tipo').value;
+            const estado = document.getElementById('filtro_trx_estado').value;
+            const catId = document.getElementById('filtro_trx_categoria').value;
+
+            const params = new URLSearchParams();
+            if (tipo) params.append('tipo', tipo);
+            if (estado) params.append('estado', estado);
+            if (catId) params.append('categoriaFinancieraId', catId);
+
+            const endpoint = `/api/v1/finanzas/transacciones${params.toString() ? '?' + params.toString() : ''}`;
+            const res = await fetchApi('GET', endpoint);
+
+            if (res.ok && res.data) {
+                renderTablaTransacciones(res.data);
+            }
+        }
+
+        function renderTablaTransacciones(items) {
+            const tbody = document.getElementById('tablaTrxCuerpo');
+            const totalLabel = document.getElementById('total-trx-records');
+            tbody.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:#94a3b8; padding:24px;">No se encontraron transacciones financieras registradas.</td></tr>`;
+                totalLabel.innerText = '0 transacciones';
+                return;
+            }
+
+            totalLabel.innerText = `${items.length} transacción(es)`;
+
+            items.forEach(item => {
+                const tr = document.createElement('tr');
+                const tipoBadge = item.tipo === 'INGRESO' ? 'badge-success' : 'badge-danger';
+                const estadoBadge = item.estado === 'PAGADO' ? 'badge-success' : (item.estado === 'PENDIENTE' ? 'badge-warning' : 'badge-danger');
+                const montoColor = item.tipo === 'INGRESO' ? '#166534' : '#991b1b';
+                const signo = item.tipo === 'INGRESO' ? '+' : '-';
+
+                tr.innerHTML = `
+                    <td style="font-weight:700; color:#64748b;">#${item.id}</td>
+                    <td style="font-weight:700; font-family:'JetBrains Mono',monospace;">${item.codigo}</td>
+                    <td>${item.fechaTransaccion || 'N/A'}</td>
+                    <td><span class="badge ${tipoBadge}">${item.tipo}</span></td>
+                    <td style="max-width: 220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${item.concepto}">${item.concepto}</td>
+                    <td><span class="badge badge-info">${item.categoriaFinanciera ? item.categoriaFinanciera.nombre : 'Cat #' + (item.categoriaFinancieraId || '')}</span></td>
+                    <td style="font-weight:800; color:${montoColor};">${signo} S/ ${parseFloat(item.monto).toFixed(2)}</td>
+                    <td><span class="badge ${estadoBadge}">${item.estado}</span></td>
+                    <td><small style="color:#64748b;">${item.tipoComprobante || ''} ${item.numeroComprobante || ''}</small></td>
+                    <td>
+                        <button class="btn-table edit" onclick="cargarEdicionTrx(${item.id})">✏️ Editar</button>
+                        <button class="btn-table" style="background:#4338ca;" onclick="cambiarEstadoTrxPrompt(${item.id}, '${item.estado}')">🔄 Estado</button>
+                        <button class="btn-table danger" onclick="eliminarTrx(${item.id})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function guardarTransaccion() {
+            const id = document.getElementById('trx_id').value;
+            const payload = {
+                codigo: document.getElementById('trx_codigo').value,
+                concepto: document.getElementById('trx_concepto').value,
+                monto: parseFloat(document.getElementById('trx_monto').value),
+                fechaTransaccion: document.getElementById('trx_fecha').value || new Date().toISOString().split('T')[0],
+                tipo: document.getElementById('trx_tipo').value,
+                estado: document.getElementById('trx_estado').value,
+                tipoComprobante: document.getElementById('trx_tipoComp').value,
+                numeroComprobante: document.getElementById('trx_nroComp').value,
+                categoriaFinancieraId: parseInt(document.getElementById('trx_categoriaId').value)
+            };
+
+            let res;
+            if (id) {
+                // Actualizar (PUT)
+                res = await fetchApi('PUT', `/api/v1/finanzas/transacciones/${id}`, payload);
+            } else {
+                // Crear (POST)
+                res = await fetchApi('POST', '/api/v1/finanzas/transacciones', payload);
+            }
+
+            if (res.ok) {
+                cancelarEdicionTrx();
+                listarTransacciones();
+                cargarFlujoCaja();
+            }
+        }
+
+        async function cargarEdicionTrx(id) {
+            const res = await fetchApi('GET', `/api/v1/finanzas/transacciones/${id}`);
+            if (res.ok && res.data) {
+                const t = res.data;
+                document.getElementById('trx_id').value = t.id;
+                document.getElementById('trx_codigo').value = t.codigo;
+                document.getElementById('trx_concepto').value = t.concepto;
+                document.getElementById('trx_monto').value = t.monto;
+                document.getElementById('trx_fecha').value = t.fechaTransaccion;
+                document.getElementById('trx_tipo').value = t.tipo;
+                document.getElementById('trx_estado').value = t.estado;
+                document.getElementById('trx_tipoComp').value = t.tipoComprobante || 'FACTURA';
+                document.getElementById('trx_nroComp').value = t.numeroComprobante || '';
+                if (t.categoriaFinanciera) {
+                    document.getElementById('trx_categoriaId').value = t.categoriaFinanciera.id;
+                }
+
+                document.getElementById('titulo-form-trx').innerText = `Editar Transacción #${t.id}`;
+                document.getElementById('badge-form-trx').innerText = `PUT /transacciones/${t.id}`;
+                document.getElementById('badge-form-trx').className = 'card-badge-method method-put';
+                document.getElementById('btn-guardar-trx').innerText = '💾 Actualizar Transacción (PUT)';
+                window.scrollTo({ top: 120, behavior: 'smooth' });
+            }
+        }
+
+        function cancelarEdicionTrx() {
+            document.getElementById('trx_id').value = '';
+            document.getElementById('trx_codigo').value = `TRX-2026-00${Math.floor(10 + Math.random()*90)}`;
+            document.getElementById('trx_concepto').value = '';
+            document.getElementById('trx_monto').value = '100.00';
+            document.getElementById('titulo-form-trx').innerText = 'Registrar Transacción Financiera';
+            document.getElementById('badge-form-trx').innerText = 'POST /api/v1/finanzas/transacciones';
+            document.getElementById('badge-form-trx').className = 'card-badge-method method-post';
+            document.getElementById('btn-guardar-trx').innerText = '💾 Guardar Transacción';
+        }
+
+        async function cambiarEstadoTrxPrompt(id, estadoActual) {
+            const nuevoEstado = prompt(`Cambiar estado de la transacción #${id}.\nIngresa: PAGADO, PENDIENTE o ANULADO:`, estadoActual);
+            if (!nuevoEstado) return;
+
+            const estadoUpper = nuevoEstado.trim().toUpperCase();
+            if (!['PAGADO', 'PENDIENTE', 'ANULADO'].includes(estadoUpper)) {
+                alert("Estado no válido. Debe ser PAGADO, PENDIENTE o ANULADO.");
+                return;
+            }
+
+            const res = await fetchApi('PATCH', `/api/v1/finanzas/transacciones/${id}/estado?estado=${estadoUpper}`);
+            if (res.ok) {
+                listarTransacciones();
+                cargarFlujoCaja();
+            }
+        }
+
+        async function eliminarTrx(id) {
+            if (!confirm(`¿Estás seguro de eliminar permanentemente la transacción financiera #${id}? (DELETE HTTP 204)`)) return;
+            const res = await fetchApi('DELETE', `/api/v1/finanzas/transacciones/${id}`);
+            if (res.ok || res.status === 204) {
+                listarTransacciones();
+                cargarFlujoCaja();
+            }
+        }
+
+        async function cargarFlujoCaja() {
+            const res = await fetchApi('GET', '/api/v1/finanzas/resumen-flujo-caja');
+            if (res.ok && res.data) {
+                const fc = res.data;
+                document.getElementById('kpi-ingresos').innerText = `S/ ${parseFloat(fc.totalIngresos || 0).toFixed(2)}`;
+                document.getElementById('kpi-egresos').innerText = `S/ ${parseFloat(fc.totalEgresos || 0).toFixed(2)}`;
+                document.getElementById('kpi-balance').innerText = `S/ ${parseFloat(fc.balanceNeto || 0).toFixed(2)}`;
+            }
+        }
+
+        async function cargarCategoriasParaSelectorTrx() {
+            try {
+                const res = await fetch(`${API_ROOT}/api/v1/finanzas/categorias`);
+                if (res.ok) {
+                    const cats = await res.json();
+                    const selTrx = document.getElementById('trx_categoriaId');
+                    const selFiltro = document.getElementById('filtro_trx_categoria');
+                    selTrx.innerHTML = '';
+                    selFiltro.innerHTML = '<option value="">TODAS LAS CATEGORÍAS</option>';
+
+                    cats.forEach(c => {
+                        selTrx.innerHTML += `<option value="${c.id}">${c.id} - ${c.nombre} (${c.tipoDefault})</option>`;
+                        selFiltro.innerHTML += `<option value="${c.id}">${c.id} - ${c.nombre}</option>`;
+                    });
+                }
+            } catch (e) {}
+        }
+
+        // =========================================================================
+        // MÓDULO 3: CATEGORÍAS FINANCIERAS (CRUD & NAVEGACIÓN)
+        // =========================================================================
+        async function listarCategoriasFinancieras() {
+            const tipo = document.getElementById('filtro_catfin_tipo').value;
+            const endpoint = tipo ? `/api/v1/finanzas/categorias?tipo=${tipo}` : `/api/v1/finanzas/categorias`;
+            const res = await fetchApi('GET', endpoint);
+
+            if (res.ok && res.data) {
+                renderTablaCategoriasFinancieras(res.data);
+            }
+        }
+
+        function renderTablaCategoriasFinancieras(items) {
+            const tbody = document.getElementById('tablaCatFinCuerpo');
+            const totalLabel = document.getElementById('total-catfin-records');
+            tbody.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:24px;">No se encontraron categorías financieras.</td></tr>`;
+                totalLabel.innerText = '0 categorías';
+                return;
+            }
+
+            totalLabel.innerText = `${items.length} categoría(s)`;
+
+            items.forEach(item => {
+                const tr = document.createElement('tr');
+                const tipoBadge = item.tipoDefault === 'INGRESO' ? 'badge-success' : 'badge-danger';
+
+                tr.innerHTML = `
+                    <td style="font-weight:700; color:#64748b;">#${item.id}</td>
+                    <td style="font-weight:700; color:#1e3a8a;">${item.nombre}</td>
+                    <td style="color:#475569;">${item.descripcion || 'Sin descripción'}</td>
+                    <td><span class="badge ${tipoBadge}">${item.tipoDefault}</span></td>
+                    <td>
+                        <button class="btn-table edit" onclick="cargarEdicionCatFin(${item.id})">✏️ Editar</button>
+                        <button class="btn-table" style="background:#0284c7;" onclick="navegarTransaccionesPorCat(${item.id})">🔗 Ver Transacciones</button>
+                        <button class="btn-table danger" onclick="eliminarCatFin(${item.id})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function guardarCategoriaFinanciera() {
+            const id = document.getElementById('catfin_id').value;
+            const payload = {
+                nombre: document.getElementById('catfin_nombre').value,
+                descripcion: document.getElementById('catfin_descripcion').value,
+                tipoDefault: document.getElementById('catfin_tipo').value
+            };
+
+            let res;
+            if (id) {
+                res = await fetchApi('PUT', `/api/v1/finanzas/categorias/${id}`, payload);
+            } else {
+                res = await fetchApi('POST', '/api/v1/finanzas/categorias', payload);
+            }
+
+            if (res.ok) {
+                cancelarEdicionCatFin();
+                listarCategoriasFinancieras();
+                cargarCategoriasParaSelectorTrx();
+            }
+        }
+
+        async function cargarEdicionCatFin(id) {
+            const res = await fetchApi('GET', `/api/v1/finanzas/categorias/${id}`);
+            if (res.ok && res.data) {
+                const c = res.data;
+                document.getElementById('catfin_id').value = c.id;
+                document.getElementById('catfin_nombre').value = c.nombre;
+                document.getElementById('catfin_descripcion').value = c.descripcion || '';
+                document.getElementById('catfin_tipo').value = c.tipoDefault;
+
+                document.getElementById('titulo-form-catfin').innerText = `Editar Categoría #${c.id}`;
+                document.getElementById('badge-form-catfin').innerText = `PUT /categorias/${c.id}`;
+                document.getElementById('badge-form-catfin').className = 'card-badge-method method-put';
+                document.getElementById('btn-guardar-catfin').innerText = '💾 Actualizar Categoría (PUT)';
+            }
+        }
+
+        function cancelarEdicionCatFin() {
+            document.getElementById('catfin_id').value = '';
+            document.getElementById('catfin_nombre').value = '';
+            document.getElementById('catfin_descripcion').value = '';
+            document.getElementById('titulo-form-catfin').innerText = 'Registrar Categoría Financiera';
+            document.getElementById('badge-form-catfin').innerText = 'POST /api/v1/finanzas/categorias';
+            document.getElementById('badge-form-catfin').className = 'card-badge-method method-post';
+            document.getElementById('btn-guardar-catfin').innerText = '💾 Guardar Categoría';
+        }
+
+        async function navegarTransaccionesPorCat(id) {
+            // Navegación controlada: GET /api/v1/finanzas/categorias/{id}/transacciones
+            const res = await fetchApi('GET', `/api/v1/finanzas/categorias/${id}/transacciones`);
+            if (res.ok && res.data) {
+                alert(`Navegación controlada exitosa: Se encontraron ${res.data.length} transacción(es) asociadas a la Categoría #${id}. Revisa la consola JSON.`);
+            }
+        }
+
+        async function eliminarCatFin(id) {
+            if (!confirm(`¿Eliminar la categoría financiera #${id}?`)) return;
+            const res = await fetchApi('DELETE', `/api/v1/finanzas/categorias/${id}`);
+            if (res.ok || res.status === 204) {
+                listarCategoriasFinancieras();
+                cargarCategoriasParaSelectorTrx();
+            }
+        }
+
+        // =========================================================================
+        // MÓDULO 4: CATÁLOGO DE PRODUCTOS Y CATEGORÍAS
+        // =========================================================================
+        async function listarProductos() {
+            const res = await fetchApi('GET', '/api/v1/productos');
+            if (res.ok && res.data) {
+                renderTablaProductos(res.data);
+            }
+        }
+
+        function renderTablaProductos(items) {
+            const tbody = document.getElementById('tablaProdCuerpo');
+            const totalLabel = document.getElementById('total-prod-records');
+            tbody.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding:24px;">No hay productos registrados en el catálogo.</td></tr>`;
+                totalLabel.innerText = '0 productos';
+                return;
+            }
+
+            totalLabel.innerText = `${items.length} producto(s)`;
+
+            items.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:700; color:#64748b;">#${p.id}</td>
+                    <td style="font-weight:700; color:#1e40af;">${p.nombre}</td>
+                    <td><span class="badge badge-info">${p.categoria ? p.categoria.nombre : 'Cat #' + p.categoriaId}</span></td>
+                    <td style="font-weight:800;">S/ ${parseFloat(p.precio).toFixed(2)}</td>
+                    <td><span class="badge ${p.stock > 10 ? 'badge-success' : 'badge-warning'}">${p.stock} unidades</span></td>
+                    <td>
+                        <button class="btn-table edit" onclick="cargarEdicionProd(${p.id})">✏️ Editar</button>
+                        <button class="btn-table danger" onclick="eliminarProd(${p.id})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function guardarProducto() {
+            const id = document.getElementById('prod_id').value;
+            const payload = {
+                nombre: document.getElementById('prod_nombre').value,
+                precio: parseFloat(document.getElementById('prod_precio').value),
+                stock: parseInt(document.getElementById('prod_stock').value),
+                categoriaId: parseInt(document.getElementById('prod_categoriaId').value)
+            };
+
+            let res;
+            if (id) {
+                res = await fetchApi('PUT', `/api/v1/productos/${id}`, payload);
+            } else {
+                res = await fetchApi('POST', '/api/v1/productos', payload);
+            }
+
+            if (res.ok) {
+                cancelarEdicionProd();
+                listarProductos();
+            }
+        }
+
+        async function cargarEdicionProd(id) {
+            const res = await fetchApi('GET', `/api/v1/productos/${id}`);
+            if (res.ok && res.data) {
+                const p = res.data;
+                document.getElementById('prod_id').value = p.id;
+                document.getElementById('prod_nombre').value = p.nombre;
+                document.getElementById('prod_precio').value = p.precio;
+                document.getElementById('prod_stock').value = p.stock;
+                if (p.categoria) document.getElementById('prod_categoriaId').value = p.categoria.id;
+
+                document.getElementById('titulo-form-prod').innerText = `Editar Producto #${p.id}`;
+                document.getElementById('badge-form-prod').innerText = `PUT /productos/${p.id}`;
+                document.getElementById('badge-form-prod').className = 'card-badge-method method-put';
+                document.getElementById('btn-guardar-prod').innerText = '💾 Actualizar Producto (PUT)';
+            }
+        }
+
+        function cancelarEdicionProd() {
+            document.getElementById('prod_id').value = '';
+            document.getElementById('prod_nombre').value = '';
+            document.getElementById('prod_precio').value = '25.00';
+            document.getElementById('prod_stock').value = '30';
+            document.getElementById('titulo-form-prod').innerText = 'Registrar Producto';
+            document.getElementById('badge-form-prod').innerText = 'POST /api/v1/productos';
+            document.getElementById('badge-form-prod').className = 'card-badge-method method-post';
+            document.getElementById('btn-guardar-prod').innerText = '💾 Guardar Producto';
+        }
+
+        async function eliminarProd(id) {
+            if (!confirm(`¿Eliminar el producto #${id}?`)) return;
+            const res = await fetchApi('DELETE', `/api/v1/productos/${id}`);
+            if (res.ok || res.status === 204) {
+                listarProductos();
+            }
+        }
+
+        // CATEGORÍAS DE PRODUCTOS
+        async function listarCategoriasProducto() {
+            const res = await fetchApi('GET', '/api/v1/categorias');
+            if (res.ok && res.data) {
+                renderTablaCategoriasProducto(res.data);
+            }
+        }
+
+        function renderTablaCategoriasProducto(items) {
+            const tbody = document.getElementById('tablaCatProdCuerpo');
+            const totalLabel = document.getElementById('total-catprod-records');
+            tbody.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding:24px;">No hay categorías de catálogo.</td></tr>`;
+                totalLabel.innerText = '0 categorías';
+                return;
+            }
+
+            totalLabel.innerText = `${items.length} categoría(s)`;
+
+            const selProdCat = document.getElementById('prod_categoriaId');
+            selProdCat.innerHTML = '';
+
+            items.forEach(c => {
+                selProdCat.innerHTML += `<option value="${c.id}">${c.id} - ${c.nombre}</option>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:700; color:#64748b;">#${c.id}</td>
+                    <td style="font-weight:700; color:#1e3a8a;">${c.nombre}</td>
+                    <td style="color:#475569;">${c.descripcion || 'Sin descripción'}</td>
+                    <td>
+                        <button class="btn-table edit" onclick="cargarEdicionCatProd(${c.id})">✏️ Editar</button>
+                        <button class="btn-table" style="background:#0284c7;" onclick="verProductosPorCat(${c.id})">🔗 Ver Productos</button>
+                        <button class="btn-table danger" onclick="eliminarCatProd(${c.id})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function guardarCategoriaProducto() {
+            const id = document.getElementById('catprod_id').value;
+            const payload = {
+                nombre: document.getElementById('catprod_nombre').value,
+                descripcion: document.getElementById('catprod_descripcion').value
+            };
+
+            let res;
+            if (id) {
+                res = await fetchApi('PUT', `/api/v1/categorias/${id}`, payload);
+            } else {
+                res = await fetchApi('POST', '/api/v1/categorias', payload);
+            }
+
+            if (res.ok) {
+                cancelarEdicionCatProd();
+                listarCategoriasProducto();
+            }
+        }
+
+        async function cargarEdicionCatProd(id) {
+            const res = await fetchApi('GET', `/api/v1/categorias/${id}`);
+            if (res.ok && res.data) {
+                const c = res.data;
+                document.getElementById('catprod_id').value = c.id;
+                document.getElementById('catprod_nombre').value = c.nombre;
+                document.getElementById('catprod_descripcion').value = c.descripcion || '';
+                document.getElementById('titulo-form-catprod').innerText = `Editar Categoría #${c.id}`;
+                document.getElementById('btn-guardar-catprod').innerText = '💾 Actualizar Categoría (PUT)';
+            }
+        }
+
+        function cancelarEdicionCatProd() {
+            document.getElementById('catprod_id').value = '';
+            document.getElementById('catprod_nombre').value = '';
+            document.getElementById('catprod_descripcion').value = '';
+            document.getElementById('titulo-form-catprod').innerText = 'Registrar Categoría de Catálogo';
+            document.getElementById('btn-guardar-catprod').innerText = '💾 Guardar Categoría';
+        }
+
+        async function verProductosPorCat(id) {
+            // GET /api/v1/categorias/{id}/productos
+            const res = await fetchApi('GET', `/api/v1/categorias/${id}/productos`);
+            if (res.ok && res.data) {
+                alert(`Se encontraron ${res.data.length} producto(s) en la categoría #${id}. Revisa la consola JSON.`);
+            }
+        }
+
+        async function eliminarCatProd(id) {
+            if (!confirm(`¿Eliminar la categoría de producto #${id}?`)) return;
+            const res = await fetchApi('DELETE', `/api/v1/categorias/${id}`);
+            if (res.ok || res.status === 204) {
+                listarCategoriasProducto();
+            }
+        }
+
+        // =========================================================================
+        // MÓDULO 5: CAJAS CHICAS
+        // =========================================================================
+        async function crearCajaChica() {
+            const codigo = document.getElementById('caja_codigo').value;
+            const responsable = document.getElementById('caja_responsable').value;
+            const limite = document.getElementById('caja_limite').value;
+            const saldo = document.getElementById('caja_saldo').value;
+
+            const endpoint = `/api/v1/finanzas/cajas-chicas?codigo=${encodeURIComponent(codigo)}&responsable=${encodeURIComponent(responsable)}&limiteMaximo=${limite}&saldoInicial=${saldo}`;
+            const res = await fetchApi('POST', endpoint);
+            if (res.ok) {
+                alert("Caja Chica creada exitosamente.");
+            }
+        }
+
+        async function consultarCajaChicaPorId() {
+            const id = document.getElementById('consulta_caja_id').value || '1';
+            const res = await fetchApi('GET', `/api/v1/finanzas/cajas-chicas/${id}`);
+            if (res.ok && res.data) {
+                const c = res.data;
+                document.getElementById('caja-det-codigo').innerText = `${c.codigo} (ID: ${c.id})`;
+                document.getElementById('caja-det-resp').innerText = c.responsable;
+                document.getElementById('caja-det-limite').innerText = `S/ ${parseFloat(c.limiteMaximo).toFixed(2)}`;
+                document.getElementById('caja-det-saldo').innerText = `S/ ${parseFloat(c.saldoDisponible).toFixed(2)}`;
+            }
+        }
+
+        // =========================================================================
+        // INICIALIZACIÓN
+        // =========================================================================
+        window.onload = () => {
+            // Establecer fecha de hoy en los inputs de fecha
+            const todayStr = new Date().toISOString().split('T')[0];
+            const postRendFecha = document.getElementById('post_rend_fecha');
+            const trxFecha = document.getElementById('trx_fecha');
+            if (postRendFecha) postRendFecha.value = todayStr;
+            if (trxFecha) trxFecha.value = todayStr;
+
+            verificarConexion();
+            consultarRendiciones();
+            actualizarSaldoCajaInfo(1);
         };
     </script>
 </body>

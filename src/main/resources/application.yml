@@ -2,4 +2,5 @@ spring:
   application:
     name: bomerp-backend
   profiles:
-    active: h2
+    active: dev
+
