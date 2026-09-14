@@ -25,7 +25,6 @@
             --info-hover: #0369a1;
             --terminal-bg: #0b1329;
             --terminal-text: #38bdf8;
-            --amber-highlight: #fef3c7;
         }
 
         * {
@@ -47,7 +46,7 @@
         header {
             background-color: var(--header-bg);
             color: white;
-            padding: 24px 36px;
+            padding: 22px 36px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: flex;
             justify-content: space-between;
@@ -66,7 +65,7 @@
         }
 
         .header-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             letter-spacing: -0.5px;
             margin-bottom: 4px;
@@ -76,7 +75,7 @@
         }
 
         .header-subtitle {
-            font-size: 13.5px;
+            font-size: 13px;
             color: #cbd5e1;
             font-weight: 400;
         }
@@ -84,15 +83,15 @@
         .server-config {
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.15);
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .server-config label {
-            font-size: 12px;
+            font-size: 11.5px;
             color: #cbd5e1;
             font-weight: 600;
         }
@@ -101,11 +100,11 @@
             background: #0f172a;
             border: 1px solid #334155;
             color: #38bdf8;
-            padding: 6px 10px;
-            border-radius: 5px;
+            padding: 5px 8px;
+            border-radius: 4px;
             font-size: 12px;
             font-family: 'JetBrains Mono', monospace;
-            width: 175px;
+            width: 170px;
         }
 
         .server-status {
@@ -144,8 +143,8 @@
             background: transparent;
             border: none;
             border-bottom: 3px solid transparent;
-            padding: 16px 18px;
-            font-size: 14px;
+            padding: 14px 16px;
+            font-size: 13.5px;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
@@ -211,7 +210,7 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 24px;
+            padding: 22px;
             box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
 
@@ -219,13 +218,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
-            padding-bottom: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #f1f5f9;
         }
 
         .card-title {
-            font-size: 16px;
+            font-size: 15.5px;
             font-weight: 700;
             color: #0f172a;
             display: flex;
@@ -249,27 +248,27 @@
 
         /* FORM CONTROLS */
         .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .form-group label {
             display: block;
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 600;
             color: #334155;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .form-group .form-hint {
-            font-size: 11.5px;
+            font-size: 11px;
             color: #64748b;
             margin-top: 3px;
         }
 
         .form-control {
             width: 100%;
-            padding: 9px 12px;
-            font-size: 13.5px;
+            padding: 8px 12px;
+            font-size: 13px;
             font-family: inherit;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
@@ -297,7 +296,7 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            margin-top: 16px;
+            margin-top: 14px;
         }
 
         .btn {
@@ -305,8 +304,8 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            padding: 9px 16px;
-            font-size: 13.5px;
+            padding: 8px 15px;
+            font-size: 13px;
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
@@ -353,7 +352,7 @@
         .btn-success { background-color: #166534; color: white; }
         .btn-success:hover { background-color: #15803d; }
 
-        /* ITEM ROWS DYNAMIC FOR RENDICION DETALLES */
+        /* ITEM ROWS DYNAMIC */
         .detalle-item-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1.2fr auto;
@@ -375,9 +374,7 @@
             cursor: pointer;
             font-weight: 700;
         }
-        .btn-delete-row:hover {
-            background: #fecaca;
-        }
+        .btn-delete-row:hover { background: #fecaca; }
 
         /* TABLES */
         .table-responsive {
@@ -398,7 +395,7 @@
             background-color: #f1f5f9;
             color: #1e3a8a;
             font-weight: 700;
-            padding: 11px 14px;
+            padding: 10px 14px;
             border-bottom: 2px solid #cbd5e1;
             white-space: nowrap;
         }
@@ -410,9 +407,7 @@
             vertical-align: middle;
         }
 
-        tr:hover td {
-            background-color: #f8fafc;
-        }
+        tr:hover td { background-color: #f8fafc; }
 
         .badge {
             display: inline-block;
@@ -426,11 +421,10 @@
         .badge-warning { background-color: #fef3c7; color: #92400e; }
         .badge-danger { background-color: #fee2e2; color: #991b1b; }
         .badge-info { background-color: #e0f2fe; color: #0369a1; }
-        .badge-purple { background-color: #f3e8ff; color: #6b21a8; }
 
         .btn-table {
-            padding: 4px 9px;
-            font-size: 11.5px;
+            padding: 5px 10px;
+            font-size: 12px;
             border-radius: 4px;
             background-color: #1e3a8a;
             color: white;
@@ -445,7 +439,7 @@
         .btn-table.edit { background-color: #d97706; }
         .btn-table.edit:hover { background-color: #b45309; }
 
-        /* KPI STATS CARDS */
+        /* KPI STATS */
         .stat-card {
             background: #ffffff;
             border: 1px solid var(--border-color);
@@ -453,32 +447,36 @@
             padding: 16px 20px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
         .stat-card .stat-title {
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
             color: #64748b;
-            letter-spacing: 0.5px;
         }
         .stat-card .stat-value {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
             color: #0f172a;
         }
         .stat-card .stat-hint {
-            font-size: 11.5px;
+            font-size: 11px;
             color: #94a3b8;
         }
 
         /* TERMINAL / RESPONSE DOCK */
         .terminal-card {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
+            border: 2px solid #cbd5e1;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+            transition: border-color 0.3s ease;
+        }
+        .terminal-card.active-glow {
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.25);
         }
 
         .terminal-header {
@@ -497,9 +495,6 @@
             font-weight: 700;
             background: #e2e8f0;
             color: #475569;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
             font-family: 'JetBrains Mono', monospace;
         }
         .status-pill.ok { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
@@ -510,7 +505,6 @@
             border-radius: 8px;
             padding: 16px;
             border: 1px solid #1e293b;
-            position: relative;
         }
 
         .terminal-output {
@@ -524,9 +518,6 @@
             overflow-y: auto;
         }
 
-        .terminal-output::-webkit-scrollbar { width: 6px; }
-        .terminal-output::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-
         .terminal-meta {
             font-size: 11px;
             color: #94a3b8;
@@ -536,7 +527,7 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* ACCORDION GUÍA TEÓRICA */
+        /* ACCORDION */
         .accordion-item {
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -545,70 +536,64 @@
             overflow: hidden;
         }
         .accordion-header {
-            padding: 16px 20px;
+            padding: 14px 18px;
             background: #f8fafc;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 13.5px;
             color: #1e3a8a;
         }
-        .accordion-header:hover {
-            background: #f1f5f9;
-        }
+        .accordion-header:hover { background: #f1f5f9; }
         .accordion-body {
-            padding: 18px 20px;
-            font-size: 13.5px;
+            padding: 16px 18px;
+            font-size: 13px;
             line-height: 1.65;
             color: #334155;
             border-top: 1px solid var(--border-color);
             background: #ffffff;
             display: none;
         }
-        .accordion-item.active .accordion-body {
-            display: block;
-        }
+        .accordion-item.active .accordion-body { display: block; }
 
-        /* MODAL SIMPLE */
+        /* MODAL POPUP */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(2px);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 9999;
             padding: 20px;
         }
-        .modal-overlay.open {
-            display: flex;
-        }
+        .modal-overlay.open { display: flex; }
         .modal-card {
             background: #ffffff;
-            border-radius: 10px;
-            max-width: 600px;
+            border-radius: 12px;
+            max-width: 680px;
             width: 100%;
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
             padding: 24px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
     </style>
 </head>
 <body>
 
-    <!-- HEADER DE LA CONSOLA -->
+    <!-- HEADER -->
     <header>
         <div>
             <div class="header-tag">EVALUACIÓN UNIDAD 1 — LP2 (BOMERP)</div>
-            <h1 class="header-title">
-                🏢 Consola de Validación API REST & CRUDS
-            </h1>
-            <div class="header-subtitle">
-                Agro Peruvian Foods — Arquitectura Monolito Modular con Spring Modulith (Brandon Ccalla)
-            </div>
+            <h1 class="header-title">🏢 Consola de Validación API REST & CRUDS</h1>
+            <div class="header-subtitle">Agro Peruvian Foods — Monolito Modular con Spring Modulith (Brandon Ccalla)</div>
         </div>
 
         <div class="server-config">
@@ -617,7 +602,7 @@
                 <input type="text" id="apiBaseInput" value="http://localhost:8080" onchange="actualizarBaseUrl()">
             </div>
             <div>
-                <button class="btn btn-outline" style="padding: 5px 10px; font-size: 12px; color: #fff; border-color: #64748b;" onclick="verificarConexion()">Ping</button>
+                <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; color: #fff; border-color: #64748b;" onclick="verificarConexion()">Ping</button>
             </div>
             <div id="server-status" class="server-status">
                 <span style="font-size: 8px;">●</span> En línea
@@ -625,7 +610,7 @@
         </div>
     </header>
 
-    <!-- TABS DE NAVEGACIÓN ENTRE MÓDULOS -->
+    <!-- TABS NAV -->
     <nav class="tabs-nav">
         <button class="tab-btn active" onclick="cambiarPestaña('tab-rendiciones', this)">
             🪙 1. Rendiciones de Caja Chica (Cabecera-Detalle & RN-FIN-01)
@@ -649,18 +634,16 @@
 
     <main>
 
-        <!-- ========================================================================================= -->
-        <!-- PESTAÑA 1: RENDICIONES DE CAJA CHICA (CABECERA-DETALLE, RN-FIN-01, REPORTES AGREGADOS)   -->
-        <!-- ========================================================================================= -->
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 1: RENDICIONES DE CAJA CHICA                                      -->
+        <!-- ========================================================================= -->
         <div id="tab-rendiciones" class="tab-content active">
             
             <div class="grid-two-cols">
                 <!-- FORMULARIO CABECERA-DETALLE -->
                 <div class="card">
                     <div class="card-header-flex">
-                        <span class="card-title">
-                            1. Registrar Rendición (Cabecera y Detalle)
-                        </span>
+                        <span class="card-title">1. Registrar Rendición (Cabecera y Detalle)</span>
                         <span class="card-badge-method method-post">POST /api/v1/finanzas/rendiciones</span>
                     </div>
 
@@ -670,7 +653,7 @@
                                 <label>Código Rendición</label>
                                 <div style="display: flex; gap: 6px;">
                                     <input type="text" id="post_rend_codigo" class="form-control" value="RND-2026-004" required>
-                                    <button type="button" class="btn btn-outline" style="padding: 6px 10px;" onclick="generarNuevoCodigoRendicion()">Autogen</button>
+                                    <button type="button" class="btn btn-outline" style="padding: 4px 8px; font-size: 11.5px;" onclick="generarNuevoCodigoRendicion()">Autogen</button>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -683,7 +666,7 @@
                             <div class="form-group">
                                 <label>Caja Chica Asignada (ID)</label>
                                 <input type="number" id="post_rend_cajaId" class="form-control" value="1" required>
-                                <div class="form-hint" id="hint-caja-saldo">Caja 1: Saldo disp. actual ~ S/ 475.00</div>
+                                <div class="form-hint" id="hint-caja-saldo">Caja CCH-001: Saldo disponible S/ 475.00</div>
                             </div>
                             <div class="form-group">
                                 <label>Fecha de Rendición</label>
@@ -691,12 +674,12 @@
                             </div>
                         </div>
 
-                        <div style="margin: 14px 0 8px 0; display: flex; justify-content: space-between; align-items: center;">
-                            <label style="font-size: 13px; font-weight: 700; color: #1e3a8a;">Detalles / Ítems de Gasto (DetalleRendicion):</label>
-                            <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="agregarFilaDetalle()">+ Agregar Ítem</button>
+                        <div style="margin: 12px 0 6px 0; display: flex; justify-content: space-between; align-items: center;">
+                            <label style="font-size: 12.5px; font-weight: 700; color: #1e3a8a;">Detalles / Ítems de Gasto (DetalleRendicion):</label>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 3px 8px;" onclick="agregarFilaDetalle()">+ Agregar Ítem</button>
                         </div>
 
-                        <!-- CONTENEDOR DE ÍTEMS DINÁMICOS -->
+                        <!-- FILAS DINÁMICAS -->
                         <div id="contenedor-detalles">
                             <div class="detalle-item-row">
                                 <input type="text" class="form-control det-concepto" placeholder="Concepto (ej. Envases de vidrio)" value="Envases de vidrio 250ml" required>
@@ -706,19 +689,19 @@
                             </div>
                         </div>
 
-                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 14px; border-radius: 6px; margin: 12px 0; display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 13px; font-weight: 600; color: #1e40af;">Total Calculado por el Backend (Cabecera):</span>
-                            <span style="font-size: 16px; font-weight: 800; color: #1e3a8a;" id="totalEstimadoLabel">S/ 37.00</span>
+                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px 12px; border-radius: 6px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 12.5px; font-weight: 600; color: #1e40af;">Total Calculado por el Backend (Cabecera):</span>
+                            <span style="font-size: 15px; font-weight: 800; color: #1e3a8a;" id="totalEstimadoLabel">S/ 37.00</span>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 6px;" id="btn-submit-post">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 4px;" id="btn-submit-post">
                             💾 Registrar Rendición (Cabecera-Detalle Atómica)
                         </button>
                     </form>
 
-                    <!-- BOTONES DE PRUEBA DE CASOS DE NEGOCIO (RÚBRICA LP2) -->
-                    <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed #cbd5e1;">
-                        <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 8px;">
+                    <!-- PRUEBAS RÁPIDAS -->
+                    <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #cbd5e1;">
+                        <div style="font-size: 11.5px; font-weight: 700; color: #475569; margin-bottom: 6px;">
                             🧪 Pruebas Rápidas de Dominio y Rúbrica:
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -735,9 +718,7 @@
                 <!-- CONSULTAS, FILTROS Y ORDENAMIENTO -->
                 <div class="card">
                     <div class="card-header-flex">
-                        <span class="card-title">
-                            2. Consultas Empresariales y Filtros Dinámicos
-                        </span>
+                        <span class="card-title">2. Consultas Empresariales y Filtros Dinámicos</span>
                         <span class="card-badge-method method-get">GET /api/v1/finanzas/rendiciones</span>
                     </div>
 
@@ -801,21 +782,18 @@
                         </button>
                     </div>
 
-                    <!-- CAJA CHICA INFO LIVE -->
-                    <div id="box-caja-status" style="margin-top: 18px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12.5px;">
+                    <div id="box-caja-status" style="margin-top: 14px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px;">
                         <strong>Estado de Caja Chica #1:</strong>
                         <span id="label-saldo-caja">Consultando saldo disponible...</span>
-                        <button class="btn btn-outline" style="padding: 2px 8px; font-size: 11px; float: right;" onclick="actualizarSaldoCajaInfo(1)">Refrescar</button>
+                        <button class="btn btn-outline" style="padding: 2px 6px; font-size: 10.5px; float: right;" onclick="actualizarSaldoCajaInfo(1)">Refrescar</button>
                     </div>
                 </div>
             </div>
 
-            <!-- TABLA DE RENDICIONES PERSISTIDAS -->
+            <!-- TABLA RENDICIONES -->
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title">
-                        📋 Rendiciones Persistidas en Base de Datos
-                    </span>
+                    <span class="card-title">📋 Rendiciones Persistidas en Base de Datos</span>
                     <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="total-records">0 registros</span>
                 </div>
 
@@ -846,12 +824,11 @@
 
         </div>
 
-        <!-- ========================================================================================= -->
-        <!-- PESTAÑA 2: TRANSACCIONES FINANCIERAS (CRUD COMPLETO & FLUJO DE CAJA)                      -->
-        <!-- ========================================================================================= -->
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 2: TRANSACCIONES FINANCIERAS                                      -->
+        <!-- ========================================================================= -->
         <div id="tab-transacciones" class="tab-content">
             
-            <!-- TARJETAS DE MÉTRICAS DE FLUJO DE CAJA -->
             <div class="grid-three-cols" id="metricas-flujo-caja">
                 <div class="stat-card" style="border-left: 4px solid #16a34a;">
                     <div class="stat-title">Total Ingresos (Cobrados)</div>
@@ -871,12 +848,9 @@
             </div>
 
             <div class="grid-two-cols">
-                <!-- FORMULARIO CREAR / EDITAR TRANSACCIÓN -->
                 <div class="card">
                     <div class="card-header-flex">
-                        <span class="card-title" id="titulo-form-trx">
-                            Registrar Transacción Financiera
-                        </span>
+                        <span class="card-title" id="titulo-form-trx">Registrar Transacción Financiera</span>
                         <span class="card-badge-method method-post" id="badge-form-trx">POST /api/v1/finanzas/transacciones</span>
                     </div>
 
@@ -886,7 +860,7 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Código Transacción</label>
-                                <input type="text" id="trx_codigo" class="form-control" value="TRX-2026-006" required>
+                                <input type="text" id="trx_codigo" class="form-control" value="TRX-2026-010" required>
                             </div>
                             <div class="form-group">
                                 <label>Tipo de Movimiento</label>
@@ -960,12 +934,9 @@
                     </form>
                 </div>
 
-                <!-- FILTROS Y ACCIONES DE FLUJO DE CAJA -->
                 <div class="card">
                     <div class="card-header-flex">
-                        <span class="card-title">
-                            Filtros de Transacciones & Flujo de Caja
-                        </span>
+                        <span class="card-title">Filtros de Transacciones & Flujo de Caja</span>
                         <span class="card-badge-method method-get">GET /api/v1/finanzas/transacciones</span>
                     </div>
 
@@ -1004,26 +975,12 @@
                             💰 Actualizar Flujo de Caja
                         </button>
                     </div>
-
-                    <div style="margin-top: 18px; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12.5px;">
-                        <strong>Operaciones CRUD soportadas en este controlador:</strong>
-                        <ul style="margin-left: 18px; margin-top: 6px; color: #475569;">
-                            <li><code>GET /transacciones</code>: Listado con filtros combinados.</li>
-                            <li><code>POST /transacciones</code>: Creación con validaciones @Valid.</li>
-                            <li><code>PUT /transacciones/{id}</code>: Actualización de datos completa.</li>
-                            <li><code>PATCH /transacciones/{id}/estado</code>: Cambio de estado sin tocar el monto.</li>
-                            <li><code>DELETE /transacciones/{id}</code>: Eliminación con HTTP 204 No Content.</li>
-                        </ul>
-                    </div>
                 </div>
             </div>
 
-            <!-- TABLA DE TRANSACCIONES -->
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title">
-                        📊 Transacciones Financieras Registradas
-                    </span>
+                    <span class="card-title">📊 Transacciones Financieras Registradas</span>
                     <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="total-trx-records">0 transacciones</span>
                 </div>
 
@@ -1056,18 +1013,15 @@
 
         </div>
 
-        <!-- ========================================================================================= -->
-        <!-- PESTAÑA 3: CATEGORÍAS FINANCIERAS (CRUD & NAVEGACIÓN CONTROLADA)                          -->
-        <!-- ========================================================================================= -->
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 3: CATEGORÍAS FINANCIERAS                                         -->
+        <!-- ========================================================================= -->
         <div id="tab-categorias-fin" class="tab-content">
             
             <div class="grid-two-cols">
-                <!-- FORMULARIO CREAR / EDITAR CATEGORÍA FINANCIERA -->
                 <div class="card">
                     <div class="card-header-flex">
-                        <span class="card-title" id="titulo-form-catfin">
-                            Registrar Categoría Financiera
-                        </span>
+                        <span class="card-title" id="titulo-form-catfin">Registrar Categoría Financiera</span>
                         <span class="card-badge-method method-post" id="badge-form-catfin">POST /api/v1/finanzas/categorias</span>
                     </div>
 
@@ -1076,12 +1030,12 @@
 
                         <div class="form-group">
                             <label>Nombre de Categoría</label>
-                            <input type="text" id="catfin_nombre" class="form-control" placeholder="Ej. Venta de Merchandising y Regalos" required>
+                            <input type="text" id="catfin_nombre" class="form-control" placeholder="Ej. Venta de Merchandising" required>
                         </div>
 
                         <div class="form-group">
                             <label>Descripción</label>
-                            <textarea id="catfin_descripcion" class="form-control" rows="2" placeholder="Detalle de los conceptos clasificados en este rubro..."></textarea>
+                            <textarea id="catfin_descripcion" class="form-control" rows="2" placeholder="Detalle de los conceptos clasificados..."></textarea>
                         </div>
 
                         <div class="form-group">
@@ -1103,12 +1057,9 @@
                     </form>
                 </div>
 
-                <!-- FILTRO Y NAVEGACIÓN CONTROLADA -->
                 <div class="card">
                     <div class="card-header-flex">
-                        <span class="card-title">
-                            Consultar & Navegación Controlada
-                        </span>
+                        <span class="card-title">Consultar & Navegación Controlada</span>
                         <span class="card-badge-method method-get">GET /api/v1/finanzas/categorias</span>
                     </div>
 
@@ -1126,23 +1077,12 @@
                             🔍 Listar Categorías
                         </button>
                     </div>
-
-                    <div style="margin-top: 20px; padding: 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; font-size: 13px; color: #1e40af;">
-                        <strong>💡 Navegación Controlada (Criterio de Rúbrica):</strong>
-                        <p style="margin-top: 4px; color: #1e3a8a;">
-                            El botón <strong>"Ver Transacciones"</strong> en la tabla consume el endpoint especializado:
-                            <code>GET /api/v1/finanzas/categorias/{id}/transacciones</code>, permitiendo listar los recursos secundarios a partir del recurso principal sin saltar capas ni exponer IDs crudos.
-                        </p>
-                    </div>
                 </div>
             </div>
 
-            <!-- TABLA DE CATEGORÍAS FINANCIERAS -->
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title">
-                        🏷️ Categorías Financieras en el Sistema
-                    </span>
+                    <span class="card-title">🏷️ Categorías Financieras en el Sistema</span>
                     <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="total-catfin-records">0 categorías</span>
                 </div>
 
@@ -1170,18 +1110,15 @@
 
         </div>
 
-        <!-- ========================================================================================= -->
-        <!-- PESTAÑA 4: CATÁLOGO DE PRODUCTOS Y CATEGORÍAS (MÓDULO CATÁLOGO)                          -->
-        <!-- ========================================================================================= -->
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 4: CATÁLOGO                                                       -->
+        <!-- ========================================================================= -->
         <div id="tab-catalogo" class="tab-content">
             
             <div class="grid-two-cols">
-                <!-- PRODUCTOS CRUD FORM -->
                 <div class="card">
                     <div class="card-header-flex">
-                        <span class="card-title" id="titulo-form-prod">
-                            Registrar Producto
-                        </span>
+                        <span class="card-title" id="titulo-form-prod">Registrar Producto</span>
                         <span class="card-badge-method method-post" id="badge-form-prod">POST /api/v1/productos</span>
                     </div>
 
@@ -1190,7 +1127,7 @@
 
                         <div class="form-group">
                             <label>Nombre del Producto</label>
-                            <input type="text" id="prod_nombre" class="form-control" placeholder="Ej. Aceite de Coco Extra Virgen 500ml" required>
+                            <input type="text" id="prod_nombre" class="form-control" placeholder="Ej. Aceite de Coco Virgen 500ml" required>
                         </div>
 
                         <div class="form-row">
@@ -1224,12 +1161,9 @@
                     </form>
                 </div>
 
-                <!-- CATEGORÍAS DE CATÁLOGO FORM -->
                 <div class="card">
                     <div class="card-header-flex">
-                        <span class="card-title" id="titulo-form-catprod">
-                            Registrar Categoría de Catálogo
-                        </span>
+                        <span class="card-title" id="titulo-form-catprod">Registrar Categoría de Catálogo</span>
                         <span class="card-badge-method method-post" id="badge-form-catprod">POST /api/v1/categorias</span>
                     </div>
 
@@ -1256,9 +1190,9 @@
                         </div>
                     </form>
 
-                    <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid #e2e8f0; display: flex; gap: 8px;">
+                    <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0; display: flex; gap: 8px;">
                         <button type="button" class="btn btn-blue" onclick="listarProductos()">
-                            🔍 Consultar Todos los Productos
+                            🔍 Listar Productos
                         </button>
                         <button type="button" class="btn btn-cyan" onclick="listarCategoriasProducto()">
                             🏷️ Listar Categorías
@@ -1267,12 +1201,9 @@
                 </div>
             </div>
 
-            <!-- TABLA PRODUCTOS -->
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title">
-                        📦 Catálogo de Productos Registrados
-                    </span>
+                    <span class="card-title">📦 Catálogo de Productos Registrados</span>
                     <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="total-prod-records">0 productos</span>
                 </div>
 
@@ -1299,45 +1230,14 @@
                 </div>
             </div>
 
-            <!-- TABLA CATEGORÍAS CATÁLOGO -->
-            <div class="card">
-                <div class="card-header-flex">
-                    <span class="card-title">
-                        🏷️ Categorías del Catálogo de Productos
-                    </span>
-                    <span style="font-size: 13px; font-weight: 600; color: #64748b;" id="total-catprod-records">0 categorías</span>
-                </div>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Descripción</th>
-                                <th>Acciones CRUD & Navegación</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaCatProdCuerpo">
-                            <tr>
-                                <td colspan="4" style="text-align: center; color: #94a3b8; padding: 24px;">
-                                    Cargando categorías de catálogo...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
         </div>
 
-        <!-- ========================================================================================= -->
-        <!-- PESTAÑA 5: CAJAS CHICAS                                                                   -->
-        <!-- ========================================================================================= -->
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 5: CAJAS CHICAS                                                   -->
+        <!-- ========================================================================= -->
         <div id="tab-cajas" class="tab-content">
             
             <div class="grid-two-cols">
-                <!-- CREAR CAJA CHICA -->
                 <div class="card">
                     <div class="card-header-flex">
                         <span class="card-title">Crear Nueva Caja Chica</span>
@@ -1367,13 +1267,12 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 6px;">
                             🏦 Crear Caja Chica
                         </button>
                     </form>
                 </div>
 
-                <!-- CONSULTAR CAJA CHICA POR ID -->
                 <div class="card">
                     <div class="card-header-flex">
                         <span class="card-title">Consultar Caja Chica por ID</span>
@@ -1392,8 +1291,8 @@
                         </div>
                     </div>
 
-                    <div id="caja-detalle-box" style="margin-top: 14px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
-                        <h4 style="color: #1e3a8a; margin-bottom: 8px;" id="caja-det-codigo">CCH-001 (Caja Principal)</h4>
+                    <div id="caja-detalle-box" style="margin-top: 12px; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <h4 style="color: #1e3a8a; margin-bottom: 6px;" id="caja-det-codigo">CCH-001 (Caja Principal)</h4>
                         <div style="font-size: 13px; line-height: 1.6; color: #475569;">
                             <div><strong>Responsable:</strong> <span id="caja-det-resp">Brandon Ccalla</span></div>
                             <div><strong>Límite Asignado:</strong> <span id="caja-det-limite">S/ 1,000.00</span></div>
@@ -1405,129 +1304,74 @@
 
         </div>
 
-        <!-- ========================================================================================= -->
-        <!-- PESTAÑA 6: GUÍA TEÓRICA DE SUSTENTACIÓN (RESPUESTAS A PREGUNTAS CLAVE DEL DOCENTE)        -->
-        <!-- ========================================================================================= -->
+        <!-- ========================================================================= -->
+        <!-- PESTAÑA 6: GUÍA TEÓRICA                                                   -->
+        <!-- ========================================================================= -->
         <div id="tab-guia" class="tab-content">
             
             <div class="card">
                 <div class="card-header-flex">
-                    <span class="card-title">
-                        🎓 Balotario y Respuestas Técnicas para Sustentación con el Profesor
-                    </span>
+                    <span class="card-title">🎓 Balotario y Respuestas Técnicas para Sustentación</span>
                     <span class="badge badge-info">Rúbrica Oficial LP2</span>
                 </div>
 
-                <p style="font-size: 13.5px; color: #64748b; margin-bottom: 16px;">
-                    Estas son las 5 preguntas fundamentales de teoría y arquitectura que el docente suele evaluar durante la defensa técnica de los CRUDs y del monolito modular:
-                </p>
-
-                <!-- PREGUNTA 1 -->
                 <div class="accordion-item active">
                     <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <span>1. ¿Por qué usamos DTOs en lugar de exponer directamente las entidades JPA en los controladores?</span>
+                        <span>1. ¿Por qué usamos DTOs en lugar de exponer directamente las entidades JPA?</span>
                         <span>▼</span>
                     </div>
                     <div class="accordion-body">
-                        <strong>Respuesta para el docente:</strong>
-                        <ul style="margin-left: 18px; margin-top: 6px;">
-                            <li><strong>Seguridad y Encapsulamiento:</strong> Evitamos el ataque de <em>Mass Assignment</em> y no exponemos campos internos sensibles o IDs autoincrementales que no corresponden al contrato público.</li>
-                            <li><strong>Prevención de Recursión Infinita:</strong> En relaciones bidireccionales de base de datos (<code>@OneToMany</code> y <code>@ManyToOne</code>), Jackson serializa cíclicamente provocando un desbordamiento de memoria (<code>StackOverflowError</code>). Los DTOs planos resuelven esto al desacoplar el contrato REST del modelo relacional.</li>
-                            <li><strong>Evolución del Contrato y Proyecciones:</strong> Permite utilizar consultas ligeras como <code>SELECT new RendicionResumenDto(...)</code>, trayendo de la BD únicamente los campos indispensables sin saturar memoria ni disparar consultas lentas (evita el problema <em>N+1 queries</em>).</li>
-                        </ul>
+                        <strong>Respuesta:</strong> Seguridad (evita <em>Mass Assignment</em>), prevención de recursión infinita en JSON con relaciones bidireccionales y optimización con expresiones de constructor JPQL (`SELECT new ...`).
                     </div>
                 </div>
 
-                <!-- PREGUNTA 2 -->
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <span>2. ¿Cómo garantiza <code>@Transactional</code> la atomicidad en la operación Cabecera-Detalle?</span>
+                        <span>2. ¿Cómo garantiza <code>@Transactional</code> la atomicidad en Cabecera-Detalle?</span>
                         <span>▼</span>
                     </div>
                     <div class="accordion-body">
-                        <strong>Respuesta para el docente:</strong>
-                        <p>
-                            <code>@Transactional</code> enmarca todas las operaciones de la función dentro de una única transacción ACID a nivel de base de datos.
-                        </p>
-                        <p style="margin-top: 6px;">
-                            Al registrar una Rendición, ocurren tres operaciones:
-                            <strong>1.</strong> Descuento del saldo en la Caja Chica.
-                            <strong>2.</strong> Inserción de la cabecera en <code>RENDICIONES_CAJA_CHICA</code>.
-                            <strong>3.</strong> Inserción en lote de los detalles en <code>DETALLES_RENDICION_CAJA_CHICA</code>.
-                        </p>
-                        <p style="margin-top: 6px;">
-                            Si se viola la regla <code>RN-FIN-01</code> (monto total &gt; saldo disponible), se lanza una <code>SolvenciaInsuficienteException</code>. Spring intercepta la excepción no verificada (Runtime) mediante AOP y emite automáticamente una orden de <strong>ROLLBACK</strong> al motor de base de datos, garantizando que <em>o se guardan todos los registros o no se guarda ninguno</em>, manteniendo el saldo y las tablas 100% íntegros.
-                        </p>
+                        <strong>Respuesta:</strong> Enmarca la actualización del saldo y la inserción de cabecera y detalles en la misma transacción ACID. Si se viola `RN-FIN-01`, la excepción lanzada activa un <strong>ROLLBACK</strong> inmediato.
                     </div>
                 </div>
 
-                <!-- PREGUNTA 3 -->
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <span>3. ¿Por qué es fundamental que un reporte financiero retorne 0 o 0.00 en vez de null?</span>
+                        <span>3. ¿Por qué un reporte financiero debe retornar 0 o 0.00 y no null?</span>
                         <span>▼</span>
                     </div>
                     <div class="accordion-body">
-                        <strong>Respuesta para el docente:</strong>
-                        <p>
-                            En el dominio contable y financiero de Agro Peruvian Foods, no tener movimientos en una caja o periodo significa <strong>cero transacciones (S/ 0.00)</strong>, nunca un valor indeterminado o nulo.
-                        </p>
-                        <p style="margin-top: 6px;">
-                            Técnicamente, si SQL retornara <code>null</code> en funciones de agregación (como <code>SUM</code> o <code>AVG</code> sobre tablas vacías), el cliente frontend o servicios downstream lanzarían errores <code>NullPointerException</code> o mostrarían interfaces rotas con valores <em>"NaN"</em>.
-                        </p>
-                        <p style="margin-top: 6px;">
-                            Para blindar esto, en el repositorio JPA usamos <strong><code>COALESCE(SUM(r.montoTotal), 0)</code></strong>, garantizando que la API siempre responda con números reales estructurados.
-                        </p>
+                        <strong>Respuesta:</strong> En finanzas la ausencia de transacciones representa un balance neutro (`S/ 0.00`). El uso de `COALESCE` en JPQL asegura que nunca se devuelvan nulos ni se causen errores en el cliente.
                     </div>
                 </div>
 
-                <!-- PREGUNTA 4 -->
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <span>4. ¿Qué es CORS y en qué capa del sistema se ejecuta la restricción?</span>
+                        <span>4. ¿Qué es CORS y en qué capa se ejecuta?</span>
                         <span>▼</span>
                     </div>
                     <div class="accordion-body">
-                        <strong>Respuesta para el docente:</strong>
-                        <p>
-                            <strong>CORS</strong> (<em>Cross-Origin Resource Sharing</em>) es una política de seguridad ejecutada exclusivamente por los <strong>Navegadores Web</strong> (no por Postman, cURL ni por el servidor backend).
-                        </p>
-                        <p style="margin-top: 6px;">
-                            Bajo la regla <em>Same-Origin Policy</em>, un script ejecutándose en un origen (por ejemplo <code>http://localhost:5173</code> o un archivo local) tiene prohibido leer datos de otro origen (como <code>http://localhost:8080</code>).
-                        </p>
-                        <p style="margin-top: 6px;">
-                            En nuestro proyecto configuramos <code>WebConfig.java</code> implementando <code>WebMvcConfigurer</code> con cabeceras <code>allowedOriginPatterns("*")</code>, métodos <code>GET, POST, PUT, DELETE, OPTIONS, PATCH</code> y <code>allowCredentials(true)</code>, permitiendo que cualquier frontend autorizado consuma la API con pre-vuelos <code>OPTIONS</code> exitosos.
-                        </p>
+                        <strong>Respuesta:</strong> Es una política de seguridad ejecutada por los <strong>navegadores web</strong> (Same-Origin Policy) para flexibilizar llamadas entre distintos orígenes con pre-vuelos `OPTIONS`.
                     </div>
                 </div>
 
-                <!-- PREGUNTA 5 -->
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <span>5. ¿Cómo ayuda Spring Modulith a mantener los límites en este monolito modular?</span>
+                        <span>5. ¿Cómo ayuda Spring Modulith a mantener los límites del monolito modular?</span>
                         <span>▼</span>
                     </div>
                     <div class="accordion-body">
-                        <strong>Respuesta para el docente:</strong>
-                        <p>
-                            Spring Modulith divide el backend en módulos de dominio de primer nivel: <code>finanzas</code>, <code>catalogo</code>, <code>ventas</code> y <code>compras</code>.
-                        </p>
-                        <p style="margin-top: 6px;">
-                            Aplica encapsulamiento estricto: ninguna clase o repositorio interno de un módulo puede ser importado o inyectado directamente por otro módulo. La única vía permitida es a través de puertos públicos declarados con <strong><code>@NamedInterface("api")</code></strong> en el <code>package-info.java</code> del módulo exportador.
-                        </p>
-                        <p style="margin-top: 6px;">
-                            Además, la prueba automática <strong><code>ModularityTests.java</code></strong> ejecuta ArchUnit en tiempo de compilación para verificar que no existan acoplamientos prohibidos ni ciclos de dependencias, garantizando la arquitectura limpia de microservicios con la simplicidad de un único monolito desplegable.
-                        </p>
+                        <strong>Respuesta:</strong> Encapsula los módulos y solo permite comunicación intermodular mediante `@NamedInterface`, verificado automáticamente en pruebas continuas con ArchUnit (`ModularityTests`).
                     </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- ========================================================================================= -->
-        <!-- TERMINAL DE RESPUESTA API (UNIVERSAL / SIEMPRE VISIBLE)                                   -->
-        <!-- ========================================================================================= -->
-        <div class="terminal-card">
+        <!-- ========================================================================= -->
+        <!-- TERMINAL DE RESPUESTA API (UNIVERSAL)                                     -->
+        <!-- ========================================================================= -->
+        <div class="terminal-card" id="terminal-box">
             <div class="terminal-header">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span style="font-weight: 700; font-size: 15px; color: #0f172a;">🖥️ Consola de Respuesta API REST</span>
@@ -1552,9 +1396,51 @@
 
     </main>
 
+    <!-- MODAL PARA VER DETALLES DE RENDICIÓN -->
+    <div id="modal-detalle" class="modal-overlay" onclick="if(event.target === this) cerrarModalDetalle()">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+                <h3 style="color: #1e3a8a; font-size: 17px; display: flex; align-items: center; gap: 8px;">
+                    📋 Desglose Completo de Rendición: <span id="modal-rend-codigo" style="font-family: 'JetBrains Mono', monospace; color: #2563eb;"></span>
+                </h3>
+                <button onclick="cerrarModalDetalle()" style="background: none; border: none; font-size: 20px; font-weight: 700; cursor: pointer; color: #64748b;">×</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; background: #f8fafc; padding: 12px; border-radius: 6px;">
+                <div><strong>ID:</strong> <span id="modal-rend-id"></span></div>
+                <div><strong>Responsable:</strong> <span id="modal-rend-resp"></span></div>
+                <div><strong>Fecha:</strong> <span id="modal-rend-fecha"></span></div>
+                <div><strong>Estado:</strong> <span id="modal-rend-estado" class="badge badge-success"></span></div>
+                <div><strong>Caja Chica ID:</strong> <span id="modal-rend-caja"></span></div>
+                <div><strong>Total Cabecera:</strong> <span id="modal-rend-total" style="font-weight: 800; color: #1e3a8a;"></span></div>
+            </div>
+
+            <h4 style="font-size: 14px; color: #0f172a; margin-top: 4px;">Ítems de Compra / Gastos Rendidos (Detalles):</h4>
+            <div class="table-responsive" style="margin-top: 0;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Concepto del Insumo / Gasto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unit. (S/)</th>
+                            <th>Subtotal (S/)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-detalles-body">
+                        <!-- Se llena dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+                <button class="btn btn-primary" onclick="cerrarModalDetalle()">Entendido / Cerrar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT CLIENT LOGIC -->
     <script>
-        // CONFIGURACIÓN DE BASE URL
         let API_ROOT = 'http://localhost:8080';
         if (window.location.port === '8080' || window.location.hostname === 'localhost') {
             API_ROOT = window.location.origin;
@@ -1565,7 +1451,6 @@
             verificarConexion();
         }
 
-        // TABS NAVIGATION
         function cambiarPestaña(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1574,7 +1459,6 @@
             if (targetTab) targetTab.classList.add('active');
             if (btnElement) btnElement.classList.add('active');
 
-            // Carga diferida según la pestaña seleccionada
             if (tabId === 'tab-rendiciones') {
                 consultarRendiciones();
                 actualizarSaldoCajaInfo(1);
@@ -1597,13 +1481,13 @@
             item.classList.toggle('active');
         }
 
-        // MOSTRAR RESPUESTA EN TERMINAL
         function showResponse(method, endpoint, status, ok, data, elapsedMs) {
             const pill = document.getElementById('status-pill');
             const output = document.getElementById('outputJson');
             const endpointLabel = document.getElementById('terminal-endpoint');
             const timeLabel = document.getElementById('terminal-time');
             const reglaLabel = document.getElementById('terminal-regla');
+            const termBox = document.getElementById('terminal-box');
 
             endpointLabel.innerText = `${method} ${endpoint}`;
             pill.innerText = `${status} ${ok ? 'OK' : 'ERROR'}`;
@@ -1621,6 +1505,12 @@
             } else {
                 reglaLabel.innerText = `Regla de Negocio: Ninguna violada`;
                 reglaLabel.style.color = '#94a3b8';
+            }
+
+            // Glow animation
+            if (termBox) {
+                termBox.classList.add('active-glow');
+                setTimeout(() => termBox.classList.remove('active-glow'), 1500);
             }
         }
 
@@ -1643,7 +1533,7 @@
                     data = await res.json();
                 } else {
                     const text = await res.text();
-                    data = text ? { responseText: text } : { status: res.status, message: "Operación ejecutada con éxito (Sin contenido en body)" };
+                    data = text ? { responseText: text } : { status: res.status, message: "Operación ejecutada con éxito (204 No Content)" };
                 }
 
                 showResponse(method, endpoint, res.status, res.ok, data, elapsed);
@@ -1652,7 +1542,7 @@
                 const elapsed = Math.round(performance.now() - start);
                 const errData = {
                     error: err.toString(),
-                    ayuda: "Verifica que el backend de Spring Boot esté encendido en " + API_ROOT
+                    ayuda: "Verifica que el backend esté encendido en " + API_ROOT
                 };
                 showResponse(method, endpoint, 500, false, errData, elapsed);
                 return { status: 500, ok: false, data: errData };
@@ -1693,7 +1583,7 @@
         }
 
         // =========================================================================
-        // MÓDULO 1: RENDICIONES DE CAJA CHICA (CABECERA Y DETALLE)
+        // MÓDULO 1: RENDICIONES DE CAJA CHICA
         // =========================================================================
         function generarNuevoCodigoRendicion() {
             const rnd = Math.floor(100 + Math.random() * 900);
@@ -1769,18 +1659,16 @@
             }
         }
 
-        // CASO ERROR RN-FIN-01 (Demostración de Rollback y Solvencia Insuficiente)
         function probarCasoErrorRNFIN01() {
             document.getElementById('post_rend_codigo').value = `RND-FAIL-999`;
-            document.getElementById('post_rend_responsable').value = 'Test Rollback (Monto Excesivo)';
+            document.getElementById('post_rend_responsable').value = 'Test Rollback';
             document.getElementById('post_rend_cajaId').value = '1';
 
             const container = document.getElementById('contenedor-detalles');
             container.innerHTML = '';
-            // Crear gasto de S/ 1,500.00 cuando la caja solo tiene S/ 475.00
-            agregarFilaDetalle("Compra masiva de barriles de acero inoxidable (Excede saldo)", 3, 500.00);
+            agregarFilaDetalle("Compra masiva de barriles de acero inoxidable", 3, 500.00);
 
-            alert("⚡ Se ha cargado una Rendición por S/ 1,500.00 en la Caja 1 (Saldo ~ S/ 475.00).\nPresiona 'Registrar Rendición' para verificar en la consola el rechazo 400 Bad Request y el Rollback.");
+            alert("⚡ Se ha cargado una Rendición por S/ 1,500.00 en la Caja 1.\nPresiona 'Registrar Rendición' para verificar el error 400 Bad Request y el Rollback.");
         }
 
         function cargarCasoExito() {
@@ -1826,7 +1714,7 @@
             tbody.innerHTML = '';
 
             if (!items || items.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#94a3b8; padding:24px;">No se encontraron rendiciones registradas con los filtros seleccionados.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#94a3b8; padding:24px;">No se encontraron rendiciones registradas.</td></tr>`;
                 totalLabel.innerText = '0 registros';
                 return;
             }
@@ -1853,7 +1741,7 @@
                     <td style="font-weight:700; color:#1e40af; font-family:'JetBrains Mono',monospace;">${codigo}</td>
                     <td>${item.responsable || 'N/A'}</td>
                     <td>${item.fecha || 'N/A'}</td>
-                    <td style="max-width: 280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${conceptoText}">${conceptoText}</td>
+                    <td style="max-width: 260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${conceptoText}">${conceptoText}</td>
                     <td style="font-weight:800; color:#0f172a;">S/ ${total}</td>
                     <td><span class="badge ${badgeClass}">${estado}</span></td>
                     <td>
@@ -1864,9 +1752,52 @@
             });
         }
 
+        // ACCIÓN: VER DETALLE EN MODAL Y EN TERMINAL
         async function verDetalleRendicion(id) {
-            await fetchApi('GET', `/api/v1/finanzas/rendiciones/${id}`);
+            const res = await fetchApi('GET', `/api/v1/finanzas/rendiciones/${id}`);
+            if (res.ok && res.data) {
+                const r = res.data;
+                document.getElementById('modal-rend-codigo').innerText = r.codigo;
+                document.getElementById('modal-rend-id').innerText = '#' + r.id;
+                document.getElementById('modal-rend-resp').innerText = r.responsable || 'N/A';
+                document.getElementById('modal-rend-fecha').innerText = r.fecha || 'N/A';
+                document.getElementById('modal-rend-caja').innerText = r.cajaChicaId || (r.cajaChica ? r.cajaChica.id : '1');
+                document.getElementById('modal-rend-total').innerText = 'S/ ' + parseFloat(r.montoTotal || 0).toFixed(2);
+                
+                const estadoBadge = document.getElementById('modal-rend-estado');
+                estadoBadge.innerText = r.estado;
+                estadoBadge.className = 'badge ' + (r.estado === 'APROBADO' ? 'badge-success' : (r.estado === 'PENDIENTE' ? 'badge-warning' : 'badge-danger'));
+
+                const tbody = document.getElementById('modal-detalles-body');
+                tbody.innerHTML = '';
+                if (r.detalles && r.detalles.length > 0) {
+                    r.detalles.forEach((d, idx) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${idx + 1}</td>
+                            <td style="font-weight:600; color:#1e40af;">${d.concepto}</td>
+                            <td>${d.cantidad}</td>
+                            <td>S/ ${parseFloat(d.precioUnitario).toFixed(2)}</td>
+                            <td style="font-weight:700; color:#0f172a;">S/ ${parseFloat(d.subtotal || (d.cantidad * d.precioUnitario)).toFixed(2)}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:16px;">Esta rendición no contiene detalles registrados.</td></tr>`;
+                }
+
+                document.getElementById('modal-detalle').classList.add('open');
+            }
         }
+
+        function cerrarModalDetalle() {
+            const modal = document.getElementById('modal-detalle');
+            if (modal) modal.classList.remove('open');
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') cerrarModalDetalle();
+        });
 
         async function obtenerResumen() {
             const cajaId = document.getElementById('get_cajaId').value;
@@ -1896,13 +1827,13 @@
             if (res.ok) {
                 const caja = await res.json();
                 document.getElementById('label-saldo-caja').innerHTML = 
-                    `<strong style="color:#15803d;">S/ ${parseFloat(caja.saldoDisponible).toFixed(2)}</strong> (Límite: S/ ${parseFloat(caja.limiteMaximo).toFixed(2)}) — Responsable: ${caja.responsable}`;
+                    `<strong style="color:#15803d;">S/ ${parseFloat(caja.saldoDisponible).toFixed(2)}</strong> (Límite: S/ ${parseFloat(caja.limiteMaximo).toFixed(2)}) — ${caja.responsable}`;
                 document.getElementById('hint-caja-saldo').innerText = `Caja ${caja.codigo}: Saldo disponible S/ ${parseFloat(caja.saldoDisponible).toFixed(2)}`;
             }
         }
 
         // =========================================================================
-        // MÓDULO 2: TRANSACCIONES FINANCIERAS (CRUD COMPLETO & FLUJO DE CAJA)
+        // MÓDULO 2: TRANSACCIONES FINANCIERAS
         // =========================================================================
         async function listarTransacciones() {
             const tipo = document.getElementById('filtro_trx_tipo').value;
@@ -1953,8 +1884,8 @@
                     <td><span class="badge ${estadoBadge}">${item.estado}</span></td>
                     <td><small style="color:#64748b;">${item.tipoComprobante || ''} ${item.numeroComprobante || ''}</small></td>
                     <td>
-                        <button class="btn-table edit" onclick="cargarEdicionTrx(${item.id})">✏️ Editar</button>
-                        <button class="btn-table" style="background:#4338ca;" onclick="cambiarEstadoTrxPrompt(${item.id}, '${item.estado}')">🔄 Estado</button>
+                        <button class="btn-table edit" onclick="cargarEdicionTrx(${item.id})">✏️</button>
+                        <button class="btn-table" style="background:#4338ca;" onclick="cambiarEstadoTrxPrompt(${item.id}, '${item.estado}')">🔄</button>
                         <button class="btn-table danger" onclick="eliminarTrx(${item.id})">🗑️</button>
                     </td>
                 `;
@@ -1978,10 +1909,8 @@
 
             let res;
             if (id) {
-                // Actualizar (PUT)
                 res = await fetchApi('PUT', `/api/v1/finanzas/transacciones/${id}`, payload);
             } else {
-                // Crear (POST)
                 res = await fetchApi('POST', '/api/v1/finanzas/transacciones', payload);
             }
 
@@ -2046,7 +1975,7 @@
         }
 
         async function eliminarTrx(id) {
-            if (!confirm(`¿Estás seguro de eliminar permanentemente la transacción financiera #${id}? (DELETE HTTP 204)`)) return;
+            if (!confirm(`¿Eliminar la transacción #${id}? (DELETE HTTP 204)`)) return;
             const res = await fetchApi('DELETE', `/api/v1/finanzas/transacciones/${id}`);
             if (res.ok || res.status === 204) {
                 listarTransacciones();
@@ -2083,7 +2012,7 @@
         }
 
         // =========================================================================
-        // MÓDULO 3: CATEGORÍAS FINANCIERAS (CRUD & NAVEGACIÓN)
+        // MÓDULO 3: CATEGORÍAS FINANCIERAS
         // =========================================================================
         async function listarCategoriasFinancieras() {
             const tipo = document.getElementById('filtro_catfin_tipo').value;
@@ -2118,8 +2047,8 @@
                     <td style="color:#475569;">${item.descripcion || 'Sin descripción'}</td>
                     <td><span class="badge ${tipoBadge}">${item.tipoDefault}</span></td>
                     <td>
-                        <button class="btn-table edit" onclick="cargarEdicionCatFin(${item.id})">✏️ Editar</button>
-                        <button class="btn-table" style="background:#0284c7;" onclick="navegarTransaccionesPorCat(${item.id})">🔗 Ver Transacciones</button>
+                        <button class="btn-table edit" onclick="cargarEdicionCatFin(${item.id})">✏️</button>
+                        <button class="btn-table" style="background:#0284c7;" onclick="navegarTransaccionesPorCat(${item.id})">🔗 Transacciones</button>
                         <button class="btn-table danger" onclick="eliminarCatFin(${item.id})">🗑️</button>
                     </td>
                 `;
@@ -2176,7 +2105,6 @@
         }
 
         async function navegarTransaccionesPorCat(id) {
-            // Navegación controlada: GET /api/v1/finanzas/categorias/{id}/transacciones
             const res = await fetchApi('GET', `/api/v1/finanzas/categorias/${id}/transacciones`);
             if (res.ok && res.data) {
                 alert(`Navegación controlada exitosa: Se encontraron ${res.data.length} transacción(es) asociadas a la Categoría #${id}. Revisa la consola JSON.`);
@@ -2193,7 +2121,7 @@
         }
 
         // =========================================================================
-        // MÓDULO 4: CATÁLOGO DE PRODUCTOS Y CATEGORÍAS
+        // MÓDULO 4: CATÁLOGO
         // =========================================================================
         async function listarProductos() {
             const res = await fetchApi('GET', '/api/v1/productos');
@@ -2224,7 +2152,7 @@
                     <td style="font-weight:800;">S/ ${parseFloat(p.precio).toFixed(2)}</td>
                     <td><span class="badge ${p.stock > 10 ? 'badge-success' : 'badge-warning'}">${p.stock} unidades</span></td>
                     <td>
-                        <button class="btn-table edit" onclick="cargarEdicionProd(${p.id})">✏️ Editar</button>
+                        <button class="btn-table edit" onclick="cargarEdicionProd(${p.id})">✏️</button>
                         <button class="btn-table danger" onclick="eliminarProd(${p.id})">🗑️</button>
                     </td>
                 `;
@@ -2290,7 +2218,6 @@
             }
         }
 
-        // CATEGORÍAS DE PRODUCTOS
         async function listarCategoriasProducto() {
             const res = await fetchApi('GET', '/api/v1/categorias');
             if (res.ok && res.data) {
@@ -2300,16 +2227,12 @@
 
         function renderTablaCategoriasProducto(items) {
             const tbody = document.getElementById('tablaCatProdCuerpo');
-            const totalLabel = document.getElementById('total-catprod-records');
             tbody.innerHTML = '';
 
             if (!items || items.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding:24px;">No hay categorías de catálogo.</td></tr>`;
-                totalLabel.innerText = '0 categorías';
                 return;
             }
-
-            totalLabel.innerText = `${items.length} categoría(s)`;
 
             const selProdCat = document.getElementById('prod_categoriaId');
             selProdCat.innerHTML = '';
@@ -2323,8 +2246,8 @@
                     <td style="font-weight:700; color:#1e3a8a;">${c.nombre}</td>
                     <td style="color:#475569;">${c.descripcion || 'Sin descripción'}</td>
                     <td>
-                        <button class="btn-table edit" onclick="cargarEdicionCatProd(${c.id})">✏️ Editar</button>
-                        <button class="btn-table" style="background:#0284c7;" onclick="verProductosPorCat(${c.id})">🔗 Ver Productos</button>
+                        <button class="btn-table edit" onclick="cargarEdicionCatProd(${c.id})">✏️</button>
+                        <button class="btn-table" style="background:#0284c7;" onclick="verProductosPorCat(${c.id})">🔗 Productos</button>
                         <button class="btn-table danger" onclick="eliminarCatProd(${c.id})">🗑️</button>
                     </td>
                 `;
@@ -2373,7 +2296,6 @@
         }
 
         async function verProductosPorCat(id) {
-            // GET /api/v1/categorias/{id}/productos
             const res = await fetchApi('GET', `/api/v1/categorias/${id}/productos`);
             if (res.ok && res.data) {
                 alert(`Se encontraron ${res.data.length} producto(s) en la categoría #${id}. Revisa la consola JSON.`);
@@ -2420,7 +2342,6 @@
         // INICIALIZACIÓN
         // =========================================================================
         window.onload = () => {
-            // Establecer fecha de hoy en los inputs de fecha
             const todayStr = new Date().toISOString().split('T')[0];
             const postRendFecha = document.getElementById('post_rend_fecha');
             const trxFecha = document.getElementById('trx_fecha');
