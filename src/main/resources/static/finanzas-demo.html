@@ -3,462 +3,640 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consola API Demo - Finanzas</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Consola API - Finanzas | Producto U1 - LP2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --panel-bg: rgba(30, 41, 59, 0.7);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --primary: #3b82f6;
-            --primary-hover: #60a5fa;
-            --accent: #10b981;
-            --accent-hover: #34d399;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --success: #22c55e;
-            --error: #ef4444;
+            --header-bg: #071e3d;
+            --page-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --primary: #1e40af;
+            --primary-hover: #1d4ed8;
+            --danger: #991b1b;
+            --danger-hover: #b91c1c;
+            --info: #0284c7;
+            --info-hover: #0369a1;
+            --terminal-bg: #0b1329;
+            --terminal-text: #38bdf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Outfit', sans-serif;
-            background: radial-gradient(circle at top right, #1e1b4b, var(--bg-color));
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--page-bg);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
+        /* HEADER BANNER */
         header {
-            padding: 20px 40px;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            background-color: var(--header-bg);
+            color: white;
+            padding: 32px 48px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        h1 {
-            margin: 0;
-            font-size: 24px;
+        .header-tag {
+            font-size: 11px;
             font-weight: 700;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #93c5fd;
+            margin-bottom: 6px;
         }
 
-        .container {
-            display: flex;
-            flex: 1;
-            padding: 20px;
-            gap: 20px;
-            overflow: hidden;
+        .header-title {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
         }
 
-        .sidebar {
-            width: 400px;
+        .header-subtitle {
+            font-size: 13.5px;
+            color: #cbd5e1;
+            font-weight: 400;
+        }
+
+        /* MAIN WRAPPER */
+        main {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 28px 24px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            overflow-y: auto;
-            padding-right: 10px;
+            gap: 24px;
         }
 
-        .sidebar::-webkit-scrollbar {
-            width: 8px;
+        /* CARDS GRID */
+        .grid-two-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
         }
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
+
+        @media (max-width: 868px) {
+            .grid-two-cols {
+                grid-template-columns: 1fr;
+            }
         }
 
         .card {
-            background: var(--panel-bg);
-            backdrop-filter: blur(16px);
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .card h2 {
-            margin-top: 0;
-            font-size: 18px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            color: #e2e8f0;
-        }
-
+        /* FORM ELEMENTS */
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 14px;
         }
 
         .form-group label {
             display: block;
-            font-size: 14px;
-            margin-bottom: 5px;
-            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
         }
 
-        .form-group input, .form-group select {
+        .form-control {
             width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.2);
-            color: white;
+            padding: 10px 12px;
+            font-size: 14px;
             font-family: inherit;
-            box-sizing: border-box;
-            transition: border-color 0.3s ease;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background-color: #ffffff;
+            color: #0f172a;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--primary);
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        /* BUTTONS */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 18px;
         }
 
         .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 18px;
+            font-size: 13.5px;
             font-weight: 600;
-            font-size: 15px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            border: none;
+            transition: all 0.2s ease;
             font-family: inherit;
+            text-decoration: none;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), #2563eb);
+            background-color: var(--primary);
             color: white;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            width: 100%;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, var(--primary-hover), #3b82f6);
-            transform: scale(1.02);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+            background-color: var(--primary-hover);
         }
 
-        .btn-accent {
-            background: linear-gradient(135deg, var(--accent), #059669);
+        .btn-blue {
+            background-color: #1e3a8a;
             color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
 
-        .btn-accent:hover {
-            background: linear-gradient(135deg, var(--accent-hover), #10b981);
-            transform: scale(1.02);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        .btn-blue:hover {
+            background-color: #172554;
         }
 
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--panel-bg);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        .btn-cyan {
+            background-color: #0284c7;
+            color: white;
         }
 
-        .console-header {
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .btn-cyan:hover {
+            background-color: #0369a1;
         }
 
-        .console-title {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .btn-danger {
+            background-color: #881337;
+            color: white;
         }
 
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            display: none;
+        .btn-danger:hover {
+            background-color: #9f1239;
         }
 
-        .status-badge.success {
-            background: rgba(34, 197, 94, 0.2);
-            color: var(--success);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            display: inline-block;
-        }
-
-        .status-badge.error {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--error);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            display: inline-block;
-        }
-        
-        .url-display {
-            font-family: monospace;
-            font-size: 13px;
-            color: #a5b4fc;
-            background: rgba(0,0,0,0.5);
-            padding: 8px 12px;
-            border-radius: 6px;
-            margin: 10px 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-            word-break: break-all;
-        }
-
-        .console-output {
-            flex: 1;
+        /* TERMINAL / RESPONSE BOX */
+        .terminal-container {
+            background-color: var(--terminal-bg);
+            border-radius: 8px;
             padding: 20px;
-            overflow-y: auto;
-            margin: 0;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 14px;
-            color: #a7f3d0;
-            background: #020617;
+            border: 1px solid #1e293b;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .terminal-output {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #7dd3fc;
             white-space: pre-wrap;
-            line-height: 1.5;
+            word-break: break-all;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        .terminal-output::-webkit-scrollbar {
+            width: 6px;
+        }
+        .terminal-output::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+
+        /* TABLE */
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eff6ff;
+            color: #1e3a8a;
+            font-weight: 700;
+            padding: 12px 16px;
+            border-bottom: 2px solid #dbeafe;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+        }
+
+        tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge-success {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-table {
+            padding: 5px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            background-color: #1e3a8a;
+            color: white;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-table:hover {
+            background-color: #1d4ed8;
         }
         
-        .console-output::-webkit-scrollbar {
-            width: 10px;
+        .status-pill {
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            background: #e2e8f0;
+            color: #475569;
+            float: right;
         }
-        .console-output::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+        .status-pill.ok {
+            background: #dcfce7;
+            color: #15803d;
         }
-
-        .loader {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .btn-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        .status-pill.error {
+            background: #fee2e2;
+            color: #b91c1c;
         }
     </style>
 </head>
 <body>
 
+    <!-- HEADER DE LA CONSOLA -->
     <header>
-        <h1>BOMERP - Finanzas</h1>
-        <div style="font-size: 14px; color: var(--text-muted)">Testing CORS y Respuestas de API</div>
+        <div class="header-tag">PRODUCTO U1 - LP2</div>
+        <h1 class="header-title">Consola API - Finanzas</h1>
+        <div class="header-subtitle">Simulación y comprobación del backend REST modular — Agro Peruvian Foods (Brandon Ccalla)</div>
     </header>
 
-    <div class="container">
-        <div class="sidebar">
+    <main>
+        <!-- GRID DE 2 COLUMNAS (FORMULARIOS) -->
+        <div class="grid-two-cols">
             
+            <!-- TARJETA 1: POST /api/v1/finanzas/rendiciones -->
             <div class="card">
-                <h2>1. Filtros y Ordenamiento</h2>
-                <form id="filtrosForm" onsubmit="event.preventDefault(); fetchFiltros();">
-                    <div style="display: flex; gap: 10px;">
-                        <div class="form-group" style="flex:1">
-                            <label>Caja Chica ID</label>
-                            <input type="number" id="f_cajaId" placeholder="Ej: 1">
-                        </div>
-                        <div class="form-group" style="flex:1">
-                            <label>Estado</label>
-                            <select id="f_estado">
-                                <option value="">Todos</option>
-                                <option value="ABIERTA">ABIERTA</option>
-                                <option value="CERRADA">CERRADA</option>
-                                <option value="RECHAZADA">RECHAZADA</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <div class="form-group" style="flex:1">
-                            <label>Ordenar Por</label>
-                            <select id="f_sort">
-                                <option value="id">ID</option>
-                                <option value="montoTotal">Monto Total</option>
-                                <option value="fechaRegistro">Fecha Registro</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="flex:1">
-                            <label>Dirección</label>
-                            <select id="f_dir">
-                                <option value="ASC">ASC</option>
-                                <option value="DESC">DESC</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary" id="btn-filtros">
-                        <div class="btn-content">
-                            <span>GET /rendiciones/filtros</span>
-                            <div class="loader" id="loader-filtros"></div>
-                        </div>
-                    </button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h2>2. Proyección de Resumen</h2>
-                <form id="resumenForm" onsubmit="event.preventDefault(); fetchResumen();">
+                <div class="card-title">1. POST /api/v1/finanzas/rendiciones</div>
+                
+                <form id="formPost" onsubmit="event.preventDefault(); registrarRendicion();">
                     <div class="form-group">
-                        <label>Caja Chica ID (Opcional)</label>
-                        <input type="number" id="r_cajaId" placeholder="Ej: 1">
+                        <label>Responsable</label>
+                        <input type="text" id="post_responsable" class="form-control" value="Carlos Quispe" required>
                     </div>
-                    <button type="submit" class="btn btn-accent" id="btn-resumen">
-                        <div class="btn-content">
-                            <span>GET /rendiciones/resumen</span>
-                            <div class="loader" id="loader-resumen"></div>
-                        </div>
-                    </button>
-                </form>
-            </div>
 
-            <div class="card">
-                <h2>3. Reporte Agregado</h2>
-                <form id="agregadoForm" onsubmit="event.preventDefault(); fetchAgregado();">
                     <div class="form-group">
-                        <label>Caja Chica ID (Opcional)</label>
-                        <input type="number" id="a_cajaId" placeholder="Ej: 999 para caso sin datos">
+                        <label>Concepto / Insumo</label>
+                        <select id="post_concepto" class="form-control">
+                            <option value="Envases de vidrio 250ml">Envases de vidrio 250ml</option>
+                            <option value="Etiquetas para frasco aceite de coco">Etiquetas para frasco aceite de coco</option>
+                            <option value="Tapas con precinto de seguridad">Tapas con precinto de seguridad</option>
+                            <option value="Cajas de embalaje y cinta">Cajas de embalaje y cinta</option>
+                        </select>
                     </div>
-                    <button type="submit" class="btn btn-primary" id="btn-agregado" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">
-                        <div class="btn-content">
-                            <span>GET /rendiciones/reporte-agregado</span>
-                            <div class="loader" id="loader-agregado"></div>
+
+                    <div style="display: flex; gap: 12px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Cantidad</label>
+                            <input type="number" id="post_cantidad" class="form-control" value="2" min="1" required>
                         </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Precio Unitario (S/)</label>
+                            <input type="number" step="0.50" id="post_precio" class="form-control" value="18.50" min="0.50" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Caja Chica Asignada (ID)</label>
+                        <input type="number" id="post_cajaId" class="form-control" value="1" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="btn-submit-post">
+                        Registrar rendición
                     </button>
                 </form>
             </div>
-            
-            <div style="text-align: center; margin-top: 10px;">
-                <a href="/swagger-ui/index.html" style="color: var(--primary); text-decoration: none; font-size: 14px;">← Volver a Swagger</a>
-            </div>
 
-        </div>
-
-        <div class="main-content">
-            <div class="console-header">
-                <div class="console-title">
-                    Terminal Output
+            <!-- TARJETA 2: GET /api/v1/finanzas/rendiciones -->
+            <div class="card">
+                <div class="card-title">2. GET /api/v1/finanzas/rendiciones</div>
+                
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select id="get_estado" class="form-control">
+                        <option value="">TODAS</option>
+                        <option value="ABIERTA">ABIERTA</option>
+                        <option value="CERRADA">CERRADA</option>
+                        <option value="RECHAZADA">RECHAZADA</option>
+                    </select>
                 </div>
-                <div id="status-badge" class="status-badge">200 OK</div>
+
+                <div class="form-group">
+                    <label>Ordenar Por</label>
+                    <select id="get_orden" class="form-control">
+                        <option value="id,desc">ID (Descendente)</option>
+                        <option value="montoTotal,desc">Monto Total (Mayor a menor)</option>
+                        <option value="montoTotal,asc">Monto Total (Menor a mayor)</option>
+                        <option value="responsable,asc">Responsable (A - Z)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Caja Chica ID (Filtro)</label>
+                    <input type="number" id="get_cajaId" class="form-control" placeholder="1 (Opcional)">
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-blue" onclick="consultarRendiciones()">Consultar</button>
+                    <button type="button" class="btn btn-cyan" onclick="obtenerResumen()">Resumen DTO</button>
+                    <button type="button" class="btn btn-cyan" onclick="obtenerReporteAgregado()">Reporte Agregado</button>
+                    <button type="button" class="btn btn-danger" onclick="limpiarConsola()">Limpiar</button>
+                </div>
             </div>
-            <div class="url-display" id="url-display">
-                Esperando solicitud...
-            </div>
-            <pre class="console-output" id="output">Seleccione una opción a la izquierda para ver los resultados aquí.
-Ideal para capturar la evidencia técnica de la rúbrica.</pre>
+
         </div>
-    </div>
+
+        <!-- TARJETA DE RESPUESTA API -->
+        <div class="card">
+            <div class="card-title">
+                Respuesta API
+                <span id="status-pill" class="status-pill">Esperando solicitud</span>
+            </div>
+            <div class="terminal-container">
+                <pre class="terminal-output" id="outputJson">// Presiona "Consultar" o "Registrar rendición" para interactuar con la API REST.</pre>
+            </div>
+        </div>
+
+        <!-- TARJETA DE RENDICIONES PERSISTIDAS (TABLA) -->
+        <div class="card">
+            <div class="card-title" style="justify-content: space-between;">
+                <span>Rendiciones persistidas</span>
+                <span style="font-size: 13px; font-weight: 500; color: #64748b;" id="total-records">0 registros</span>
+            </div>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID / Código</th>
+                            <th>Responsable</th>
+                            <th>Detalles / Concepto</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaCuerpo">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #94a3b8; padding: 24px;">
+                                No hay datos cargados aún. Haz clic en <strong>Consultar</strong>.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
 
     <script>
         const API_BASE = 'http://localhost:8080/api/v1/finanzas';
 
-        async function executeRequest(url, btnId, loaderId) {
-            const btn = document.getElementById(btnId);
-            const loader = document.getElementById(loaderId);
-            const output = document.getElementById('output');
-            const statusBadge = document.getElementById('status-badge');
-            const urlDisplay = document.getElementById('url-display');
+        function showResponse(status, ok, data) {
+            const pill = document.getElementById('status-pill');
+            const output = document.getElementById('outputJson');
 
-            // UI Loading state
-            btn.disabled = true;
-            loader.style.display = 'block';
-            output.innerText = 'Cargando...';
-            statusBadge.className = 'status-badge'; // reset
-            urlDisplay.innerText = url;
+            pill.innerText = `${status} ${ok ? 'OK' : 'ERROR'}`;
+            pill.className = `status-pill ${ok ? 'ok' : 'error'}`;
+
+            output.innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function registrarRendicion() {
+            const responsable = document.getElementById('post_responsable').value;
+            const concepto = document.getElementById('post_concepto').value;
+            const cantidad = parseInt(document.getElementById('post_cantidad').value) || 1;
+            const precio = parseFloat(document.getElementById('post_precio').value) || 1.0;
+            const cajaId = parseInt(document.getElementById('post_cajaId').value) || 1;
+
+            const randomCode = 'REND-' + Date.now().toString().slice(-6);
+
+            const payload = {
+                codigo: randomCode,
+                cajaChicaId: cajaId,
+                responsable: responsable,
+                fecha: new Date().toISOString().split('T')[0],
+                detalles: [
+                    {
+                        productoId: 1,
+                        concepto: concepto,
+                        cantidad: cantidad,
+                        precioUnitario: precio
+                    }
+                ]
+            };
 
             try {
-                const startTime = performance.now();
-                const response = await fetch(url);
-                const endTime = performance.now();
-                const duration = Math.round(endTime - startTime);
-                
-                const contentType = response.headers.get('content-type');
-                let data = null;
-                if (contentType && contentType.includes('application/json')) {
-                    data = await response.json();
-                } else {
-                    data = await response.text();
+                const response = await fetch(`${API_BASE}/rendiciones`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                showResponse(response.status, response.ok, {
+                    status: response.status,
+                    ok: response.ok,
+                    data: data
+                });
+
+                if (response.ok) {
+                    consultarRendiciones();
                 }
-
-                // Update Status
-                statusBadge.innerText = `${response.status} ${response.statusText} (${duration}ms)`;
-                statusBadge.className = response.ok ? 'status-badge success' : 'status-badge error';
-
-                // Display Data
-                if (typeof data === 'object') {
-                    output.innerText = JSON.stringify(data, null, 2);
-                } else {
-                    output.innerText = data || 'Empty Response';
-                }
-
-            } catch (error) {
-                statusBadge.innerText = 'ERROR DE RED (CORS / Servidor Caído)';
-                statusBadge.className = 'status-badge error';
-                output.innerText = error.toString() + "\n\nTip: Verifica que tu backend esté corriendo y que @CrossOrigin esté configurado en tu controlador.";
-            } finally {
-                btn.disabled = false;
-                loader.style.display = 'none';
+            } catch (err) {
+                showResponse(500, false, { error: err.toString(), message: "Verifica que el backend esté encendido." });
             }
         }
 
-        function fetchFiltros() {
-            let url = new URL(API_BASE + '/rendiciones');
-            
-            const cajaId = document.getElementById('f_cajaId').value;
-            const estado = document.getElementById('f_estado').value;
-            const sort = document.getElementById('f_sort').value;
-            const dir = document.getElementById('f_dir').value;
+        async function consultarRendiciones() {
+            const estado = document.getElementById('get_estado').value;
+            const ordenRaw = document.getElementById('get_orden').value.split(',');
+            const cajaId = document.getElementById('get_cajaId').value;
 
-            if (cajaId) url.searchParams.append('cajaChicaId', cajaId);
+            let url = new URL(`${API_BASE}/rendiciones`);
             if (estado) url.searchParams.append('estado', estado);
-            if (sort) url.searchParams.append('ordenarPor', sort);
-            if (dir) url.searchParams.append('direccion', dir);
+            if (cajaId) url.searchParams.append('cajaChicaId', cajaId);
+            if (ordenRaw[0]) url.searchParams.append('ordenarPor', ordenRaw[0]);
+            if (ordenRaw[1]) url.searchParams.append('direccion', ordenRaw[1].toUpperCase());
 
-            executeRequest(url.toString(), 'btn-filtros', 'loader-filtros');
+            try {
+                const response = await fetch(url.toString());
+                const data = await response.json();
+
+                showResponse(response.status, response.ok, {
+                    status: response.status,
+                    ok: response.ok,
+                    totalElements: data.totalElements !== undefined ? data.totalElements : (Array.isArray(data) ? data.length : 1),
+                    content: data.content || data
+                });
+
+                const items = data.content || (Array.isArray(data) ? data : [data]);
+                renderTable(items);
+            } catch (err) {
+                showResponse(500, false, { error: err.toString() });
+            }
         }
 
-        function fetchResumen() {
-            let url = new URL(API_BASE + '/rendiciones/resumen');
-            const cajaId = document.getElementById('r_cajaId').value;
+        async function obtenerResumen() {
+            const cajaId = document.getElementById('get_cajaId').value;
+            let url = new URL(`${API_BASE}/rendiciones/resumen`);
             if (cajaId) url.searchParams.append('cajaChicaId', cajaId);
 
-            executeRequest(url.toString(), 'btn-resumen', 'loader-resumen');
+            try {
+                const response = await fetch(url.toString());
+                const data = await response.json();
+                showResponse(response.status, response.ok, {
+                    endpoint: "GET /rendiciones/resumen (Proyección DTO)",
+                    status: response.status,
+                    data: data
+                });
+            } catch (err) {
+                showResponse(500, false, { error: err.toString() });
+            }
         }
 
-        function fetchAgregado() {
-            let url = new URL(API_BASE + '/rendiciones/reporte-agregado');
-            const cajaId = document.getElementById('a_cajaId').value;
-            if (cajaId) url.searchParams.append('cajaChicaId', cajaId);
+        async function obtenerReporteAgregado() {
+            const cajaId = document.getElementById('get_cajaId').value || '1';
+            let url = new URL(`${API_BASE}/rendiciones/reporte-agregado`);
+            url.searchParams.append('cajaChicaId', cajaId);
 
-            executeRequest(url.toString(), 'btn-agregado', 'loader-agregado');
+            try {
+                const response = await fetch(url.toString());
+                const data = await response.json();
+                showResponse(response.status, response.ok, {
+                    endpoint: "GET /rendiciones/reporte-agregado (Agregaciones Math)",
+                    cajaChicaId: cajaId,
+                    status: response.status,
+                    data: data
+                });
+            } catch (err) {
+                showResponse(500, false, { error: err.toString() });
+            }
         }
+
+        function renderTable(items) {
+            const tbody = document.getElementById('tablaCuerpo');
+            const totalLabel = document.getElementById('total-records');
+            tbody.innerHTML = '';
+
+            if (!items || items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding:24px;">No se encontraron registros.</td></tr>`;
+                totalLabel.innerText = '0 registros';
+                return;
+            }
+
+            totalLabel.innerText = `${items.length} registro(s)`;
+
+            items.forEach(item => {
+                const tr = document.createElement('tr');
+                const codigo = item.codigo || `ID-${item.id}`;
+                const total = item.montoTotal !== undefined ? parseFloat(item.montoTotal).toFixed(2) : '0.00';
+                const detalles = item.detalles && item.detalles.length > 0 
+                    ? `${item.detalles[0].concepto} × ${item.detalles[0].cantidad}`
+                    : (item.cantidadDetalles !== undefined ? `${item.cantidadDetalles} ítem(s)` : 'Sin detalles');
+
+                const estado = item.estado || 'ABIERTA';
+                const badgeClass = estado === 'ABIERTA' ? 'badge-success' : (estado === 'CERRADA' ? 'badge-warning' : 'badge-danger');
+
+                tr.innerHTML = `
+                    <td style="font-weight:600; color:#1e40af;">${codigo}</td>
+                    <td>${item.responsable || 'N/A'}</td>
+                    <td>${detalles}</td>
+                    <td style="font-weight:600;">S/ ${total}</td>
+                    <td><span class="badge ${badgeClass}">${estado}</span></td>
+                    <td><button class="btn-table" onclick="verDetalle(${item.id})">Consultar</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function verDetalle(id) {
+            try {
+                const response = await fetch(`${API_BASE}/rendiciones/${id}`);
+                const data = await response.json();
+                showResponse(response.status, response.ok, {
+                    endpoint: `GET /rendiciones/${id}`,
+                    data: data
+                });
+            } catch (err) {
+                showResponse(500, false, { error: err.toString() });
+            }
+        }
+
+        function limpiarConsola() {
+            document.getElementById('outputJson').innerText = '// Consola limpia.';
+            document.getElementById('status-pill').innerText = 'Esperando solicitud';
+            document.getElementById('status-pill').className = 'status-pill';
+        }
+
+        // Cargar automáticamente las rendiciones al abrir
+        window.onload = () => {
+            consultarRendiciones();
+        };
     </script>
 </body>
 </html>
