@@ -1,1 +1,21 @@
-<p>layout works!</p>
+<header>
+  <h1>
+    <a routerLink="/" class="home-link">
+      <img src="favicon.ico" alt="" height="30" />
+    </a>
+    BomERP - AgroPeruvian Foods
+  </h1>
+</header>
+
+<div class="body">
+  <aside class="sidebar">
+    <nav>
+      <a routerLink="/catalogo/categorias" routerLinkActive="active">Categorías</a>
+      <a routerLink="/catalogo/productos" routerLinkActive="active">Productos</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

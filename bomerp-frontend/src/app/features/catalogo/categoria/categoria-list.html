@@ -1,1 +1,44 @@
-<p>categoria-list works!</p>
+<h2>Gestión de Categorías</h2>
+
+@if (loading()) {
+  <p>Cargando categorías...</p>
+}
+
+@if (error()) {
+  <p class="error" style="color: red;">{{ error() }}</p>
+}
+
+<p>
+  <a routerLink="/catalogo/categorias/nueva">+ Nueva categoría</a>
+</p>
+
+<table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+  <thead>
+    <tr style="background-color: #f2f2f2;">
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (categoria of categorias(); track categoria.id) {
+      <tr>
+        <td>{{ categoria.id }}</td>
+        <td><strong>{{ categoria.nombre }}</strong></td>
+        <td>{{ categoria.descripcion }}</td>
+        <td>
+          <a [routerLink]="['/catalogo/categorias', categoria.id, 'editar']">Editar</a>
+          &nbsp;|&nbsp;
+          <button (click)="eliminar(categoria.id!)">Eliminar</button>
+        </td>
+      </tr>
+    } @empty {
+      @if (!loading() && !error()) {
+        <tr>
+          <td colspan="4">No hay categorías registradas.</td>
+        </tr>
+      }
+    }
+  </tbody>
+</table>
