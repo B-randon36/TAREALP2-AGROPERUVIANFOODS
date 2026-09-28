@@ -9,6 +9,51 @@ export const routes: Routes = [
         path: '',
         loadComponent: () => import('./core/inicio/inicio').then((m) => m.Inicio),
       },
+      // --- Módulo Finanzas y Reportes (Módulo Asignado) ---
+      {
+        path: 'finanzas/transacciones',
+        loadComponent: () =>
+          import('./features/finanzas/transaccion-financiera/transaccion-financiera-list').then(
+            (m) => m.TransaccionFinancieraList
+          ),
+      },
+      {
+        path: 'finanzas/transacciones/nueva',
+        loadComponent: () =>
+          import('./features/finanzas/transaccion-financiera/transaccion-financiera-form').then(
+            (m) => m.TransaccionFinancieraForm
+          ),
+      },
+      {
+        path: 'finanzas/transacciones/:id/editar',
+        loadComponent: () =>
+          import('./features/finanzas/transaccion-financiera/transaccion-financiera-form').then(
+            (m) => m.TransaccionFinancieraForm
+          ),
+      },
+      {
+        path: 'finanzas/categorias',
+        loadComponent: () =>
+          import('./features/finanzas/categoria-financiera/categoria-financiera-list').then(
+            (m) => m.CategoriaFinancieraList
+          ),
+      },
+      {
+        path: 'finanzas/categorias/nueva',
+        loadComponent: () =>
+          import('./features/finanzas/categoria-financiera/categoria-financiera-form').then(
+            (m) => m.CategoriaFinancieraForm
+          ),
+      },
+      {
+        path: 'finanzas/categorias/:id/editar',
+        loadComponent: () =>
+          import('./features/finanzas/categoria-financiera/categoria-financiera-form').then(
+            (m) => m.CategoriaFinancieraForm
+          ),
+      },
+
+      // --- Módulo Catálogo ---
       {
         path: 'catalogo/categorias',
         loadComponent: () =>
