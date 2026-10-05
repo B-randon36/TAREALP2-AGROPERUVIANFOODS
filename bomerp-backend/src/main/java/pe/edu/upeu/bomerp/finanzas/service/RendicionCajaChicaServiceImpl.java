@@ -54,9 +54,50 @@ public class RendicionCajaChicaServiceImpl implements RendicionCajaChicaService 
 
     @Override
     @Transactional(readOnly = true)
+    public List<CajaChicaResponse> listarCajasChicas() {
+        return cajaChicaRepository.findAll().stream()
+                .map(this::mapToCajaChicaResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public CajaChicaResponse obtenerCajaChica(Long id) {
         CajaChica caja = buscarCajaChicaOFallar(id);
         return mapToCajaChicaResponse(caja);
+    }
+
+    /**
+     * ========================================================================
+     * TRANSICIÓN DE ESTADO CON REGLA DE NEGOCIO REAL (ANULACIÓN CON EFECTO COLATERAL)
+     * ========================================================================
+     * 1. Validación de idempotencia: Si la rendición ya se encuentra en estado ANULADO,
+     *    se rechaza con IllegalStateException (manejada -> HTTP 409 Conflict).
+     * 2. Transición de Estado: Pasa de su estado actual a EstadoRendicion.ANULADO.
+     * 3. Efecto Colateral Financiero Real: Restituye el saldo debitado a la Caja Chica
+     *    (caja.saldoDisponible += rendicion.montoTotal).
+     * ========================================================================
+     */
+    @Override
+    @Transactional
+    public RendicionCajaChicaResponse anularRendicion(Long id) {
+        RendicionCajaChica rendicion = rendicionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rendición no encontrada con id: " + id));
+
+        if (rendicion.getEstado() == EstadoRendicion.ANULADO) {
+            throw new IllegalStateException("RN-FIN-02: La rendición con código " + rendicion.getCodigo() +
+                    " ya se encuentra en estado ANULADO y no se puede anular nuevamente.");
+        }
+
+        rendicion.setEstado(EstadoRendicion.ANULADO);
+
+        // [EFECTO COLATERAL REAL]: Restitución del monto rendido al saldo disponible de la Caja Chica
+        CajaChica caja = rendicion.getCajaChica();
+        caja.setSaldoDisponible(caja.getSaldoDisponible().add(rendicion.getMontoTotal()));
+        cajaChicaRepository.save(caja);
+
+        RendicionCajaChica guardada = rendicionRepository.save(rendicion);
+        return mapToRendicionResponse(guardada);
     }
 
     /**

@@ -33,6 +33,9 @@ public interface RendicionCajaChicaService {
             Pageable pageable
     );
 
+    List<CajaChicaResponse> listarCajasChicas();
+    RendicionCajaChicaResponse anularRendicion(Long id);
+
     List<RendicionResumenDto> obtenerResumen(Long cajaChicaId);
 
     ReporteRendicionesAgregadoDto obtenerReporteAgregado(Long cajaChicaId);

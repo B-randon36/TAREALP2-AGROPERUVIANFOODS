@@ -52,6 +52,21 @@ export const routes: Routes = [
             (m) => m.CategoriaFinancieraForm
           ),
       },
+      // --- Operación Transaccional Cabecera-Detalle: Rendiciones de Caja Chica ---
+      {
+        path: 'finanzas/rendiciones',
+        loadComponent: () =>
+          import('./features/finanzas/rendicion-caja-chica/rendicion-caja-chica-list').then(
+            (m) => m.RendicionCajaChicaList
+          ),
+      },
+      {
+        path: 'finanzas/rendiciones/nueva',
+        loadComponent: () =>
+          import('./features/finanzas/rendicion-caja-chica/rendicion-caja-chica-form').then(
+            (m) => m.RendicionCajaChicaForm
+          ),
+      },
 
       // --- Módulo Catálogo ---
       {

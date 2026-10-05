@@ -38,6 +38,11 @@ public class RendicionCajaChicaController {
 
     private final RendicionCajaChicaService rendicionService;
 
+    @GetMapping("/cajas-chicas")
+    public ResponseEntity<List<CajaChicaResponse>> listarCajasChicas() {
+        return ResponseEntity.ok(rendicionService.listarCajasChicas());
+    }
+
     @PostMapping("/cajas-chicas")
     public ResponseEntity<CajaChicaResponse> crearCajaChica(
             @RequestParam String codigo,
@@ -62,6 +67,16 @@ public class RendicionCajaChicaController {
     @GetMapping("/rendiciones/{id}")
     public ResponseEntity<RendicionCajaChicaResponse> obtenerRendicion(@PathVariable Long id) {
         return ResponseEntity.ok(rendicionService.obtenerRendicion(id));
+    }
+
+    /**
+     * TRANSICIÓN DE ESTADO CON REGLA DE NEGOCIO REAL
+     * Anula una rendición activa y reintegra el importe debitado a la Caja Chica.
+     * Si ya se encuentra en estado ANULADO, el backend rechaza la transacción con HTTP 409 Conflict.
+     */
+    @PostMapping("/rendiciones/{id}/anular")
+    public ResponseEntity<RendicionCajaChicaResponse> anularRendicion(@PathVariable Long id) {
+        return ResponseEntity.ok(rendicionService.anularRendicion(id));
     }
 
     @GetMapping("/rendiciones/caja/{cajaChicaId}")
