@@ -32,7 +32,7 @@ import java.util.List;
 
 @CrossOrigin(originPatterns = "*")
 @RestController
-@RequestMapping("/api/v1/finanzas")
+@RequestMapping({"/api/v1/finanzas", "/api/v1"})
 @RequiredArgsConstructor
 public class RendicionCajaChicaController {
 
