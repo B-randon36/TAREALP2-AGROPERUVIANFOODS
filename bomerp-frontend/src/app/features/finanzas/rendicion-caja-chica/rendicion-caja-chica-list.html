@@ -8,9 +8,31 @@
       <p class="subtitle">Consulta de operaciones con detalle profundo, métricas agregadas y transición de estado</p>
     </div>
     <div class="header-actions">
+      <button class="btn btn-secondary" (click)="abrirModalCajaChica()">
+        💼 + Nueva Caja Chica (Fondo Fijo)
+      </button>
       <a routerLink="/finanzas/rendiciones/nueva" class="btn btn-primary">
         ➕ Nueva Rendición (Cabecera-Detalle)
       </a>
+    </div>
+  </div>
+
+  <!-- TARJETAS DE FONDOS DISPONIBLES EN CAJAS CHICAS -->
+  <div class="cajas-chicas-banner">
+    <div class="banner-title">
+      <span>FONDOS FIJOS OPERATIVOS ASIGNADOS:</span>
+    </div>
+    <div class="cajas-chicas-chips">
+      @for (c of cajasChicas(); track c.id) {
+        <div class="caja-chip" [class.selected]="filtroCajaChicaId() === c.id" (click)="filtroCajaChicaId.set(filtroCajaChicaId() === c.id ? null : c.id); aplicarFiltros();">
+          <div class="chip-code">{{ c.codigo }}</div>
+          <div class="chip-resp">{{ c.responsable }}</div>
+          <div class="chip-balance">
+            <strong>S/ {{ c.saldoDisponible | number:'1.2-2' }}</strong>
+            <span class="chip-limit">/ S/ {{ c.limiteMaximo | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      }
     </div>
   </div>
 
@@ -307,6 +329,53 @@
             } @else {
               🚫 Confirmar Anulación y Revertir Saldo
             }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- MODAL: ASIGNACIÓN DE NUEVA CAJA CHICA (FONDO FIJO) -->
+  @if (mostrarModalCajaChica()) {
+    <div class="modal-backdrop" (click)="cerrarModalCajaChica()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()" style="max-width: 520px;">
+        <div class="modal-header">
+          <h3>Asignar Nuevo Fondo Fijo (Caja Chica)</h3>
+          <button type="button" class="btn-close" (click)="cerrarModalCajaChica()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label style="font-weight: 600; font-size: 0.85rem;">Código de Caja Chica *</label>
+            <input type="text" [value]="nuevaCajaCodigo()" (input)="nuevaCajaCodigo.set($any($event.target).value)" class="form-control" placeholder="Ej: CCH-2026-003" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label style="font-weight: 600; font-size: 0.85rem;">Responsable Asignado *</label>
+            <input type="text" [value]="nuevaCajaResponsable()" (input)="nuevaCajaResponsable.set($any($event.target).value)" class="form-control" placeholder="Ej: Juan Pérez (Logística Tarapoto)" />
+          </div>
+
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.85rem;">
+            <div class="form-group">
+              <label style="font-weight: 600; font-size: 0.85rem;">Límite Máximo (S/) *</label>
+              <input type="number" [value]="nuevaCajaLimite()" (input)="nuevaCajaLimite.set(+$any($event.target).value)" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label style="font-weight: 600; font-size: 0.85rem;">Saldo Inicial (S/) *</label>
+              <input type="number" [value]="nuevaCajaSaldo()" (input)="nuevaCajaSaldo.set(+$any($event.target).value)" class="form-control" />
+            </div>
+          </div>
+          <p class="help-text" style="font-size: 0.75rem; color: #64748b;">
+            El saldo inicial asignará la liquidez disponible para rendiciones menores de compras e insumos.
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalCajaChica()" [disabled]="loadingCrearCaja()">
+            Cancelar
+          </button>
+          <button type="button" class="btn btn-primary" (click)="guardarCajaChica()" [disabled]="loadingCrearCaja()">
+            {{ loadingCrearCaja() ? 'Guardando...' : 'Crear Fondo de Caja Chica' }}
           </button>
         </div>
       </div>

@@ -2,7 +2,6 @@ package pe.edu.upeu.bomerp.seguridad.auth.service;
 
 import com.nimbusds.jose.jwk.RSAKey;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
@@ -18,10 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class JwtService {
     private final JwtEncoder jwtEncoder;
     private final RSAKey rsaKey;
+
+    public JwtService(JwtEncoder jwtEncoder, RSAKey rsaKey) {
+        this.jwtEncoder = jwtEncoder;
+        this.rsaKey = rsaKey;
+    }
 
     @Value("${jwt.issuer:bomerp-backend}")
     private String issuer;

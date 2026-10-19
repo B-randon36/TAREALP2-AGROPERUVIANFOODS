@@ -19,7 +19,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
@@ -56,11 +59,12 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos de autenticación y documentación
+                        // Endpoints públicos de autenticación, documentación y módulo Finanzas
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/registro").permitAll()
                         .requestMatchers("/.well-known/jwks.json").permitAll()
                         .requestMatchers("/actuator/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
                         .requestMatchers("/finanzas-demo.html", "/favicon.ico").permitAll()
+                        .requestMatchers("/api/v1/finanzas/**").permitAll()
 
                         // Perfil ABAC: requiere usuario autenticado
                         .requestMatchers("/api/v1/auth/perfil").authenticated()

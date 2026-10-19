@@ -1,9 +1,7 @@
 package pe.edu.upeu.bomerp.finanzas.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.edu.upeu.bomerp.finanzas.entity.EstadoRendicion;
 
@@ -17,8 +15,6 @@ import java.time.LocalDate;
  */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class RendicionResumenDto {
 
@@ -30,4 +26,18 @@ public class RendicionResumenDto {
     private EstadoRendicion estado;
     private String codigoCajaChica;
     private Integer cantidadDetalles;
+
+    public RendicionResumenDto() {
+    }
+
+    public RendicionResumenDto(Long id, String codigo, String responsable, LocalDate fecha, BigDecimal montoTotal, EstadoRendicion estado, String codigoCajaChica, Integer cantidadDetalles) {
+        this.id = id;
+        this.codigo = codigo;
+        this.responsable = responsable;
+        this.fecha = fecha;
+        this.montoTotal = montoTotal;
+        this.estado = estado;
+        this.codigoCajaChica = codigoCajaChica;
+        this.cantidadDetalles = cantidadDetalles;
+    }
 }

@@ -2,7 +2,7 @@ spring:
   application:
     name: bomerp-backend
   profiles:
-    active: dev
+    active: h2
   security:
     oauth2:
       resourceserver:

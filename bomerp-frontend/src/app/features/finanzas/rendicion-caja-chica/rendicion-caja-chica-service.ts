@@ -20,6 +20,22 @@ export class RendicionCajaChicaService {
     return this.http.get<CajaChica[]>(this.api.buildUrl(`${this.basePath}/cajas-chicas`));
   }
 
+  crearCajaChica(datos: {
+    codigo: string;
+    responsable: string;
+    limiteMaximo: number;
+    saldoInicial: number;
+  }): Observable<CajaChica> {
+    const params = new HttpParams()
+      .set('codigo', datos.codigo)
+      .set('responsable', datos.responsable)
+      .set('limiteMaximo', datos.limiteMaximo.toString())
+      .set('saldoInicial', datos.saldoInicial.toString());
+    return this.http.post<CajaChica>(this.api.buildUrl(`${this.basePath}/cajas-chicas`), null, {
+      params,
+    });
+  }
+
   obtenerCajaChica(id: number): Observable<CajaChica> {
     return this.http.get<CajaChica>(this.api.buildUrl(`${this.basePath}/cajas-chicas/${id}`));
   }

@@ -1,7 +1,6 @@
 package pe.edu.upeu.bomerp.finanzas.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +32,13 @@ import java.util.List;
 @CrossOrigin(originPatterns = "*")
 @RestController
 @RequestMapping({"/api/v1/finanzas", "/api/v1"})
-@RequiredArgsConstructor
 public class RendicionCajaChicaController {
 
     private final RendicionCajaChicaService rendicionService;
+
+    public RendicionCajaChicaController(RendicionCajaChicaService rendicionService) {
+        this.rendicionService = rendicionService;
+    }
 
     @GetMapping("/cajas-chicas")
     public ResponseEntity<List<CajaChicaResponse>> listarCajasChicas() {

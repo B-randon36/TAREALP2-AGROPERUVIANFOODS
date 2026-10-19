@@ -13,10 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -29,8 +27,6 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class RendicionCajaChica {
 
     @Id
@@ -80,5 +76,19 @@ public class RendicionCajaChica {
             suma = suma.add(subtotal);
         }
         this.montoTotal = suma;
+    }
+
+    public RendicionCajaChica() {
+    }
+
+    public RendicionCajaChica(Long id, String codigo, String responsable, LocalDate fecha, BigDecimal montoTotal, EstadoRendicion estado, CajaChica cajaChica, List<DetalleRendicionCajaChica> detalles) {
+        this.id = id;
+        this.codigo = codigo;
+        this.responsable = responsable;
+        this.fecha = fecha;
+        this.montoTotal = montoTotal;
+        this.estado = estado;
+        this.cajaChica = cajaChica;
+        this.detalles = detalles != null ? detalles : new ArrayList<>();
     }
 }

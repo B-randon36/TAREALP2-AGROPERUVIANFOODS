@@ -1,6 +1,5 @@
 package pe.edu.upeu.bomerp.catalogo.config;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,11 +14,17 @@ import java.math.BigDecimal;
 @Slf4j
 @Configuration
 @ConditionalOnProperty(name = "app.init.demo-data", havingValue = "true", matchIfMissing = true)
-@RequiredArgsConstructor
 public class CatalogoDataInitializer implements CommandLineRunner {
 
     private final CategoriaRepository categoriaRepository;
     private final ProductoRepository productoRepository;
+
+    public CatalogoDataInitializer(
+            CategoriaRepository categoriaRepository,
+            ProductoRepository productoRepository) {
+        this.categoriaRepository = categoriaRepository;
+        this.productoRepository = productoRepository;
+    }
 
     @Override
     public void run(String... args) {

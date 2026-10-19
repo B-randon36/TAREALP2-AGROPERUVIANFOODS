@@ -4,10 +4,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -15,8 +13,6 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class DetalleRendicionRequest {
 
     @NotBlank(message = "El concepto es obligatorio")
@@ -31,4 +27,14 @@ public class DetalleRendicionRequest {
     private BigDecimal precioUnitario;
 
     private Long productoId;
+
+    public DetalleRendicionRequest() {
+    }
+
+    public DetalleRendicionRequest(String concepto, Integer cantidad, BigDecimal precioUnitario, Long productoId) {
+        this.concepto = concepto;
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+        this.productoId = productoId;
+    }
 }

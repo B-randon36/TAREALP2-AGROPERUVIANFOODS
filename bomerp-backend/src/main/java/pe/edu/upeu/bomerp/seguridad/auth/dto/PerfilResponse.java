@@ -1,9 +1,7 @@
 package pe.edu.upeu.bomerp.seguridad.auth.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -11,10 +9,17 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class PerfilResponse {
     private String id;
     private String email;
     private List<String> roles;
+
+    public PerfilResponse() {
+    }
+
+    public PerfilResponse(String id, String email, List<String> roles) {
+        this.id = id;
+        this.email = email;
+        this.roles = roles;
+    }
 }

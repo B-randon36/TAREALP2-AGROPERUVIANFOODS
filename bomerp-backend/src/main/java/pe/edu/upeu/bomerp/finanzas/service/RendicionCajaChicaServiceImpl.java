@@ -1,6 +1,5 @@
 package pe.edu.upeu.bomerp.finanzas.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,12 +26,20 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class RendicionCajaChicaServiceImpl implements RendicionCajaChicaService {
 
     private final CajaChicaRepository cajaChicaRepository;
     private final RendicionCajaChicaRepository rendicionRepository;
-    private final ProductoService productoService; // Comunicación cruzada con módulo catalogo
+    private final ProductoService productoService;
+
+    public RendicionCajaChicaServiceImpl(
+            CajaChicaRepository cajaChicaRepository,
+            RendicionCajaChicaRepository rendicionRepository,
+            ProductoService productoService) {
+        this.cajaChicaRepository = cajaChicaRepository;
+        this.rendicionRepository = rendicionRepository;
+        this.productoService = productoService;
+    }
 
     @Override
     @Transactional

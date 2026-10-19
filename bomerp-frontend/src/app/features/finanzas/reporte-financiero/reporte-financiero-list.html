@@ -1,0 +1,138 @@
+<div class="reportes-container">
+  <header class="page-header">
+    <div>
+      <span class="badge-agro">BOMERP Analítica</span>
+      <h2>Dashboard Financiero & Reportes</h2>
+      <p class="subtitle">Consolidación de ingresos, egresos, arqueo de turnos y fondos fijos de Agro Peruvian Foods.</p>
+    </div>
+
+    <div class="header-actions">
+      @if (dashboard()?.sesionActivaId) {
+        <button class="btn btn-pdf" (click)="descargarReporteActiva('PDF')" [disabled]="exportando()">
+          &#128196; Exportar Corte Activo (PDF)
+        </button>
+        <button class="btn btn-excel" (click)="descargarReporteActiva('EXCEL')" [disabled]="exportando()">
+          &#128202; Exportar Corte Activo (Excel)
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Procesando métricas financieras consolidadas...</p>
+    </div>
+  } @else if (dashboard(); as d) {
+    <!-- KPIs Principales -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-title">Ingresos Totales (ERP)</span>
+        <span class="kpi-num text-success">{{ d.totalIngresos | currency:'PEN':'symbol':'1.2-2' }}</span>
+        <span class="kpi-sub">Ventas y cobranzas</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-title">Egresos Totales (ERP)</span>
+        <span class="kpi-num text-danger">{{ d.totalEgresos | currency:'PEN':'symbol':'1.2-2' }}</span>
+        <span class="kpi-sub">Gastos, compras y rendiciones</span>
+      </div>
+
+      <div class="kpi-card highlight-card">
+        <span class="kpi-title">Balance Neto Consolidado</span>
+        <span class="kpi-num" [class.text-success]="d.balanceNeto >= 0" [class.text-danger]="d.balanceNeto < 0">
+          {{ d.balanceNeto | currency:'PEN':'symbol':'1.2-2' }}
+        </span>
+        <span class="kpi-sub">Flujo de caja disponible</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-title">Caja Diaria Activa</span>
+        <span class="kpi-num text-primary">{{ d.saldoCajaDiariaActiva | currency:'PEN':'symbol':'1.2-2' }}</span>
+        <span class="kpi-sub">
+          {{ d.codigoSesionActiva ? d.codigoSesionActiva + ' (' + d.cajeroActivo + ')' : 'Sin turno abierto' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Sección 2: Métodos de Pago y Flujo de Caja -->
+    <div class="dashboard-grid">
+      <!-- Tarjeta: Distribución por Método de Pago -->
+      <div class="card p-4">
+        <h3 class="card-title">Distribución por Método de Pago</h3>
+        <p class="subtitle text-xs mb-3">Participación y montos transaccionados en la gaveta y canales digitales.</p>
+
+        <div class="metodos-list">
+          @for (m of d.resumenPorMetodo; track m.metodoPago) {
+            <div class="metodo-item">
+              <div class="metodo-info">
+                <span class="badge-payment">{{ m.metodoPago }}</span>
+                <span class="metodo-amount">{{ m.totalIngresos | currency:'PEN':'symbol':'1.2-2' }}</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" [style.width.%]="calcularPorcentaje(m.totalIngresos)"></div>
+              </div>
+              <div class="metodo-sub">
+                <span>Egresos: {{ m.totalEgresos | currency:'PEN':'symbol':'1.2-2' }}</span>
+                <span class="font-bold">Neto: {{ m.neto | currency:'PEN':'symbol':'1.2-2' }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Tarjeta: Consolidado de Rendiciones de Fondos Fijos -->
+      <div class="card p-4">
+        <h3 class="card-title">Fondos Fijos y Rendiciones (Caja Chica)</h3>
+        <p class="subtitle text-xs mb-3">Métricas de rendiciones operativas del furgón, logística y compras menores.</p>
+
+        <div class="stats-table-wrapper">
+          <table class="data-table">
+            <tbody>
+              <tr>
+                <td>Total Rendido (Gastos menores):</td>
+                <td class="text-right font-bold text-danger">
+                  {{ d.reporteRendiciones.totalMonto | currency:'PEN':'symbol':'1.2-2' }}
+                </td>
+              </tr>
+              <tr>
+                <td>Gasto Promedio por Rendición:</td>
+                <td class="text-right font-mono">
+                  S/ {{ d.reporteRendiciones.promedioMonto | number:'1.2-2' }}
+                </td>
+              </tr>
+              <tr>
+                <td>Gasto Máximo Registrado:</td>
+                <td class="text-right font-mono">
+                  {{ d.reporteRendiciones.montoMaximo | currency:'PEN':'symbol':'1.2-2' }}
+                </td>
+              </tr>
+              <tr>
+                <td>Gasto Mínimo Registrado:</td>
+                <td class="text-right font-mono">
+                  {{ d.reporteRendiciones.montoMinimo | currency:'PEN':'symbol':'1.2-2' }}
+                </td>
+              </tr>
+              <tr>
+                <td>Total Rendiciones Tramitadas:</td>
+                <td class="text-right font-bold">
+                  {{ d.reporteRendiciones.cantidadRendiciones }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-footer-action mt-4">
+          <a routerLink="/finanzas/rendiciones" class="btn btn-outline-dark btn-sm w-full text-center">
+            Ver Todas las Rendiciones &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  }
+</div>

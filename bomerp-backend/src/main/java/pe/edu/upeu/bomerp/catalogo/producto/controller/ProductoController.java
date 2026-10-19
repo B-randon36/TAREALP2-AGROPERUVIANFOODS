@@ -3,7 +3,6 @@ package pe.edu.upeu.bomerp.catalogo.producto.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +14,12 @@ import java.util.List;
 @Tag(name = "Productos")
 @RestController
 @RequestMapping("/api/v1/productos")
-@RequiredArgsConstructor
 public class ProductoController {
     private final ProductoService productoService;
+
+    public ProductoController(ProductoService productoService) {
+        this.productoService = productoService;
+    }
 
     @Operation(summary = "Lista los productos registrados, opcionalmente filtrados por categoria")
     @GetMapping

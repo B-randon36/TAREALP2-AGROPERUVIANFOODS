@@ -68,6 +68,32 @@ export const routes: Routes = [
           ),
       },
 
+      // --- Submódulo Transaccional: Sesiones y Turnos de Caja Diaria (RN-FIN-01) ---
+      {
+        path: 'finanzas/sesiones',
+        loadComponent: () =>
+          import('./features/finanzas/sesion-caja/sesion-caja-list').then((m) => m.SesionCajaList),
+      },
+      {
+        path: 'finanzas/sesiones/nueva',
+        loadComponent: () =>
+          import('./features/finanzas/sesion-caja/sesion-caja-form').then((m) => m.SesionCajaForm),
+      },
+      {
+        path: 'finanzas/sesiones/:id',
+        loadComponent: () =>
+          import('./features/finanzas/sesion-caja/sesion-caja-form').then((m) => m.SesionCajaForm),
+      },
+
+      // --- Submódulo Analítico: Dashboard y Reportes Financieros ---
+      {
+        path: 'finanzas/reportes',
+        loadComponent: () =>
+          import('./features/finanzas/reporte-financiero/reporte-financiero-list').then(
+            (m) => m.ReporteFinancieroList
+          ),
+      },
+
       // --- Módulo Catálogo ---
       {
         path: 'catalogo/categorias',

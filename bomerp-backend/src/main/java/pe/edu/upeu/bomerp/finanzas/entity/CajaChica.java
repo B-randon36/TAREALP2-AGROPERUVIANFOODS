@@ -6,10 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -19,8 +17,6 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class CajaChica {
 
     @Id
@@ -39,4 +35,15 @@ public class CajaChica {
 
     @Column(name = "LIMITE_MAXIMO", nullable = false, precision = 12, scale = 2)
     private BigDecimal limiteMaximo;
+
+    public CajaChica() {
+    }
+
+    public CajaChica(Long id, String codigo, String responsable, BigDecimal saldoDisponible, BigDecimal limiteMaximo) {
+        this.id = id;
+        this.codigo = codigo;
+        this.responsable = responsable;
+        this.saldoDisponible = saldoDisponible;
+        this.limiteMaximo = limiteMaximo;
+    }
 }

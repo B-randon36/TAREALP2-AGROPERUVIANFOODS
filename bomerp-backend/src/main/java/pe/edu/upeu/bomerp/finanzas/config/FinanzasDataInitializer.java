@@ -19,13 +19,26 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 @Slf4j
 @Configuration
 @ConditionalOnProperty(name = "app.init.demo-data", havingValue = "true", matchIfMissing = true)
-@RequiredArgsConstructor
 public class FinanzasDataInitializer implements CommandLineRunner {
 
     private final CajaChicaRepository cajaChicaRepository;
     private final RendicionCajaChicaRepository rendicionRepository;
     private final pe.edu.upeu.bomerp.finanzas.repository.CategoriaFinancieraRepository categoriaFinancieraRepository;
     private final pe.edu.upeu.bomerp.finanzas.repository.TransaccionFinancieraRepository transaccionFinancieraRepository;
+    private final pe.edu.upeu.bomerp.finanzas.repository.SesionCajaRepository sesionCajaRepository;
+
+    public FinanzasDataInitializer(
+            CajaChicaRepository cajaChicaRepository,
+            RendicionCajaChicaRepository rendicionRepository,
+            pe.edu.upeu.bomerp.finanzas.repository.CategoriaFinancieraRepository categoriaFinancieraRepository,
+            pe.edu.upeu.bomerp.finanzas.repository.TransaccionFinancieraRepository transaccionFinancieraRepository,
+            pe.edu.upeu.bomerp.finanzas.repository.SesionCajaRepository sesionCajaRepository) {
+        this.cajaChicaRepository = cajaChicaRepository;
+        this.rendicionRepository = rendicionRepository;
+        this.categoriaFinancieraRepository = categoriaFinancieraRepository;
+        this.transaccionFinancieraRepository = transaccionFinancieraRepository;
+        this.sesionCajaRepository = sesionCajaRepository;
+    }
 
     @Override
     public void run(String... args) {
@@ -195,6 +208,66 @@ public class FinanzasDataInitializer implements CommandLineRunner {
             rendicionRepository.save(rnd3);
 
             log.info("Datos demo de Finanzas cargados exitosamente (3 rendiciones registradas).");
+        }
+
+        if (sesionCajaRepository.count() == 0) {
+            log.info("Inicializando Sesión de Caja Diaria Demo (Agro Peruvian Foods)...");
+            pe.edu.upeu.bomerp.finanzas.entity.CategoriaFinanciera catVentas = categoriaFinancieraRepository.findAll().stream()
+                    .filter(c -> c.getTipoDefault() == pe.edu.upeu.bomerp.finanzas.entity.TipoFinanciero.INGRESO)
+                    .findFirst().orElse(null);
+
+            pe.edu.upeu.bomerp.finanzas.entity.CategoriaFinanciera catGastos = categoriaFinancieraRepository.findAll().stream()
+                    .filter(c -> c.getTipoDefault() == pe.edu.upeu.bomerp.finanzas.entity.TipoFinanciero.EGRESO)
+                    .findFirst().orElse(null);
+
+            pe.edu.upeu.bomerp.finanzas.entity.SesionCaja sesion = pe.edu.upeu.bomerp.finanzas.entity.SesionCaja.builder()
+                    .codigoSesion("SES-20261018-001")
+                    .usuarioId(1L)
+                    .cajero("Brandon Ccalla")
+                    .fechaApertura(java.time.LocalDateTime.now().minusHours(4))
+                    .saldoInicial(new BigDecimal("350.00"))
+                    .totalIngresosEfectivo(BigDecimal.ZERO)
+                    .totalEgresosEfectivo(BigDecimal.ZERO)
+                    .saldoEsperadoEfectivo(new BigDecimal("350.00"))
+                    .estado(pe.edu.upeu.bomerp.finanzas.entity.EstadoCaja.ABIERTA)
+                    .build();
+
+            if (catVentas != null) {
+                sesion.agregarMovimiento(pe.edu.upeu.bomerp.finanzas.entity.MovimientoCaja.builder()
+                        .fechaHora(java.time.LocalDateTime.now().minusHours(3))
+                        .tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoFinanciero.INGRESO)
+                        .metodoPago(pe.edu.upeu.bomerp.finanzas.entity.MetodoPago.EFECTIVO)
+                        .monto(new BigDecimal("120.00"))
+                        .descripcion("Venta 3 frascos Aceite de Coco 500ml")
+                        .referenciaExterna("VTA-00101")
+                        .categoriaFinanciera(catVentas)
+                        .build());
+
+                sesion.agregarMovimiento(pe.edu.upeu.bomerp.finanzas.entity.MovimientoCaja.builder()
+                        .fechaHora(java.time.LocalDateTime.now().minusHours(2))
+                        .tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoFinanciero.INGRESO)
+                        .metodoPago(pe.edu.upeu.bomerp.finanzas.entity.MetodoPago.YAPE)
+                        .monto(new BigDecimal("85.00"))
+                        .descripcion("Venta Pack Chocolates 70% Cacao")
+                        .referenciaExterna("VTA-00102")
+                        .categoriaFinanciera(catVentas)
+                        .build());
+            }
+
+            if (catGastos != null) {
+                sesion.agregarMovimiento(pe.edu.upeu.bomerp.finanzas.entity.MovimientoCaja.builder()
+                        .fechaHora(java.time.LocalDateTime.now().minusHours(1))
+                        .tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoFinanciero.EGRESO)
+                        .metodoPago(pe.edu.upeu.bomerp.finanzas.entity.MetodoPago.EFECTIVO)
+                        .monto(new BigDecimal("35.00"))
+                        .descripcion("Compra de bolsas kraft para despacho")
+                        .referenciaExterna("EGR-00045")
+                        .categoriaFinanciera(catGastos)
+                        .build());
+            }
+
+            sesionCajaRepository.save(sesion);
+            log.info("Sesión de caja demo inicializada con código: {}", sesion.getCodigoSesion());
         }
     }
 }

@@ -1,17 +1,13 @@
 package pe.edu.upeu.bomerp.finanzas.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class FlujoCajaResumenResponse {
     private BigDecimal totalIngresos;
@@ -20,4 +16,16 @@ public class FlujoCajaResumenResponse {
     private BigDecimal cuentasPorCobrarPendientes;
     private BigDecimal cuentasPorPagarPendientes;
     private long totalTransacciones;
+
+    public FlujoCajaResumenResponse() {
+    }
+
+    public FlujoCajaResumenResponse(BigDecimal totalIngresos, BigDecimal totalEgresos, BigDecimal balanceNeto, BigDecimal cuentasPorCobrarPendientes, BigDecimal cuentasPorPagarPendientes, long totalTransacciones) {
+        this.totalIngresos = totalIngresos;
+        this.totalEgresos = totalEgresos;
+        this.balanceNeto = balanceNeto;
+        this.cuentasPorCobrarPendientes = cuentasPorCobrarPendientes;
+        this.cuentasPorPagarPendientes = cuentasPorPagarPendientes;
+        this.totalTransacciones = totalTransacciones;
+    }
 }

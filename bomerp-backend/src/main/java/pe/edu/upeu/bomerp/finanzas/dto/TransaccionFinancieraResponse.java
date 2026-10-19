@@ -1,9 +1,7 @@
 package pe.edu.upeu.bomerp.finanzas.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.edu.upeu.bomerp.finanzas.entity.EstadoFinanciero;
 import pe.edu.upeu.bomerp.finanzas.entity.TipoFinanciero;
@@ -13,8 +11,6 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class TransaccionFinancieraResponse {
     private Long id;
@@ -27,4 +23,20 @@ public class TransaccionFinancieraResponse {
     private String tipoComprobante;
     private String numeroComprobante;
     private CategoriaFinancieraResumen categoriaFinanciera;
+
+    public TransaccionFinancieraResponse() {
+    }
+
+    public TransaccionFinancieraResponse(Long id, String codigo, String concepto, BigDecimal monto, LocalDate fechaTransaccion, TipoFinanciero tipo, EstadoFinanciero estado, String tipoComprobante, String numeroComprobante, CategoriaFinancieraResumen categoriaFinanciera) {
+        this.id = id;
+        this.codigo = codigo;
+        this.concepto = concepto;
+        this.monto = monto;
+        this.fechaTransaccion = fechaTransaccion;
+        this.tipo = tipo;
+        this.estado = estado;
+        this.tipoComprobante = tipoComprobante;
+        this.numeroComprobante = numeroComprobante;
+        this.categoriaFinanciera = categoriaFinanciera;
+    }
 }

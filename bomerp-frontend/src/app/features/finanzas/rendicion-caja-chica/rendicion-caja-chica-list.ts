@@ -46,6 +46,14 @@ export class RendicionCajaChicaList implements OnInit {
   protected rendicionParaAnular = signal<RendicionCajaChica | null>(null);
   protected mostrarModalAnular = signal(false);
 
+  // Gestión de Fondos Fijos (Cajas Chicas)
+  protected mostrarModalCajaChica = signal(false);
+  protected nuevaCajaCodigo = signal('');
+  protected nuevaCajaResponsable = signal('');
+  protected nuevaCajaLimite = signal(1000);
+  protected nuevaCajaSaldo = signal(1000);
+  protected loadingCrearCaja = signal(false);
+
   ngOnInit(): void {
     this.cargarCajasChicas();
     this.aplicarFiltros();
@@ -197,5 +205,53 @@ export class RendicionCajaChicaList implements OnInit {
       default:
         return 'badge-secondary';
     }
+  }
+
+  abrirModalCajaChica(): void {
+    const nextNum = this.cajasChicas().length + 1;
+    this.nuevaCajaCodigo.set(`CCH-2026-00${nextNum}`);
+    this.nuevaCajaResponsable.set('');
+    this.nuevaCajaLimite.set(1000);
+    this.nuevaCajaSaldo.set(1000);
+    this.mostrarModalCajaChica.set(true);
+  }
+
+  cerrarModalCajaChica(): void {
+    this.mostrarModalCajaChica.set(false);
+  }
+
+  guardarCajaChica(): void {
+    const codigo = this.nuevaCajaCodigo().trim();
+    const responsable = this.nuevaCajaResponsable().trim();
+    const limite = this.nuevaCajaLimite();
+    const saldo = this.nuevaCajaSaldo();
+
+    if (!codigo || !responsable || limite <= 0 || saldo < 0) {
+      this.mensajeError.set('Por favor completa todos los campos válidos para la Caja Chica.');
+      return;
+    }
+
+    this.loadingCrearCaja.set(true);
+    this.mensajeError.set(null);
+
+    this.rendicionService
+      .crearCajaChica({
+        codigo,
+        responsable,
+        limiteMaximo: limite,
+        saldoInicial: saldo,
+      })
+      .subscribe({
+        next: (caja) => {
+          this.mensajeExito.set(`Caja Chica ${caja.codigo} (${caja.responsable}) creada con éxito.`);
+          this.mostrarModalCajaChica.set(false);
+          this.loadingCrearCaja.set(false);
+          this.cargarCajasChicas();
+        },
+        error: (err) => {
+          this.mensajeError.set(err?.error?.message || 'Error al crear la caja chica.');
+          this.loadingCrearCaja.set(false);
+        },
+      });
   }
 }

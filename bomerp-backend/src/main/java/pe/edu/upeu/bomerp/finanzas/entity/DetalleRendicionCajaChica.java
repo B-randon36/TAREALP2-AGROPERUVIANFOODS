@@ -9,10 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -22,8 +20,6 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class DetalleRendicionCajaChica {
 
     @Id
@@ -49,4 +45,17 @@ public class DetalleRendicionCajaChica {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_RENDICION", nullable = false)
     private RendicionCajaChica rendicion;
+
+    public DetalleRendicionCajaChica() {
+    }
+
+    public DetalleRendicionCajaChica(Long id, String concepto, Integer cantidad, BigDecimal precioUnitario, BigDecimal subtotal, Long productoId, RendicionCajaChica rendicion) {
+        this.id = id;
+        this.concepto = concepto;
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+        this.subtotal = subtotal;
+        this.productoId = productoId;
+        this.rendicion = rendicion;
+    }
 }

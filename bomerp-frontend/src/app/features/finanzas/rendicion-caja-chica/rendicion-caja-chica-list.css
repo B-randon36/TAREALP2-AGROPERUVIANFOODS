@@ -423,3 +423,71 @@
   text-align: center;
   color: #64748b;
 }
+
+/* Banner de Cajas Chicas */
+.cajas-chicas-banner {
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.banner-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.65rem;
+}
+
+.cajas-chicas-chips {
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.caja-chip {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 170px;
+}
+
+.caja-chip:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.caja-chip.selected {
+  border-color: #2563eb;
+  background: #dbeafe;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.chip-code {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #1e293b;
+  font-family: monospace;
+}
+
+.chip-resp {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.chip-balance {
+  font-size: 0.85rem;
+  color: #166534;
+}
+
+.chip-limit {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}

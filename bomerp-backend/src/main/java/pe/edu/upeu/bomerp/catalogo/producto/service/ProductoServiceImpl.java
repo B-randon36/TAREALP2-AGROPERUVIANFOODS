@@ -1,6 +1,5 @@
 package pe.edu.upeu.bomerp.catalogo.producto.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.upeu.bomerp.catalogo.categoria.entity.Categoria;
@@ -14,11 +13,19 @@ import pe.edu.upeu.bomerp.exception.ResourceNotFoundException;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class ProductoServiceImpl implements ProductoService {
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
     private final ProductoMapper productoMapper;
+
+    public ProductoServiceImpl(
+            ProductoRepository productoRepository,
+            CategoriaRepository categoriaRepository,
+            ProductoMapper productoMapper) {
+        this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
+        this.productoMapper = productoMapper;
+    }
 
     @Override
     @Transactional(readOnly = true)

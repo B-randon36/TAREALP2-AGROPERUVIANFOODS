@@ -1,6 +1,5 @@
 package pe.edu.upeu.bomerp.finanzas.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.upeu.bomerp.exception.ResourceNotFoundException;
@@ -22,11 +21,19 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class FinanzasServiceImpl implements FinanzasService {
     private final CategoriaFinancieraRepository categoriaRepository;
     private final TransaccionFinancieraRepository transaccionRepository;
     private final FinanzasMapper finanzasMapper;
+
+    public FinanzasServiceImpl(
+            CategoriaFinancieraRepository categoriaRepository,
+            TransaccionFinancieraRepository transaccionRepository,
+            FinanzasMapper finanzasMapper) {
+        this.categoriaRepository = categoriaRepository;
+        this.transaccionRepository = transaccionRepository;
+        this.finanzasMapper = finanzasMapper;
+    }
 
     // --- CATEGORÍAS FINANCIERAS ---
 
