@@ -1,35 +1,59 @@
-<header>
-  <h1>
+<header class="app-header">
+  <div class="brand">
     <a routerLink="/" class="home-link">
       <img src="favicon.ico" alt="" height="30" />
     </a>
-    BomERP - AgroPeruvian Foods
-  </h1>
+    <h1>AgroPeruvian Foods - ERP</h1>
+  </div>
+
+  <div class="user-panel">
+    <div class="user-info">
+      <span class="user-name">{{ auth.usuario()?.nombre || 'Usuario' }}</span>
+      <span class="user-role-badge">
+        {{ auth.roles().length ? auth.roles().join(', ') : 'AUTENTICADO' }}
+      </span>
+    </div>
+    <button type="button" class="btn-logout" (click)="auth.cerrarSesion()">
+      Cerrar sesión
+    </button>
+  </div>
 </header>
 
 <div class="body">
   <aside class="sidebar">
     <nav>
-      <div style="font-size: 0.75rem; text-transform: uppercase; color: #888; font-weight: bold; margin-top: 0.5rem; margin-bottom: 0.25rem;">
+      <!-- Menú Módulo Finanzas -->
+      <div class="nav-section-title">
         Finanzas y Reportes
       </div>
-      <a routerLink="/finanzas/sesiones" routerLinkActive="active">
-        Turnos y Sesiones de Caja
-      </a>
-      <a routerLink="/finanzas/reportes" routerLinkActive="active">
-        Dashboard y Reportes
-      </a>
-      <a routerLink="/finanzas/transacciones" routerLinkActive="active">
-        Transacciones Financieras
-      </a>
+
+      @if (auth.tieneRol('ADMIN', 'ADMIN_FINANZAS', 'CAJERO')) {
+        <a routerLink="/finanzas/sesiones" routerLinkActive="active">
+          Turnos y Sesiones de Caja
+        </a>
+      }
+
+      @if (auth.tieneRol('ADMIN', 'ADMIN_FINANZAS')) {
+        <a routerLink="/finanzas/reportes" routerLinkActive="active">
+          Dashboard y Reportes
+        </a>
+        <a routerLink="/finanzas/transacciones" routerLinkActive="active">
+          Transacciones Financieras
+        </a>
+      }
+
       <a routerLink="/finanzas/rendiciones" routerLinkActive="active">
         Rendiciones de Caja Chica
       </a>
-      <a routerLink="/finanzas/categorias" routerLinkActive="active">
-        Categorías Financieras
-      </a>
 
-      <div style="font-size: 0.75rem; text-transform: uppercase; color: #888; font-weight: bold; margin-top: 1rem; margin-bottom: 0.25rem;">
+      @if (auth.tieneRol('ADMIN', 'ADMIN_FINANZAS')) {
+        <a routerLink="/finanzas/categorias" routerLinkActive="active">
+          Categorías Financieras
+        </a>
+      }
+
+      <!-- Menú Módulo Catálogo -->
+      <div class="nav-section-title">
         Catálogo General
       </div>
       <a routerLink="/catalogo/productos" routerLinkActive="active">

@@ -307,7 +307,7 @@ export class RendicionCajaChicaForm implements OnInit {
     // Error 1: Regla de Negocio RN-FIN-01 (Solvencia de Caja Insuficiente)
     if (reglaNegocio === 'RN-FIN-01' || mensaje.toLowerCase().includes('solvencia') || mensaje.toLowerCase().includes('supera la solvencia')) {
       this.errorSolvencia.set(
-        `⚠️ REGLA DE NEGOCIO RN-FIN-01 (Control de Liquidez): ${mensaje}`
+        `REGLA DE NEGOCIO RN-FIN-01 (Control de Liquidez): ${mensaje}`
       );
       return;
     }
@@ -315,7 +315,7 @@ export class RendicionCajaChicaForm implements OnInit {
     // Error 2: Conflicto de Integridad / Duplicidad de Código
     if (status === 400 && (mensaje.toLowerCase().includes('ya existe una rendición') || mensaje.toLowerCase().includes('código'))) {
       this.errorDuplicidad.set(
-        `⚠️ ERROR DE INTEGRIDAD: ${mensaje}. Por favor especifique un número correlativo único.`
+        `ERROR DE INTEGRIDAD: ${mensaje}. Por favor especifique un número correlativo único.`
       );
       return;
     }

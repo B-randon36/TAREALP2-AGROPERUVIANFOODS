@@ -15,7 +15,7 @@
   <!-- ALERTA DE ÉXITO -->
   @if (mensajeExito()) {
     <div class="alert alert-success">
-      <span class="alert-icon">✓</span>
+      <span class="alert-icon">[OK]</span>
       <div>{{ mensajeExito() }}</div>
     </div>
   }
@@ -23,7 +23,7 @@
   <!-- ALERTAS DE ERRORES REALES DEL BACKEND -->
   @if (errorSolvencia()) {
     <div class="alert alert-solvencia">
-      <span class="alert-icon">⚠️</span>
+      <span class="alert-icon">[!]</span>
       <div>
         <strong>FALLO DE REGLA DE NEGOCIO EN EL SERVIDOR</strong>
         <p>{{ errorSolvencia() }}</p>
@@ -33,7 +33,7 @@
 
   @if (errorDuplicidad()) {
     <div class="alert alert-duplicidad">
-      <span class="alert-icon">🛑</span>
+      <span class="alert-icon">[!]</span>
       <div>
         <strong>ERROR DE RESTRICCIÓN DE INTEGRIDAD (BACKEND)</strong>
         <p>{{ errorDuplicidad() }}</p>
@@ -43,7 +43,7 @@
 
   @if (errorGeneral()) {
     <div class="alert alert-error">
-      <span class="alert-icon">✕</span>
+      <span class="alert-icon">[!]</span>
       <div>{{ errorGeneral() }}</div>
     </div>
   }
@@ -52,7 +52,7 @@
   @if (intentoEnvioInvalido()) {
     <div class="alert alert-validation-banner">
       <div class="alert-header">
-        <span class="alert-icon-big">⚠️</span>
+        <span class="alert-icon-big">[!]</span>
         <div>
           <h4>ERRORES DETECTADOS EN EL FORMULARIO (VALIDACIÓN PREVENTIVA)</h4>
           <p>Corrija los campos resaltados en rojo antes de emitir la operación transaccional:</p>
@@ -105,7 +105,7 @@
             [class.is-invalid]="form.get('codigo')?.touched && form.get('codigo')?.invalid"
           />
           @if (form.get('codigo')?.touched && form.get('codigo')?.invalid) {
-            <div class="error-badge"><span>⚠️</span> Código obligatorio</div>
+            <div class="error-badge">Código obligatorio</div>
           }
         </div>
 
@@ -120,7 +120,7 @@
             [class.is-invalid]="form.get('responsable')?.touched && form.get('responsable')?.invalid"
           />
           @if (form.get('responsable')?.touched && form.get('responsable')?.invalid) {
-            <div class="error-badge"><span>⚠️</span> Responsable obligatorio</div>
+            <div class="error-badge">Responsable obligatorio</div>
           }
         </div>
 
@@ -140,7 +140,7 @@
             }
           </select>
           @if (form.get('cajaChicaId')?.touched && form.get('cajaChicaId')?.invalid) {
-            <div class="error-badge"><span>⚠️</span> Seleccione una caja chica</div>
+            <div class="error-badge">Seleccione una caja chica</div>
           }
         </div>
       </div>
@@ -166,7 +166,7 @@
           <p class="section-hint">Seleccione un producto por autocompletado o ingrese un concepto personalizado.</p>
         </div>
         <button type="button" class="btn btn-add" (click)="agregarLinea()">
-          ➕ Agregar Ítem
+          + Agregar Ítem
         </button>
       </div>
 
@@ -218,7 +218,7 @@
                     }
                   </div>
                   @if (grupo.get('concepto')?.touched && grupo.get('concepto')?.invalid) {
-                    <div class="error-badge"><span>⚠️</span> Concepto obligatorio</div>
+                    <div class="error-badge">Concepto obligatorio</div>
                   }
                 </td>
 
@@ -233,7 +233,7 @@
                     [class.is-invalid]="grupo.get('cantidad')?.touched && grupo.get('cantidad')?.invalid"
                   />
                   @if (grupo.get('cantidad')?.touched && grupo.get('cantidad')?.invalid) {
-                    <div class="error-badge"><span>⚠️</span> Mínimo 1</div>
+                    <div class="error-badge">Mínimo 1</div>
                   }
                 </td>
 
@@ -242,16 +242,16 @@
                   <div class="input-money">
                     <span>S/</span>
                     <input
-                      type="number"
-                      min="0.01"
-                      step="0.01"
-                      formControlName="precioUnitario"
-                      class="form-control text-right"
-                      [class.is-invalid]="grupo.get('precioUnitario')?.touched && grupo.get('precioUnitario')?.invalid"
-                    />
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    formControlName="precioUnitario"
+                    class="form-control text-right"
+                    [class.is-invalid]="grupo.get('precioUnitario')?.touched && grupo.get('precioUnitario')?.invalid"
+                  />
                   </div>
                   @if (grupo.get('precioUnitario')?.touched && grupo.get('precioUnitario')?.invalid) {
-                    <div class="error-badge"><span>⚠️</span> Mayor a S/ 0.00</div>
+                    <div class="error-badge">Mayor a S/ 0.00</div>
                   }
                 </td>
 
@@ -269,7 +269,7 @@
                     [disabled]="detallesArray.length <= 1"
                     title="{{ detallesArray.length <= 1 ? 'Debe mantener al menos una línea' : 'Eliminar esta línea' }}"
                   >
-                    🗑️
+                    Quitar
                   </button>
                 </td>
               </tr>
@@ -385,7 +385,7 @@
           </table>
 
           <div class="alerta-impacto">
-            ℹ️ <strong>Efecto Financiero:</strong> Esta acción debitará inmediatamente <strong>S/ {{ totalGeneral() | number:'1.2-2' }}</strong> del saldo de la Caja Chica {{ cajaSeleccionada()?.codigo }}.
+            <strong>Efecto Financiero:</strong> Esta acción debitará inmediatamente <strong>S/ {{ totalGeneral() | number:'1.2-2' }}</strong> del saldo de la Caja Chica {{ cajaSeleccionada()?.codigo }}.
           </div>
         </div>
 
@@ -394,7 +394,7 @@
             Volver a Editar
           </button>
           <button type="button" class="btn btn-success" (click)="confirmarYEnviar()">
-            ✓ Confirmar y Procesar Transacción
+            Confirmar y Procesar Transacción
           </button>
         </div>
       </div>

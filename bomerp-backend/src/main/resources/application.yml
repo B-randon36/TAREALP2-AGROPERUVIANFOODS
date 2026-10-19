@@ -7,9 +7,13 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8080/.well-known/jwks.json
+          issuer-uri: http://localhost:38080/realms/agroperuvianfoods
+
+bomerp:
+  cors:
+    allowed-origins: http://localhost:4200,http://127.0.0.1:4200
 
 jwt:
-  issuer: bomerp-backend
+  issuer: http://localhost:38080/realms/agroperuvianfoods
   expiracion-segundos: 3600
 

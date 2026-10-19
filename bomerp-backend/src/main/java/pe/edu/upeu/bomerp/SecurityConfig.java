@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,8 +19,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @Configuration
 @EnableWebSecurity
@@ -59,21 +58,26 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos de autenticación, documentación y módulo Finanzas
+                        // Endpoints públicos de autenticación y documentación
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/registro").permitAll()
                         .requestMatchers("/.well-known/jwks.json").permitAll()
                         .requestMatchers("/actuator/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
                         .requestMatchers("/finanzas-demo.html", "/favicon.ico").permitAll()
-                        .requestMatchers("/api/v1/finanzas/**").permitAll()
 
                         // Perfil ABAC: requiere usuario autenticado
                         .requestMatchers("/api/v1/auth/perfil").authenticated()
 
-                        // Módulo no transaccional (Catálogo y Cajas Chicas) protegido por rol
-                        .requestMatchers(HttpMethod.GET, "/api/v1/productos/**", "/api/v1/categorias/**", "/api/v1/cajas-chicas/**", "/api/v1/finanzas/cajas-chicas/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/productos/**", "/api/v1/categorias/**", "/api/v1/cajas-chicas/**", "/api/v1/finanzas/cajas-chicas/**").hasAnyRole("ADMIN", "ADMIN_FINANZAS")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/productos/**", "/api/v1/categorias/**", "/api/v1/cajas-chicas/**", "/api/v1/finanzas/cajas-chicas/**").hasAnyRole("ADMIN", "ADMIN_FINANZAS")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/productos/**", "/api/v1/categorias/**", "/api/v1/cajas-chicas/**", "/api/v1/finanzas/cajas-chicas/**").hasAnyRole("ADMIN", "ADMIN_FINANZAS")
+                        // Módulo Catálogo: Lectura autenticada, Escritura restringida a ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/v1/productos/**", "/api/v1/categorias/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/productos/**", "/api/v1/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/productos/**", "/api/v1/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/productos/**", "/api/v1/categorias/**").hasRole("ADMIN")
+
+                        // Módulo Finanzas: Lectura autenticada, Escritura restringida a ADMIN o ADMIN_FINANZAS
+                        .requestMatchers(HttpMethod.GET, "/api/v1/finanzas/**", "/api/v1/cajas-chicas/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/finanzas/**", "/api/v1/cajas-chicas/**").hasAnyRole("ADMIN", "ADMIN_FINANZAS")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/finanzas/**", "/api/v1/cajas-chicas/**").hasAnyRole("ADMIN", "ADMIN_FINANZAS")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/finanzas/**", "/api/v1/cajas-chicas/**").hasAnyRole("ADMIN", "ADMIN_FINANZAS")
 
                         // Resto de endpoints requieren autenticación
                         .anyRequest().authenticated()

@@ -9,10 +9,10 @@
     </div>
     <div class="header-actions">
       <button class="btn btn-secondary" (click)="abrirModalCajaChica()">
-        💼 + Nueva Caja Chica (Fondo Fijo)
+        + Nueva Caja Chica (Fondo Fijo)
       </button>
       <a routerLink="/finanzas/rendiciones/nueva" class="btn btn-primary">
-        ➕ Nueva Rendición (Cabecera-Detalle)
+        + Nueva Rendición (Cabecera-Detalle)
       </a>
     </div>
   </div>
@@ -39,14 +39,14 @@
   <!-- ALERTAS DE ÉXITO O ERROR -->
   @if (mensajeExito()) {
     <div class="alert alert-success">
-      <span class="alert-icon">✓</span>
+      <span class="alert-icon">[OK]</span>
       <div>{{ mensajeExito() }}</div>
     </div>
   }
 
   @if (mensajeError()) {
     <div class="alert alert-error">
-      <span class="alert-icon">⚠️</span>
+      <span class="alert-icon">[!]</span>
       <div>{{ mensajeError() }}</div>
     </div>
   }
@@ -55,7 +55,6 @@
   @if (reporteAgregado(); as rep) {
     <div class="metrics-grid">
       <div class="metric-card">
-        <div class="metric-icon">💳</div>
         <div class="metric-content">
           <span class="metric-label">Total Rendido (SUM)</span>
           <span class="metric-value text-primary">S/ {{ rep.totalMonto | number:'1.2-2' }}</span>
@@ -63,7 +62,6 @@
       </div>
 
       <div class="metric-card">
-        <div class="metric-icon">📊</div>
         <div class="metric-content">
           <span class="metric-label">Promedio por Rendición (AVG)</span>
           <span class="metric-value">S/ {{ rep.promedioMonto | number:'1.2-2' }}</span>
@@ -71,7 +69,6 @@
       </div>
 
       <div class="metric-card">
-        <div class="metric-icon">📈</div>
         <div class="metric-content">
           <span class="metric-label">Gasto Máximo (MAX)</span>
           <span class="metric-value text-warning">S/ {{ rep.montoMaximo | number:'1.2-2' }}</span>
@@ -79,7 +76,6 @@
       </div>
 
       <div class="metric-card">
-        <div class="metric-icon">📋</div>
         <div class="metric-content">
           <span class="metric-label">Total Rendiciones (COUNT)</span>
           <span class="metric-value">{{ rep.cantidadRendiciones }} operaciones</span>
@@ -91,7 +87,7 @@
   <!-- BLOQUE 2: BARRA DE FILTROS COMBINADOS (ESTADO Y RANGO DE FECHAS) -->
   <div class="card filter-card">
     <div class="filter-header">
-      <h4>🔍 Filtros de Búsqueda Parametrizada</h4>
+      <h4>Filtros de Búsqueda Parametrizada</h4>
       <span class="filter-sub">Filtro por estado, fechas y caja chica probados con datos reales</span>
     </div>
 
@@ -187,7 +183,7 @@
                       (click)="verDetalle(r)"
                       title="Ver detalle completo de líneas"
                     >
-                      👁️ Detalle
+                      Detalle
                     </button>
 
                     <!-- TRANSICIÓN DE ESTADO (ANULAR) CONDICIONADA AL ESTADO ACTUAL -->
@@ -198,7 +194,7 @@
                         (click)="abrirModalAnular(r)"
                         title="Anular rendición y revertir saldo a caja chica"
                       >
-                        🚫 Anular
+                        Anular
                       </button>
                     } @else {
                       <span class="badge-disabled" title="Operación ya anulada (irreversible)">
@@ -299,7 +295,7 @@
 
         <div class="modal-body">
           <div class="alert alert-solvencia" style="margin-bottom: 1rem;">
-            <span class="alert-icon">⚠️</span>
+            <span class="alert-icon">[!]</span>
             <div>
               <strong>ADVERTENCIA DE INTEGRIDAD TRANSACCIONAL</strong>
               <p>Esta acción es definitiva e irreversible. Cambiará el estado de la rendición a <strong>ANULADO</strong>.</p>
@@ -315,7 +311,7 @@
           </ul>
 
           <div class="alerta-impacto" style="margin-top: 1rem;">
-            💰 <strong>Efecto Colateral Financiero:</strong> Se reintegrarán automáticamente <strong>S/ {{ rendAnular.montoTotal | number:'1.2-2' }}</strong> al saldo disponible de la Caja Chica en una transacción atómica de compensación.
+            <strong>Efecto Colateral Financiero:</strong> Se reintegrarán automáticamente <strong>S/ {{ rendAnular.montoTotal | number:'1.2-2' }}</strong> al saldo disponible de la Caja Chica en una transacción atómica de compensación.
           </div>
         </div>
 
@@ -327,7 +323,7 @@
             @if (loadingAnular()) {
               Procesando anulación...
             } @else {
-              🚫 Confirmar Anulación y Revertir Saldo
+              Confirmar Anulación y Revertir Saldo
             }
           </button>
         </div>
@@ -341,7 +337,7 @@
       <div class="modal-dialog" (click)="$event.stopPropagation()" style="max-width: 520px;">
         <div class="modal-header">
           <h3>Asignar Nuevo Fondo Fijo (Caja Chica)</h3>
-          <button type="button" class="btn-close" (click)="cerrarModalCajaChica()">✕</button>
+          <button type="button" class="btn-close" (click)="cerrarModalCajaChica()">&times;</button>
         </div>
 
         <div class="modal-body">

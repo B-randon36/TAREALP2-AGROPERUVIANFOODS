@@ -1,0 +1,151 @@
+import { Injectable, computed, signal } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { generarCodeChallenge, generarCodeVerifier, generarState } from './pkce';
+import { decodeJwtPayload } from './jwt';
+
+interface SesionKeycloak {
+  accessToken: string;
+  refreshToken: string;
+  idToken: string;
+  expiraEn: number;
+}
+
+interface TokenResponse {
+  access_token: string;
+  refresh_token: string;
+  id_token: string;
+  expires_in: number;
+}
+
+const CLAVE_CODE_VERIFIER = 'agroperuvian_pkce_code_verifier';
+const CLAVE_STATE = 'agroperuvian_pkce_state';
+const CLAVE_DESTINO = 'agroperuvian_pkce_destino';
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private readonly sesion = signal<SesionKeycloak | null>(null);
+
+  readonly autenticado = computed(() => {
+    const actual = this.sesion();
+    return actual !== null && actual.expiraEn > Date.now();
+  });
+
+  readonly roles = computed<string[]>(() => {
+    const token = this.sesion()?.accessToken;
+    if (!token) return [];
+    return decodeJwtPayload(token)?.realm_access?.roles ?? [];
+  });
+
+  readonly usuario = computed(() => {
+    const token = this.sesion()?.accessToken;
+    if (!token) return null;
+    const payload = decodeJwtPayload(token);
+    if (!payload) return null;
+    return {
+      nombre: payload.name ?? payload.preferred_username ?? 'Usuario',
+      email: payload.email ?? '',
+      username: payload.preferred_username ?? '',
+    };
+  });
+
+  tieneRol(...rolesPermitidos: string[]): boolean {
+    return rolesPermitidos.some((rol) => this.roles().includes(rol));
+  }
+
+  accessToken(): string | null {
+    return this.sesion()?.accessToken ?? null;
+  }
+
+  async iniciarLogin(destino = location.pathname): Promise<void> {
+    const verifier = generarCodeVerifier();
+    const state = generarState();
+    const challenge = await generarCodeChallenge(verifier);
+    sessionStorage.setItem(CLAVE_CODE_VERIFIER, verifier);
+    sessionStorage.setItem(CLAVE_STATE, state);
+    sessionStorage.setItem(CLAVE_DESTINO, destino);
+
+    const parametros = new URLSearchParams({
+      client_id: environment.keycloak.clientId,
+      response_type: 'code',
+      redirect_uri: environment.keycloak.redirectUri,
+      scope: 'openid profile email',
+      state,
+      code_challenge: challenge,
+      code_challenge_method: 'S256',
+    });
+    location.href = `${environment.keycloak.issuer}/protocol/openid-connect/auth?${parametros}`;
+  }
+
+  async completarLogin(code: string, stateRecibido: string): Promise<void> {
+    const stateEsperado = sessionStorage.getItem(CLAVE_STATE);
+    const verifier = sessionStorage.getItem(CLAVE_CODE_VERIFIER);
+    sessionStorage.removeItem(CLAVE_STATE);
+    if (!verifier || stateRecibido !== stateEsperado) {
+      throw new Error('state o code_verifier invalido: posible CSRF, inicia el login de nuevo');
+    }
+    const cuerpo = new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: environment.keycloak.clientId,
+      redirect_uri: environment.keycloak.redirectUri,
+      code,
+      code_verifier: verifier,
+    });
+    const respuesta = await fetch(`${environment.keycloak.issuer}/protocol/openid-connect/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: cuerpo,
+    });
+    sessionStorage.removeItem(CLAVE_CODE_VERIFIER);
+    if (!respuesta.ok) {
+      throw new Error('No se pudo intercambiar el codigo por un token');
+    }
+    this.guardarSesion(await respuesta.json());
+  }
+
+  destinoPendiente(): string {
+    const destino = sessionStorage.getItem(CLAVE_DESTINO) ?? '/';
+    sessionStorage.removeItem(CLAVE_DESTINO);
+    return destino;
+  }
+
+  async refrescar(): Promise<boolean> {
+    const refreshToken = this.sesion()?.refreshToken;
+    if (!refreshToken) return false;
+
+    const cuerpo = new URLSearchParams({
+      grant_type: 'refresh_token',
+      client_id: environment.keycloak.clientId,
+      refresh_token: refreshToken,
+    });
+    const respuesta = await fetch(`${environment.keycloak.issuer}/protocol/openid-connect/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: cuerpo,
+    });
+    if (!respuesta.ok) {
+      this.sesion.set(null);
+      return false;
+    }
+    this.guardarSesion(await respuesta.json());
+    return true;
+  }
+
+  cerrarSesion(): void {
+    const idToken = this.sesion()?.idToken;
+    this.sesion.set(null);
+    const parametros = new URLSearchParams({
+      post_logout_redirect_uri: environment.keycloak.postLogoutRedirectUri,
+      ...(idToken ? { id_token_hint: idToken } : {}),
+    });
+    location.href = `${environment.keycloak.issuer}/protocol/openid-connect/logout?${parametros}`;
+  }
+
+  private guardarSesion(datos: TokenResponse): void {
+    this.sesion.set({
+      accessToken: datos.access_token,
+      refreshToken: datos.refresh_token,
+      idToken: datos.id_token,
+      expiraEn: Date.now() + datos.expires_in * 1000,
+    });
+  }
+}

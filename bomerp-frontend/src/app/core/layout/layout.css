@@ -1,55 +1,132 @@
-header {
+header.app-header {
   border-bottom: 1px solid #e0e0e0;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 header h1 {
   margin: 0;
   font-size: 1.25rem;
+  color: #1b5e20;
+  font-weight: 700;
+}
+
+.user-panel {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.user-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.user-role-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+  padding: 1px 8px;
+  border-radius: 12px;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+.btn-logout {
+  background-color: #c62828;
+  color: #ffffff;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-logout:hover {
+  background-color: #b71c1c;
+}
+
+.btn-logout:active {
+  transform: scale(0.98);
 }
 
 .body {
   display: flex;
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 65px);
 }
 
 .sidebar {
-  width: 220px;
+  width: 240px;
   border-right: 1px solid #e0e0e0;
-  padding: 1rem;
+  padding: 1rem 0.75rem;
   background-color: #fafafa;
 }
 
 .sidebar nav {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
+}
+
+.nav-section-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  color: #78909c;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 1rem;
+  margin-bottom: 0.35rem;
+  padding-left: 0.75rem;
 }
 
 .sidebar nav a {
   text-decoration: none;
-  color: #333;
+  color: #37474f;
   padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: background-color 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
 }
 
 .sidebar nav a:hover {
-  background-color: #eee;
+  background-color: #eceff1;
+  color: #1b5e20;
 }
 
 .sidebar nav a.active {
-  font-weight: bold;
-  background-color: #e3f2fd;
-  color: #0d47a1;
+  font-weight: 600;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-left: 3px solid #2e7d32;
 }
 
 .content {
   flex: 1;
   padding: 1.5rem;
+  background-color: #fcfcfc;
 }
 
 .home-link {

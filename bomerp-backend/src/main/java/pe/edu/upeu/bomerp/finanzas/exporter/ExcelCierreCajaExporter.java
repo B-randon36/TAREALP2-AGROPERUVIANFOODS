@@ -59,7 +59,6 @@ public class ExcelCierreCajaExporter implements CierreCajaExporter {
             CellStyle styleCurrency = workbook.createCellStyle();
             styleCurrency.setDataFormat(workbook.createDataFormat().getFormat("S/ #,##0.00"));
 
-            CellStyle styleBold = workbook.createFont().getFontHeight() > 0 ? workbook.createCellStyle() : null;
             Font boldF = workbook.createFont();
             boldF.setBold(true);
             CellStyle boldStyle = workbook.createCellStyle();

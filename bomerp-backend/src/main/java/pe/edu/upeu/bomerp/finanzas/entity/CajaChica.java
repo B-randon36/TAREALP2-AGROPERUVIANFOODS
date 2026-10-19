@@ -1,16 +1,14 @@
 package pe.edu.upeu.bomerp.finanzas.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import pe.edu.upeu.bomerp.seguridad.usuario.entity.Usuario;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "CAJAS_CHICAS")
@@ -36,6 +34,15 @@ public class CajaChica {
     @Column(name = "LIMITE_MAXIMO", nullable = false, precision = 12, scale = 2)
     private BigDecimal limiteMaximo;
 
+    @Builder.Default
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "CAJA_CHICA_CUSTODIOS",
+        joinColumns = @JoinColumn(name = "CAJA_CHICA_ID"),
+        inverseJoinColumns = @JoinColumn(name = "USUARIO_ID")
+    )
+    private Set<Usuario> custodiosAutorizados = new HashSet<>();
+
     public CajaChica() {
     }
 
@@ -45,5 +52,15 @@ public class CajaChica {
         this.responsable = responsable;
         this.saldoDisponible = saldoDisponible;
         this.limiteMaximo = limiteMaximo;
+        this.custodiosAutorizados = new HashSet<>();
+    }
+
+    public CajaChica(Long id, String codigo, String responsable, BigDecimal saldoDisponible, BigDecimal limiteMaximo, Set<Usuario> custodiosAutorizados) {
+        this.id = id;
+        this.codigo = codigo;
+        this.responsable = responsable;
+        this.saldoDisponible = saldoDisponible;
+        this.limiteMaximo = limiteMaximo;
+        this.custodiosAutorizados = custodiosAutorizados != null ? custodiosAutorizados : new HashSet<>();
     }
 }

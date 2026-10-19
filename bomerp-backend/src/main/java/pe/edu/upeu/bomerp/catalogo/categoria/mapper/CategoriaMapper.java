@@ -8,6 +8,7 @@ import pe.edu.upeu.bomerp.catalogo.categoria.entity.Categoria;
 
 @Mapper(componentModel = "spring")
 public interface CategoriaMapper {
+    @org.mapstruct.Mapping(target = "id", ignore = true)
     Categoria toEntity(CategoriaRequest request);
     CategoriaResponse toResponse(Categoria categoria);
     CategoriaResumen toResumen(Categoria categoria);
