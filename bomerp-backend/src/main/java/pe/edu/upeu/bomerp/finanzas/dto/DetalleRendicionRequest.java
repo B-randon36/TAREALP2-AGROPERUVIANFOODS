@@ -27,14 +27,20 @@ public class DetalleRendicionRequest {
     private BigDecimal precioUnitario;
 
     private Long productoId;
+    private Long centroCostoId;
 
     public DetalleRendicionRequest() {
     }
 
     public DetalleRendicionRequest(String concepto, Integer cantidad, BigDecimal precioUnitario, Long productoId) {
+        this(concepto, cantidad, precioUnitario, productoId, null);
+    }
+
+    public DetalleRendicionRequest(String concepto, Integer cantidad, BigDecimal precioUnitario, Long productoId, Long centroCostoId) {
         this.concepto = concepto;
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
         this.productoId = productoId;
+        this.centroCostoId = centroCostoId;
     }
 }

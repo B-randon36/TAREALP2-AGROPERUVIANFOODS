@@ -22,4 +22,6 @@ public class CierreSesionRequest {
     private BigDecimal saldoRealEfectivo;
 
     private String observaciones;
+
+    private java.util.List<DesgloseEfectivoItemDto> desglose;
 }

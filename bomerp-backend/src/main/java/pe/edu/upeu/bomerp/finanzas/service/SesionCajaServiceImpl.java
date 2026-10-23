@@ -36,14 +36,20 @@ public class SesionCajaServiceImpl implements SesionCajaService {
     private final SesionCajaRepository sesionRepository;
     private final MovimientoCajaRepository movimientoRepository;
     private final CategoriaFinancieraRepository categoriaRepository;
+    private final pe.edu.upeu.bomerp.finanzas.repository.DenominacionMonedaRepository denominacionRepository;
+    private final pe.edu.upeu.bomerp.finanzas.repository.DetalleArqueoEfectivoRepository detalleArqueoRepository;
 
     public SesionCajaServiceImpl(
             SesionCajaRepository sesionRepository,
             MovimientoCajaRepository movimientoRepository,
-            CategoriaFinancieraRepository categoriaRepository) {
+            CategoriaFinancieraRepository categoriaRepository,
+            pe.edu.upeu.bomerp.finanzas.repository.DenominacionMonedaRepository denominacionRepository,
+            pe.edu.upeu.bomerp.finanzas.repository.DetalleArqueoEfectivoRepository detalleArqueoRepository) {
         this.sesionRepository = sesionRepository;
         this.movimientoRepository = movimientoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.denominacionRepository = denominacionRepository;
+        this.detalleArqueoRepository = detalleArqueoRepository;
     }
 
     @Override
@@ -63,10 +69,16 @@ public class SesionCajaServiceImpl implements SesionCajaService {
             throw new IllegalArgumentException("Ya existe una sesión con el código: " + codigo);
         }
 
+        String rol = request.getCajeroRol();
+        if (rol == null || rol.isBlank()) {
+            rol = "CAJERO";
+        }
+
         SesionCaja sesion = SesionCaja.builder()
                 .codigoSesion(codigo)
                 .usuarioId(request.getUsuarioId())
                 .cajero(request.getCajero())
+                .cajeroRol(rol)
                 .fechaApertura(LocalDateTime.now())
                 .saldoInicial(request.getSaldoInicial())
                 .totalIngresosEfectivo(BigDecimal.ZERO)
@@ -85,7 +97,39 @@ public class SesionCajaServiceImpl implements SesionCajaService {
     @Transactional
     public SesionCajaResponse cerrarSesion(Long id, CierreSesionRequest request) {
         SesionCaja sesion = buscarSesionOFallar(id);
-        sesion.cerrarSesion(request.getSaldoRealEfectivo(), request.getObservaciones());
+
+        // RN-FIN-02: Un turno ya sellado no puede volver a cerrarse (se sobrescribiría su arqueo)
+        if (sesion.getEstado() != EstadoCaja.ABIERTA) {
+            throw new IllegalStateException("RN-FIN-02: La sesión " + sesion.getCodigoSesion() + " ya se encuentra CERRADA.");
+        }
+
+        BigDecimal saldoReal = request.getSaldoRealEfectivo();
+
+        if (request.getDesglose() != null && !request.getDesglose().isEmpty()) {
+            BigDecimal totalDesglose = BigDecimal.ZERO;
+            sesion.getDetallesArqueo().clear();
+            for (pe.edu.upeu.bomerp.finanzas.dto.DesgloseEfectivoItemDto item : request.getDesglose()) {
+                if (item.getCantidad() != null && item.getCantidad() > 0) {
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda denom = denominacionRepository.findById(item.getDenominacionId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Denominación no encontrada con id: " + item.getDenominacionId()));
+                    BigDecimal subtotal = denom.getValorFacial().multiply(BigDecimal.valueOf(item.getCantidad()));
+                    totalDesglose = totalDesglose.add(subtotal);
+
+                    pe.edu.upeu.bomerp.finanzas.entity.DetalleArqueoEfectivo detalle = pe.edu.upeu.bomerp.finanzas.entity.DetalleArqueoEfectivo.builder()
+                            .id(new pe.edu.upeu.bomerp.finanzas.entity.DetalleArqueoEfectivoId(sesion.getId(), denom.getId()))
+                            .sesionCaja(sesion)
+                            .denominacionMoneda(denom)
+                            .cantidad(item.getCantidad())
+                            .subtotal(subtotal)
+                            .build();
+                    sesion.agregarDetalleArqueo(detalle);
+                }
+            }
+            // RN-FIN-04: El total recalculado en servidor a partir del desglose M:N es la fuente de verdad
+            saldoReal = totalDesglose;
+        }
+
+        sesion.cerrarSesion(saldoReal, request.getObservaciones());
         SesionCaja guardada = sesionRepository.save(sesion);
         return mapToResponse(guardada);
     }
@@ -161,11 +205,23 @@ public class SesionCajaServiceImpl implements SesionCajaService {
                 .map(this::mapToMovimientoResponse)
                 .toList();
 
+        List<pe.edu.upeu.bomerp.finanzas.dto.DesgloseEfectivoItemDto> arqueo = sesion.getDetallesArqueo() != null ?
+                sesion.getDetallesArqueo().stream()
+                        .map(d -> pe.edu.upeu.bomerp.finanzas.dto.DesgloseEfectivoItemDto.builder()
+                                .denominacionId(d.getDenominacionMoneda().getId())
+                                .valorFacial(d.getDenominacionMoneda().getValorFacial())
+                                .tipo(d.getDenominacionMoneda().getTipo())
+                                .cantidad(d.getCantidad())
+                                .subtotal(d.getSubtotal())
+                                .build())
+                        .toList() : java.util.Collections.emptyList();
+
         return SesionCajaDetalleResponse.builder()
                 .id(sesion.getId())
                 .codigoSesion(sesion.getCodigoSesion())
                 .usuarioId(sesion.getUsuarioId())
                 .cajero(sesion.getCajero())
+                .cajeroRol(sesion.getCajeroRol() != null ? sesion.getCajeroRol() : "CAJERO")
                 .fechaApertura(sesion.getFechaApertura())
                 .fechaCierre(sesion.getFechaCierre())
                 .saldoInicial(sesion.getSaldoInicial())
@@ -177,6 +233,7 @@ public class SesionCajaServiceImpl implements SesionCajaService {
                 .estado(sesion.getEstado())
                 .observaciones(sesion.getObservaciones())
                 .movimientos(movs)
+                .detallesArqueo(arqueo)
                 .build();
     }
 
@@ -253,6 +310,7 @@ public class SesionCajaServiceImpl implements SesionCajaService {
                 .codigoSesion(s.getCodigoSesion())
                 .usuarioId(s.getUsuarioId())
                 .cajero(s.getCajero())
+                .cajeroRol(s.getCajeroRol() != null ? s.getCajeroRol() : "CAJERO")
                 .fechaApertura(s.getFechaApertura())
                 .fechaCierre(s.getFechaCierre())
                 .saldoInicial(s.getSaldoInicial())
@@ -284,5 +342,19 @@ public class SesionCajaServiceImpl implements SesionCajaService {
                 .categoriaFinancieraNombre(catNombre)
                 .sesionCajaId(sesionId)
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<pe.edu.upeu.bomerp.finanzas.dto.DenominacionMonedaResponse> listarDenominaciones() {
+        return denominacionRepository.findByActivoTrueOrderByValorFacialDesc().stream()
+                .map(d -> pe.edu.upeu.bomerp.finanzas.dto.DenominacionMonedaResponse.builder()
+                        .id(d.getId())
+                        .valorFacial(d.getValorFacial())
+                        .tipo(d.getTipo())
+                        .orden(d.getOrden())
+                        .activo(d.getActivo())
+                        .build())
+                .toList();
     }
 }

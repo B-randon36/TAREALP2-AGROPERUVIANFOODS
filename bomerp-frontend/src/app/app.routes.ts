@@ -101,6 +101,23 @@ export const routes: Routes = [
         canActivate: [rolGuard('ADMIN', 'ADMIN_FINANZAS')],
       },
 
+      // --- Submódulo Cartera: Cuentas por Cobrar (Créditos y Amortizaciones) ---
+      {
+        path: 'finanzas/creditos',
+        loadComponent: () =>
+          import('./features/finanzas/cuenta-cobrar/cuenta-cobrar-list').then(
+            (m) => m.CuentaCobrarList
+          ),
+      },
+      {
+        path: 'finanzas/creditos/nuevo',
+        loadComponent: () =>
+          import('./features/finanzas/cuenta-cobrar/cuenta-cobrar-form').then(
+            (m) => m.CuentaCobrarForm
+          ),
+        canActivate: [rolGuard('ADMIN', 'ADMIN_FINANZAS', 'CAJERO')],
+      },
+
       // --- Submódulo Analítico: Dashboard y Reportes Financieros ---
       {
         path: 'finanzas/reportes',
@@ -144,6 +161,30 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/catalogo/producto/producto-form').then((m) => m.ProductoForm),
         canActivate: [rolGuard('ADMIN')],
+      },
+
+      // --- Módulo Inventario por Lotes y FEFO ---
+      {
+        path: 'inventario/lotes',
+        loadComponent: () =>
+          import('./features/inventario/lote-list').then((m) => m.LoteList),
+      },
+      {
+        path: 'inventario/kardex',
+        loadComponent: () =>
+          import('./features/inventario/kardex-list').then((m) => m.KardexList),
+      },
+
+      // --- Módulo Ventas y POS Mostrador ---
+      {
+        path: 'ventas/pos',
+        loadComponent: () =>
+          import('./features/ventas/pos-checkout').then((m) => m.PosCheckout),
+      },
+      {
+        path: 'ventas/historial',
+        loadComponent: () =>
+          import('./features/ventas/venta-list').then((m) => m.VentaList),
       },
 
       // --- Ruta de Acceso Denegado ---

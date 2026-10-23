@@ -48,6 +48,9 @@ class SesionCajaServiceTest {
     @Autowired
     private CategoriaFinancieraRepository categoriaRepository;
 
+    @Autowired
+    private pe.edu.upeu.bomerp.finanzas.repository.DenominacionMonedaRepository denominacionRepository;
+
     private Long categoriaVentasId;
     private Long categoriaGastosId;
 
@@ -124,6 +127,63 @@ class SesionCajaServiceTest {
             assertThat(cerrada.getEstado()).isEqualTo(EstadoCaja.CERRADA);
             assertThat(cerrada.getSaldoRealEfectivo()).isEqualByComparingTo("205.00");
             assertThat(cerrada.getDiferencia()).isEqualByComparingTo("5.00");
+        }
+
+        @Test
+        @DisplayName("Debe cerrar turno con desglose de billetes y monedas M:N y persistir DetalleArqueoEfectivo")
+        void debeCerrarSesionConDesgloseDeDenominacionesYPersistirDetalleArqueo() {
+            var denom100 = denominacionRepository.save(pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder()
+                    .valorFacial(new BigDecimal("100.00"))
+                    .tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.BILLETE)
+                    .orden(1)
+                    .activo(true)
+                    .build());
+
+            var denom50 = denominacionRepository.save(pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder()
+                    .valorFacial(new BigDecimal("50.00"))
+                    .tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.BILLETE)
+                    .orden(2)
+                    .activo(true)
+                    .build());
+
+            AperturaSesionRequest req = AperturaSesionRequest.builder()
+                    .usuarioId(109L)
+                    .cajero("Brandon Ccalla")
+                    .saldoInicial(new BigDecimal("150.00"))
+                    .build();
+            SesionCajaResponse sesion = sesionCajaService.abrirSesion(req);
+
+            var item1 = pe.edu.upeu.bomerp.finanzas.dto.DesgloseEfectivoItemDto.builder()
+                    .denominacionId(denom100.getId())
+                    .valorFacial(new BigDecimal("100.00"))
+                    .tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.BILLETE)
+                    .cantidad(1)
+                    .subtotal(new BigDecimal("100.00"))
+                    .build();
+
+            var item2 = pe.edu.upeu.bomerp.finanzas.dto.DesgloseEfectivoItemDto.builder()
+                    .denominacionId(denom50.getId())
+                    .valorFacial(new BigDecimal("50.00"))
+                    .tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.BILLETE)
+                    .cantidad(1)
+                    .subtotal(new BigDecimal("50.00"))
+                    .build();
+
+            CierreSesionRequest cierreReq = CierreSesionRequest.builder()
+                    .saldoRealEfectivo(new BigDecimal("150.00"))
+                    .observaciones("Cierre arqueo conforme con desglose")
+                    .desglose(java.util.List.of(item1, item2))
+                    .build();
+
+            SesionCajaResponse cerrada = sesionCajaService.cerrarSesion(sesion.getId(), cierreReq);
+            assertThat(cerrada.getEstado()).isEqualTo(EstadoCaja.CERRADA);
+            assertThat(cerrada.getSaldoRealEfectivo()).isEqualByComparingTo("150.00");
+            assertThat(cerrada.getDiferencia()).isEqualByComparingTo("0.00");
+
+            SesionCajaDetalleResponse detalle = sesionCajaService.obtenerDetalle(sesion.getId());
+            assertThat(detalle.getDetallesArqueo()).hasSize(2);
+            assertThat(detalle.getDetallesArqueo()).extracting("subtotal")
+                    .contains(new BigDecimal("100.00"), new BigDecimal("50.00"));
         }
     }
 

@@ -22,6 +22,7 @@ export interface FormLineaItem {
   cantidad: number;
   precioUnitario: number;
   productoId: number | null;
+  centroCostoId: number | null;
 }
 
 @Component({
@@ -40,6 +41,8 @@ export class RendicionCajaChicaForm implements OnInit {
   // Señales de Estado
   protected readonly cajasChicas = signal<CajaChica[]>([]);
   protected readonly productos = signal<Producto[]>([]);
+  protected readonly centrosCosto = signal<import('./rendicion-caja-chica.model').CentroCosto[]>([]);
+  protected readonly presupuestosCaja = signal<import('./rendicion-caja-chica.model').AsignacionCajaCentroCosto[]>([]);
   protected readonly loading = signal(false);
   protected readonly cargandoDatos = signal(true);
   protected readonly mensajeExito = signal<string | null>(null);
@@ -84,7 +87,6 @@ export class RendicionCajaChicaForm implements OnInit {
   });
 
   // Signal Derivada: Total General recalculado reactivamente con computed
-  // Ningún subtotal ni total es enviado como campo editable al backend
   protected readonly totalGeneral = computed(() => {
     return this.subtotales().reduce((acc, sub) => acc + sub, 0);
   });
@@ -96,6 +98,25 @@ export class RendicionCajaChicaForm implements OnInit {
     return caja.saldoDisponible - this.totalGeneral();
   });
 
+  // Alerta preventiva reactiva RN-FIN-06 en el cliente
+  protected readonly alertaRnFin06 = computed(() => {
+    const presupuestos = this.presupuestosCaja();
+    if (!presupuestos || presupuestos.length === 0) return null;
+
+    const lineas = this.lineasSignal();
+    for (let i = 0; i < lineas.length; i++) {
+      const l = lineas[i];
+      if (l.centroCostoId) {
+        const asig = presupuestos.find((p) => p.centroCostoId === Number(l.centroCostoId));
+        const subtotal = (Number(l.cantidad) || 0) * (Number(l.precioUnitario) || 0);
+        if (asig && subtotal > asig.saldoDisponible) {
+          return `RN-FIN-06 (Control Presupuestal): El importe de la línea #${i + 1} (S/ ${subtotal.toFixed(2)}) supera el saldo disponible de ${asig.codigoCc} (S/ ${asig.saldoDisponible.toFixed(2)}).`;
+        }
+      }
+    }
+    return null;
+  });
+
   get detallesArray(): FormArray<FormGroup> {
     return this.form.get('detalles') as FormArray<FormGroup>;
   }
@@ -105,8 +126,17 @@ export class RendicionCajaChicaForm implements OnInit {
     this.agregarLinea(); // Inicializa siempre con al menos una línea obligatoria
 
     // Escucha cambios del FormArray para alimentar la señal lineasSignal de forma reactiva
-    this.detallesArray.valueChanges.subscribe((val) => {
+    this.detallesArray.valueChanges.subscribe(() => {
       this.actualizarLineasSignal();
+    });
+
+    this.form.get('cajaChicaId')?.valueChanges.subscribe((id) => {
+      if (id && Number(id) > 0) {
+        this.rendicionService.listarPresupuestosCaja(Number(id)).subscribe({
+          next: (presupuestos) => this.presupuestosCaja.set(presupuestos),
+          error: () => this.presupuestosCaja.set([]),
+        });
+      }
     });
 
     // Auto-generar código tentativo correlativo
@@ -126,6 +156,10 @@ export class RendicionCajaChicaForm implements OnInit {
         this.cajasChicas.set(cajas);
         if (cajas.length > 0) {
           this.form.patchValue({ cajaChicaId: cajas[0].id });
+          this.rendicionService.listarPresupuestosCaja(cajas[0].id).subscribe({
+            next: (p) => this.presupuestosCaja.set(p),
+            error: () => this.presupuestosCaja.set([]),
+          });
         }
         this.cargandoDatos.set(false);
       },
@@ -135,25 +169,38 @@ export class RendicionCajaChicaForm implements OnInit {
       },
     });
 
+    this.rendicionService.listarCentrosCosto().subscribe({
+      next: (ccs) => this.centrosCosto.set(ccs),
+      error: (e) => console.warn('No se pudieron precargar centros de costo:', e),
+    });
+
     this.productoService.listar().subscribe({
       next: (prods) => this.productos.set(prods),
       error: (e) => console.warn('No se pudo precargar catálogo para autocomplete:', e),
     });
   }
 
-  private crearGrupoLinea(concepto = '', cantidad = 1, precioUnitario = 0, productoId: number | null = null): FormGroup {
+  private crearGrupoLinea(
+    concepto = '',
+    cantidad = 1,
+    precioUnitario = 0,
+    productoId: number | null = null,
+    centroCostoId: number | null = null
+  ): FormGroup {
     return this.fb.group({
       concepto: [concepto, [Validators.required, Validators.maxLength(150)]],
       cantidad: [cantidad, [Validators.required, Validators.min(1)]],
       precioUnitario: [precioUnitario, [Validators.required, Validators.min(0.01)]],
       productoId: [productoId],
+      centroCostoId: [centroCostoId, [Validators.required]],
     });
   }
 
   // --- Manejo dinámico de líneas con FormArray ---
 
   agregarLinea(): void {
-    this.detallesArray.push(this.crearGrupoLinea('', 1, 0, null));
+    const primerCc = this.centrosCosto()[0]?.id ?? null;
+    this.detallesArray.push(this.crearGrupoLinea('', 1, 0, null, primerCc));
     this.actualizarLineasSignal();
   }
 
@@ -278,6 +325,7 @@ export class RendicionCajaChicaForm implements OnInit {
         cantidad: Number(d.cantidad),
         precioUnitario: Number(d.precioUnitario),
         productoId: d.productoId ? Number(d.productoId) : undefined,
+        centroCostoId: d.centroCostoId ? Number(d.centroCostoId) : undefined,
       })),
     };
 
@@ -304,7 +352,15 @@ export class RendicionCajaChicaForm implements OnInit {
     const mensaje: string = body.message || '';
     const reglaNegocio: string = body.reglaNegocio || '';
 
-    // Error 1: Regla de Negocio RN-FIN-01 (Solvencia de Caja Insuficiente)
+    // Error 1: Regla de Negocio RN-FIN-06 (Control Presupuestal por Centro de Costo)
+    if (reglaNegocio === 'RN-FIN-06' || mensaje.includes('RN-FIN-06') || mensaje.toLowerCase().includes('presupuestal') || mensaje.toLowerCase().includes('centro de costo')) {
+      this.errorSolvencia.set(
+        `REGLA DE NEGOCIO RN-FIN-06 (Presupuesto Centro de Costo): ${mensaje}`
+      );
+      return;
+    }
+
+    // Error 2: Regla de Negocio RN-FIN-01 (Solvencia de Caja Insuficiente)
     if (reglaNegocio === 'RN-FIN-01' || mensaje.toLowerCase().includes('solvencia') || mensaje.toLowerCase().includes('supera la solvencia')) {
       this.errorSolvencia.set(
         `REGLA DE NEGOCIO RN-FIN-01 (Control de Liquidez): ${mensaje}`
@@ -312,7 +368,7 @@ export class RendicionCajaChicaForm implements OnInit {
       return;
     }
 
-    // Error 2: Conflicto de Integridad / Duplicidad de Código
+    // Error 3: Conflicto de Integridad / Duplicidad de Código
     if (status === 400 && (mensaje.toLowerCase().includes('ya existe una rendición') || mensaje.toLowerCase().includes('código'))) {
       this.errorDuplicidad.set(
         `ERROR DE INTEGRIDAD: ${mensaje}. Por favor especifique un número correlativo único.`

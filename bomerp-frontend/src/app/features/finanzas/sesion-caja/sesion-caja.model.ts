@@ -7,6 +7,7 @@ export interface SesionCaja {
   codigoSesion: string;
   usuarioId: number;
   cajero: string;
+  cajeroRol?: string;
   fechaApertura: string;
   fechaCierre?: string | null;
   saldoInicial: number;
@@ -33,13 +34,33 @@ export interface MovimientoCaja {
   sesionCajaId: number;
 }
 
+export type TipoDenominacion = 'BILLETE' | 'MONEDA';
+
+export interface DenominacionMoneda {
+  id: number;
+  valorFacial: number;
+  tipo: TipoDenominacion;
+  orden: number;
+  activo: boolean;
+}
+
+export interface DesgloseEfectivoItem {
+  denominacionId: number;
+  valorFacial: number;
+  tipo: TipoDenominacion;
+  cantidad: number;
+  subtotal: number;
+}
+
 export interface SesionCajaDetalle extends SesionCaja {
   movimientos: MovimientoCaja[];
+  detallesArqueo?: DesgloseEfectivoItem[];
 }
 
 export interface AperturaSesionRequest {
   usuarioId: number;
   cajero: string;
+  cajeroRol?: string;
   saldoInicial: number;
   codigoSesion?: string | null;
 }
@@ -47,6 +68,7 @@ export interface AperturaSesionRequest {
 export interface CierreSesionRequest {
   saldoRealEfectivo: number;
   observaciones?: string | null;
+  desglose?: DesgloseEfectivoItem[];
 }
 
 export interface MovimientoCajaRequest {
@@ -73,10 +95,13 @@ export interface CierreCajaReporte {
   sesion: SesionCaja;
   movimientos: MovimientoCaja[];
   resumenPorMetodo: MetodoPagoResumen[];
+  desglose?: DesgloseEfectivoItem[];
 }
 
 export interface ArqueoDenominacion {
+  denominacionId?: number;
   denominacion: number;
   cantidad: number;
-  tipo: 'BILLETE' | 'MONEDA';
+  tipo: TipoDenominacion;
 }
+

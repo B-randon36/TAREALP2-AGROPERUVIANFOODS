@@ -382,3 +382,90 @@
   border-radius: 4px;
   font-weight: 600;
 }
+
+/* ========================================================================== */
+/* Roles de Cajero y Responsable (Finanzas / Arqueo)                          */
+/* ========================================================================== */
+.badge-role-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+  margin: 0 0.5rem;
+  border: 1px solid #c7d2fe;
+  vertical-align: middle;
+}
+
+.badge-role-chip.badge-admin {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  color: #5b21b6;
+  border-color: #c4b5fd;
+  box-shadow: 0 1px 3px rgba(124, 58, 237, 0.15);
+}
+
+.badge-role-chip-card {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  margin-left: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.03em;
+  vertical-align: middle;
+}
+
+.cashier-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: flex-start;
+}
+
+.cashier-name {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.badge-role-table {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 0.125rem 0.45rem;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  letter-spacing: 0.02em;
+}
+
+.badge-role-table.badge-admin-subtle {
+  background: #ede9fe;
+  color: #6d28d9;
+  border-color: #ddd6fe;
+}
+
+.badge-state-mini {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.badge-state-mini.state-open {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge-state-mini.state-closed {
+  background: #f1f5f9;
+  color: #475569;
+}

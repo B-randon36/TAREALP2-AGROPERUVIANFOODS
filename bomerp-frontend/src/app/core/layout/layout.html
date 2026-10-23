@@ -31,6 +31,9 @@
         <a routerLink="/finanzas/sesiones" routerLinkActive="active">
           Turnos y Sesiones de Caja
         </a>
+        <a routerLink="/finanzas/creditos" routerLinkActive="active">
+          Cuentas por Cobrar
+        </a>
       }
 
       @if (auth.tieneRol('ADMIN', 'ADMIN_FINANZAS')) {
@@ -61,6 +64,28 @@
       </a>
       <a routerLink="/catalogo/categorias" routerLinkActive="active">
         Categorías
+      </a>
+
+      <!-- Menú Módulo Inventario y Lotes FEFO -->
+      <div class="nav-section-title">
+        Inventario y Lotes FEFO
+      </div>
+      <a routerLink="/inventario/lotes" routerLinkActive="active">
+        Lotes y Caducidad FEFO
+      </a>
+      <a routerLink="/inventario/kardex" routerLinkActive="active">
+        Kardex de Almacén
+      </a>
+
+      <!-- Menú Módulo Ventas POS -->
+      <div class="nav-section-title">
+        Ventas y Mostrador POS
+      </div>
+      <a routerLink="/ventas/pos" routerLinkActive="active">
+        🛒 Terminal POS Mostrador
+      </a>
+      <a routerLink="/ventas/historial" routerLinkActive="active">
+        🧾 Historial de Ventas
       </a>
     </nav>
   </aside>

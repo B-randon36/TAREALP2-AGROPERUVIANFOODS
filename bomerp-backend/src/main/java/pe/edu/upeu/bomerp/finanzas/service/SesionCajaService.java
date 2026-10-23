@@ -27,4 +27,6 @@ public interface SesionCajaService {
     SesionCajaResponse obtenerUltimaSesionActiva();
 
     CierreCajaReporteDto generarDatosReporte(Long id);
+
+    List<pe.edu.upeu.bomerp.finanzas.dto.DenominacionMonedaResponse> listarDenominaciones();
 }

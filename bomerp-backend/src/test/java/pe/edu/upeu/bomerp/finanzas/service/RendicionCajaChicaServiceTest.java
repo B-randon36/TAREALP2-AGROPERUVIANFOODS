@@ -49,6 +49,12 @@ class RendicionCajaChicaServiceTest {
     @Autowired
     private DetalleRendicionCajaChicaRepository detalleRepository;
 
+    @Autowired
+    private pe.edu.upeu.bomerp.finanzas.repository.CentroCostoRepository centroCostoRepository;
+
+    @Autowired
+    private pe.edu.upeu.bomerp.finanzas.repository.AsignacionCajaCentroCostoRepository asignacionRepository;
+
     @MockitoBean
     private ProductoService productoService;
 
@@ -445,6 +451,74 @@ class RendicionCajaChicaServiceTest {
             assertThat(reporte.getMontoMaximo()).isNotNull().isEqualByComparingTo(BigDecimal.ZERO);
             assertThat(reporte.getMontoMinimo()).isNotNull().isEqualByComparingTo(BigDecimal.ZERO);
             assertThat(reporte.getCantidadRendiciones()).isNotNull().isEqualTo(0L);
+        }
+    }
+
+    @Nested
+    @DisplayName("7. Relación M:N Asignación Presupuestal por Centro de Costo (RN-FIN-06)")
+    class ControlPresupuestalCentroCostoTests {
+
+        @Test
+        @DisplayName("RN-FIN-06: Debe descontar saldo presupuestal por centro de costo al registrar rendición")
+        void debeDescontarSaldoPresupuestalPorCentroCosto() {
+            var cc = centroCostoRepository.save(pe.edu.upeu.bomerp.finanzas.entity.CentroCosto.builder()
+                    .codigoCc("CC-TEST-01")
+                    .nombreArea("Área Prueba")
+                    .activo(true)
+                    .build());
+
+            rendicionService.asignarPresupuestoCentroCosto(cajaChicaId, cc.getId(), new BigDecimal("300.00"));
+
+            DetalleRendicionRequest item = DetalleRendicionRequest.builder()
+                    .concepto("Insumos de Prueba")
+                    .cantidad(2)
+                    .precioUnitario(new BigDecimal("50.00")) // S/ 100.00
+                    .centroCostoId(cc.getId())
+                    .build();
+
+            RendicionCajaChicaRequest req = RendicionCajaChicaRequest.builder()
+                    .codigo("REND-CC-TEST-01")
+                    .responsable("Juan Pérez")
+                    .cajaChicaId(cajaChicaId)
+                    .detalles(List.of(item))
+                    .build();
+
+            rendicionService.registrarRendicion(req);
+
+            var presupuestos = rendicionService.listarPresupuestosPorCaja(cajaChicaId);
+            assertThat(presupuestos).anyMatch(p -> p.getCodigoCc().equals("CC-TEST-01") &&
+                    p.getSaldoDisponible().compareTo(new BigDecimal("200.00")) == 0);
+        }
+
+        @Test
+        @DisplayName("RN-FIN-06: Debe bloquear gasto y lanzar SolvenciaInsuficienteException si excede el saldo del centro de costo")
+        void debeBloquearGastoQueExcedePresupuestoCentroCosto() {
+            var cc = centroCostoRepository.save(pe.edu.upeu.bomerp.finanzas.entity.CentroCosto.builder()
+                    .codigoCc("CC-TEST-02")
+                    .nombreArea("Área Prueba 2")
+                    .activo(true)
+                    .build());
+
+            rendicionService.asignarPresupuestoCentroCosto(cajaChicaId, cc.getId(), new BigDecimal("80.00"));
+
+            DetalleRendicionRequest item = DetalleRendicionRequest.builder()
+                    .concepto("Compra que excede techo de centro de costo")
+                    .cantidad(1)
+                    .precioUnitario(new BigDecimal("100.00")) // S/ 100.00 > S/ 80.00 disponible
+                    .centroCostoId(cc.getId())
+                    .build();
+
+            RendicionCajaChicaRequest req = RendicionCajaChicaRequest.builder()
+                    .codigo("REND-CC-EXCESO-01")
+                    .responsable("Juan Pérez")
+                    .cajaChicaId(cajaChicaId)
+                    .detalles(List.of(item))
+                    .build();
+
+            assertThatThrownBy(() -> rendicionService.registrarRendicion(req))
+                    .isInstanceOf(SolvenciaInsuficienteException.class)
+                    .hasMessageContaining("RN-FIN-06")
+                    .hasMessageContaining("excede el saldo presupuestal disponible");
         }
     }
 }

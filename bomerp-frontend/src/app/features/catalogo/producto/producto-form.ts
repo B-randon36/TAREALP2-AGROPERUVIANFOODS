@@ -34,12 +34,15 @@ export class ProductoForm {
   protected readonly error = signal<string | null>(null);
   protected readonly loading = signal(false);
   protected readonly errorCarga = signal(false);
+  protected readonly imagenPreview = signal<string | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
     nombre: ['', [Validators.required, Validators.maxLength(120)]],
     precio: [0, [Validators.required, Validators.min(0)]],
     stock: [0, [Validators.required, Validators.min(0), entero]],
     categoriaId: [0, [Validators.min(1)]],
+    descripcion: ['', [Validators.maxLength(1000)]],
+    imagenUrl: [''],
   });
 
   constructor() {
@@ -57,7 +60,12 @@ export class ProductoForm {
             precio: producto.precio,
             stock: producto.stock,
             categoriaId: producto.categoria.id,
+            descripcion: producto.descripcion || '',
+            imagenUrl: producto.imagenUrl || '',
           });
+          if (producto.imagenUrl) {
+            this.imagenPreview.set(producto.imagenUrl);
+          }
           this.loading.set(false);
         },
         error: () => {
@@ -67,6 +75,40 @@ export class ProductoForm {
         },
       });
     }
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      if (!file.type.startsWith('image/')) {
+        this.error.set('El archivo seleccionado debe ser una imagen (PNG, JPG, WebP).');
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        this.error.set('La imagen no debe superar los 2MB.');
+        return;
+      }
+      this.error.set(null);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        this.form.controls.imagenUrl.setValue(result);
+        this.imagenPreview.set(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onUrlChange(url: string): void {
+    const trimmed = url.trim();
+    this.form.controls.imagenUrl.setValue(trimmed);
+    this.imagenPreview.set(trimmed || null);
+  }
+
+  limpiarImagen(): void {
+    this.form.controls.imagenUrl.setValue('');
+    this.imagenPreview.set(null);
   }
 
   cargarCategorias(): void {

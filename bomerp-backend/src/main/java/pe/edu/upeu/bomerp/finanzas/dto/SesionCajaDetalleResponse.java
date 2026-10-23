@@ -21,6 +21,7 @@ public class SesionCajaDetalleResponse {
     private String codigoSesion;
     private Long usuarioId;
     private String cajero;
+    private String cajeroRol;
     private LocalDateTime fechaApertura;
     private LocalDateTime fechaCierre;
     private BigDecimal saldoInicial;
@@ -32,4 +33,5 @@ public class SesionCajaDetalleResponse {
     private EstadoCaja estado;
     private String observaciones;
     private List<MovimientoCajaResponse> movimientos;
+    private List<DesgloseEfectivoItemDto> detallesArqueo;
 }

@@ -35,6 +35,13 @@ public class Producto {
     @Column(name = "STOCK", nullable = false)
     private Integer stock;
 
+    @Column(name = "DESCRIPCION", length = 1000)
+    private String descripcion;
+
+    @jakarta.persistence.Lob
+    @Column(name = "IMAGEN_URL")
+    private String imagenUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CATEGORIA", nullable = false)
     private Categoria categoria;

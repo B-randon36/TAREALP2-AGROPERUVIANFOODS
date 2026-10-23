@@ -55,6 +55,8 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setNombre(request.getNombre());
         producto.setPrecio(request.getPrecio());
         producto.setStock(request.getStock());
+        producto.setDescripcion(request.getDescripcion());
+        producto.setImagenUrl(request.getImagenUrl());
         producto.setCategoria(categoria);
         return productoMapper.toResponse(productoRepository.save(producto));
     }

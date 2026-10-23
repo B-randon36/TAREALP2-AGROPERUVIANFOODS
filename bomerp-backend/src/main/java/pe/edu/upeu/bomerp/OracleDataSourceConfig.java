@@ -17,7 +17,12 @@ import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = {"pe.edu.upeu.bomerp.catalogo", "pe.edu.upeu.bomerp.finanzas"},
+        basePackages = {
+                "pe.edu.upeu.bomerp.catalogo",
+                "pe.edu.upeu.bomerp.finanzas",
+                "pe.edu.upeu.bomerp.inventario",
+                "pe.edu.upeu.bomerp.ventas"
+        },
         entityManagerFactoryRef = "oracleEntityManagerFactory",
         transactionManagerRef = "oracleTransactionManager")
 public class OracleDataSourceConfig {
@@ -40,7 +45,13 @@ public class OracleDataSourceConfig {
     public LocalContainerEntityManagerFactoryBean oracleEntityManagerFactory(@Qualifier("oracleDataSource") DataSource oracleDataSource) {
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setDataSource(oracleDataSource);
-        factory.setPackagesToScan("pe.edu.upeu.bomerp.catalogo", "pe.edu.upeu.bomerp.finanzas");
+        factory.setPackagesToScan(
+                "pe.edu.upeu.bomerp.catalogo",
+                "pe.edu.upeu.bomerp.finanzas",
+                "pe.edu.upeu.bomerp.inventario",
+                "pe.edu.upeu.bomerp.ventas",
+                "pe.edu.upeu.bomerp.seguridad"
+        );
         factory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         factory.setJpaPropertyMap(Map.of(
                 "hibernate.hbm2ddl.auto", "update",

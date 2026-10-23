@@ -41,6 +41,10 @@ public class SesionCaja {
     @Column(name = "CAJERO", nullable = false, length = 120)
     private String cajero;
 
+    @Column(name = "CAJERO_ROL", length = 80)
+    @Builder.Default
+    private String cajeroRol = "CAJERO";
+
     @Column(name = "FECHA_APERTURA", nullable = false)
     private LocalDateTime fechaApertura;
 
@@ -81,6 +85,10 @@ public class SesionCaja {
     @OrderBy("fechaHora ASC")
     @Builder.Default
     private List<MovimientoCaja> movimientos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sesionCaja", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<DetalleArqueoEfectivo> detallesArqueo = new ArrayList<>();
 
     /**
      * Recalcula los totales en memoria a partir de los movimientos registrados.
@@ -134,14 +142,40 @@ public class SesionCaja {
         recalcularTotales();
     }
 
+    public void agregarDetalleArqueo(DetalleArqueoEfectivo detalle) {
+        if (this.detallesArqueo == null) {
+            this.detallesArqueo = new ArrayList<>();
+        }
+        detalle.setSesionCaja(this);
+        if (detalle.getId() == null) {
+            detalle.setId(new DetalleArqueoEfectivoId());
+        }
+        if (this.id != null) {
+            detalle.getId().setSesionId(this.id);
+        }
+        if (detalle.getDenominacionMoneda() != null) {
+            detalle.getId().setDenominacionId(detalle.getDenominacionMoneda().getId());
+        }
+        this.detallesArqueo.add(detalle);
+    }
+
     public SesionCaja() {
     }
 
     public SesionCaja(Long id, String codigoSesion, Long usuarioId, String cajero, LocalDateTime fechaApertura, LocalDateTime fechaCierre, BigDecimal saldoInicial, BigDecimal totalIngresosEfectivo, BigDecimal totalEgresosEfectivo, BigDecimal saldoEsperadoEfectivo, BigDecimal saldoRealEfectivo, BigDecimal diferencia, EstadoCaja estado, String observaciones, List<MovimientoCaja> movimientos) {
+        this(id, codigoSesion, usuarioId, cajero, "CAJERO", fechaApertura, fechaCierre, saldoInicial, totalIngresosEfectivo, totalEgresosEfectivo, saldoEsperadoEfectivo, saldoRealEfectivo, diferencia, estado, observaciones, movimientos, new ArrayList<>());
+    }
+
+    public SesionCaja(Long id, String codigoSesion, Long usuarioId, String cajero, LocalDateTime fechaApertura, LocalDateTime fechaCierre, BigDecimal saldoInicial, BigDecimal totalIngresosEfectivo, BigDecimal totalEgresosEfectivo, BigDecimal saldoEsperadoEfectivo, BigDecimal saldoRealEfectivo, BigDecimal diferencia, EstadoCaja estado, String observaciones, List<MovimientoCaja> movimientos, List<DetalleArqueoEfectivo> detallesArqueo) {
+        this(id, codigoSesion, usuarioId, cajero, "CAJERO", fechaApertura, fechaCierre, saldoInicial, totalIngresosEfectivo, totalEgresosEfectivo, saldoEsperadoEfectivo, saldoRealEfectivo, diferencia, estado, observaciones, movimientos, detallesArqueo);
+    }
+
+    public SesionCaja(Long id, String codigoSesion, Long usuarioId, String cajero, String cajeroRol, LocalDateTime fechaApertura, LocalDateTime fechaCierre, BigDecimal saldoInicial, BigDecimal totalIngresosEfectivo, BigDecimal totalEgresosEfectivo, BigDecimal saldoEsperadoEfectivo, BigDecimal saldoRealEfectivo, BigDecimal diferencia, EstadoCaja estado, String observaciones, List<MovimientoCaja> movimientos, List<DetalleArqueoEfectivo> detallesArqueo) {
         this.id = id;
         this.codigoSesion = codigoSesion;
         this.usuarioId = usuarioId;
         this.cajero = cajero;
+        this.cajeroRol = cajeroRol != null ? cajeroRol : "CAJERO";
         this.fechaApertura = fechaApertura;
         this.fechaCierre = fechaCierre;
         this.saldoInicial = saldoInicial;
@@ -153,5 +187,6 @@ public class SesionCaja {
         this.estado = estado != null ? estado : EstadoCaja.ABIERTA;
         this.observaciones = observaciones;
         this.movimientos = movimientos != null ? movimientos : new ArrayList<>();
+        this.detallesArqueo = detallesArqueo != null ? detallesArqueo : new ArrayList<>();
     }
 }

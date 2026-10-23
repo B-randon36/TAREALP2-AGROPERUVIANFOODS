@@ -1,0 +1,342 @@
+<div class="pos-layout">
+  <!-- ENCABEZADO SUPERIOR DEL PUNTO DE VENTA -->
+  <div class="pos-header">
+    <div class="pos-title-block">
+      <h2>Punto de Venta (POS) Mostrador</h2>
+      <span class="pos-subtitle">Agro Peruvian Foods S.A.C. — Tienda y Ferias Comerciales</span>
+    </div>
+
+    <!-- ESTADO DEL TURNO DE CAJA -->
+    <div class="turno-status-card" [class.turno-open]="turnoActivo()" [class.turno-closed]="!turnoActivo()">
+      @if (turnoActivo(); as activa) {
+        <div class="status-indicator online"></div>
+        <div class="turno-info">
+          <span class="turno-label">TURNO ACTIVO: <strong>{{ activa.codigoSesion }}</strong></span>
+          <span class="turno-cashier">Cajero: <strong>{{ activa.cajero }}</strong> | Gaveta: <strong>S/ {{ activa.saldoEsperadoEfectivo | number:'1.2-2' }}</strong></span>
+        </div>
+      } @else {
+        <div class="status-indicator offline"></div>
+        <div class="turno-info">
+          <span class="turno-label text-danger font-bold">SIN TURNO DE CAJA ABIERTO</span>
+          <a routerLink="/finanzas/sesiones/nueva" class="link-apertura">Aperturar Turno Diario &rarr;</a>
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  <!-- CUERPO PRINCIPAL DEL POS: PRODUCTOS + PANEL DE COBRO -->
+  <div class="pos-main">
+    <!-- PANEL IZQUIERDO: CATÁLOGO DE PRODUCTOS -->
+    <div class="products-panel">
+      <div class="panel-header">
+        <h3>Catálogo de Productos Disponibles</h3>
+        <span class="badge-agro">Descuento Automático FEFO</span>
+      </div>
+
+      <div class="products-grid">
+        @for (p of productos(); track p.id) {
+          <div class="product-card" (click)="agregarAlCarrito(p)">
+            <div class="prod-badge">Stock: {{ p.stock }}</div>
+            <div class="prod-media-wrapper">
+              @if (p.imagenUrl) {
+                <img
+                  [src]="p.imagenUrl"
+                  [alt]="p.nombre"
+                  class="prod-img"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                />
+                <div class="prod-icon" style="display: none;">
+                  @if (p.nombre.includes('Aceite')) { 🥥 }
+                  @else if (p.nombre.includes('Cacao') || p.nombre.includes('Nibs')) { 🍫 }
+                  @else { 📦 }
+                </div>
+              } @else {
+                <div class="prod-icon">
+                  @if (p.nombre.includes('Aceite')) { 🥥 }
+                  @else if (p.nombre.includes('Cacao') || p.nombre.includes('Nibs')) { 🍫 }
+                  @else { 📦 }
+                </div>
+              }
+            </div>
+            <h4 class="prod-name" [title]="p.nombre">{{ p.nombre }}</h4>
+            @if (p.descripcion) {
+              <div class="prod-desc" [title]="p.descripcion">{{ p.descripcion }}</div>
+            }
+            <div class="prod-price font-mono">S/ {{ p.precio | number:'1.2-2' }}</div>
+            <button type="button" class="btn-add">+ Agregar</button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- PANEL DERECHO: CARRITO Y TERMINAL DE COBRO -->
+    <div class="checkout-panel">
+      <div class="panel-header">
+        <h3>Orden de Venta</h3>
+        <button class="btn-clear" (click)="limpiarCarrito()" [disabled]="carrito().length === 0">Limpiar</button>
+      </div>
+
+      <!-- LISTA DE PRODUCTOS EN EL CARRITO -->
+      <div class="cart-items-wrapper">
+        @if (carrito().length === 0) {
+          <div class="cart-empty">
+            <span class="cart-empty-icon">🛒</span>
+            <p>Carrito vacío. Haz clic en un producto para agregarlo a la orden.</p>
+          </div>
+        } @else {
+          <div class="cart-items-list">
+            @for (it of carrito(); track it.productoId) {
+              <div class="cart-row">
+                <div class="cart-col-thumb">
+                  @if (it.imagenUrl) {
+                    <img
+                      [src]="it.imagenUrl"
+                      [alt]="it.nombre"
+                      class="cart-thumb-img"
+                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    />
+                    <div class="cart-thumb-fallback" style="display: none;">
+                      @if (it.nombre.includes('Aceite') || it.nombre.includes('Coco')) { 🥥 }
+                      @else if (it.nombre.includes('Cacao') || it.nombre.includes('Nibs') || it.nombre.includes('Chocolate')) { 🍫 }
+                      @else { 📦 }
+                    </div>
+                  } @else {
+                    <div class="cart-thumb-fallback">
+                      @if (it.nombre.includes('Aceite') || it.nombre.includes('Coco')) { 🥥 }
+                      @else if (it.nombre.includes('Cacao') || it.nombre.includes('Nibs') || it.nombre.includes('Chocolate')) { 🍫 }
+                      @else { 📦 }
+                    </div>
+                  }
+                </div>
+                <div class="cart-col-info">
+                  <div class="cart-prod-name" [title]="it.nombre">{{ it.nombre }}</div>
+                  <div class="cart-prod-price">S/ {{ it.precio | number:'1.2-2' }} c/u</div>
+                </div>
+                <div class="cart-col-qty">
+                  <button type="button" class="btn-qty" (click)="modificarCantidad(it.productoId, -1)">-</button>
+                  <span class="cart-qty-val">{{ it.cantidad }}</span>
+                  <button type="button" class="btn-qty" (click)="modificarCantidad(it.productoId, 1)">+</button>
+                </div>
+                <div class="cart-col-sub font-mono font-bold">
+                  S/ {{ (it.precio * it.cantidad) | number:'1.2-2' }}
+                </div>
+                <button type="button" class="btn-remove" (click)="eliminarDelCarrito(it.productoId)">&times;</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- TOTALES -->
+      <div class="totals-section">
+        <div class="total-row font-sm text-muted">
+          <span>Subtotal:</span>
+          <span class="font-mono">S/ {{ subtotalVenta() | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row font-sm text-muted">
+          <span>I.G.V. (18%):</span>
+          <span class="font-mono">S/ {{ igvVenta() | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row total-highlight">
+          <span>TOTAL A COBRAR:</span>
+          <span class="font-mono text-primary font-bold">S/ {{ totalVenta() | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <!-- MÉTODO DE PAGO Y FACTURACIÓN -->
+      <div class="payment-section">
+        <label class="form-section-title">Método de Pago:</label>
+        <div class="payment-methods-grid">
+          <button
+            type="button"
+            class="btn-method"
+            [class.active]="metodoPago() === 'EFECTIVO'"
+            (click)="metodoPago.set('EFECTIVO')"
+          >
+            💵 Efectivo
+          </button>
+          <button
+            type="button"
+            class="btn-method"
+            [class.active]="metodoPago() === 'TARJETA'"
+            (click)="metodoPago.set('TARJETA')"
+          >
+            💳 Tarjeta (POS)
+          </button>
+          <button
+            type="button"
+            class="btn-method"
+            [class.active]="metodoPago() === 'TRANSFERENCIA_DIGITAL'"
+            (click)="metodoPago.set('TRANSFERENCIA_DIGITAL')"
+          >
+            📱 Yape / Plin
+          </button>
+        </div>
+
+        @if (metodoPago() === 'EFECTIVO') {
+          <div class="cash-calc-box">
+            <div class="cash-row">
+              <label>Monto Recibido del Cliente:</label>
+              <div class="input-prefix-wrapper">
+                <span class="input-prefix">S/</span>
+                <input
+                  type="number"
+                  step="0.5"
+                  [ngModel]="montoRecibido()"
+                  (ngModelChange)="montoRecibido.set($event)"
+                  class="form-control font-mono font-bold"
+                />
+              </div>
+            </div>
+
+            <!-- BOTONES RÁPIDOS DE BILLETES -->
+            <div class="fast-cash-buttons">
+              <button type="button" class="btn-fast" (click)="fijarMontoRecibido(totalVenta())">Exacto</button>
+              <button type="button" class="btn-fast" (click)="fijarMontoRecibido(20)">S/ 20</button>
+              <button type="button" class="btn-fast" (click)="fijarMontoRecibido(50)">S/ 50</button>
+              <button type="button" class="btn-fast" (click)="fijarMontoRecibido(100)">S/ 100</button>
+              <button type="button" class="btn-fast" (click)="fijarMontoRecibido(200)">S/ 200</button>
+            </div>
+
+            <div class="change-display" [class.change-valid]="vuelto() >= 0" [class.change-invalid]="montoRecibido() < totalVenta()">
+              <span>VUELTO A ENTREGAR:</span>
+              <strong class="font-mono">S/ {{ vuelto() | number:'1.2-2' }}</strong>
+            </div>
+          </div>
+        }
+
+        <!-- DATOS DEL CLIENTE -->
+        <div class="customer-info-box">
+          <div class="customer-row">
+            <select [ngModel]="clienteTipo()" (ngModelChange)="clienteTipo.set($event)" class="form-control select-sm">
+              <option value="CONSUMIDOR_FINAL">Consumidor Final</option>
+              <option value="DNI">Boleta DNI</option>
+              <option value="RUC">Factura RUC</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Nombre o Razón Social"
+              [ngModel]="clienteNombre()"
+              (ngModelChange)="clienteNombre.set($event)"
+              class="form-control input-sm"
+            />
+          </div>
+          @if (clienteTipo() !== 'CONSUMIDOR_FINAL') {
+            <input
+              type="text"
+              placeholder="Número de DNI / RUC"
+              [ngModel]="clienteNumeroDoc()"
+              (ngModelChange)="clienteNumeroDoc.set($event)"
+              class="form-control input-sm mt-2 font-mono"
+            />
+          }
+        </div>
+      </div>
+
+      <!-- BOTÓN DE COBRO -->
+      <div class="checkout-footer">
+        <button
+          type="button"
+          class="btn-pay"
+          [disabled]="!puedeCobrar() || loadingCobro()"
+          (click)="procesarCobro()"
+        >
+          @if (loadingCobro()) {
+            Procesando Venta y Asignación FEFO...
+          } @else {
+            COBRAR Y EMITIR TICKET (S/ {{ totalVenta() | number:'1.2-2' }})
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL / VISTA DE TICKET TÉRMICO (80MM) TRAS COMPLETAR LA VENTA -->
+  @if (ventaConfirmada(); as v) {
+    <div class="modal-backdrop">
+      <div class="modal-card max-w-500 ticket-modal" (click)="$event.stopPropagation()">
+        <div class="ticket-wrapper" id="thermal-receipt">
+          <div class="ticket-header">
+            <h3>AGRO PERUVIAN FOODS S.A.C.</h3>
+            <p>R.U.C. 20608549321</p>
+            <p>Carretera Central Km 19.5 - Lima</p>
+            <p class="ticket-type">TICKET DE VENTA EN MOSTRADOR</p>
+            <div class="ticket-divider">================================</div>
+            <p><strong>N°: {{ v.codigoVenta }}</strong></p>
+            <p>Fecha: {{ v.fechaHora | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+            <p>Cajero: {{ v.cajeroNombre }}</p>
+            <p>Cliente: {{ v.clienteNombre }}</p>
+            @if (v.clienteNumeroDoc) {
+              <p>Doc: {{ v.clienteNumeroDoc }}</p>
+            }
+            <div class="ticket-divider">--------------------------------</div>
+          </div>
+
+          <table class="ticket-table">
+            <thead>
+              <tr>
+                <th>DESCRIPCIÓN</th>
+                <th class="text-right">CANT</th>
+                <th class="text-right">TOTAL</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (det of v.detalles; track det.id) {
+                <tr>
+                  <td colspan="3">
+                    <div class="ticket-prod-line">
+                      @if (det.productoImagenUrl) {
+                        <img [src]="det.productoImagenUrl" [alt]="det.productoNombre" class="ticket-thumb-img" onerror="this.style.display='none';" />
+                      }
+                      <div class="ticket-prod-text">
+                        <div class="ticket-prod-name">{{ det.productoNombre }}</div>
+                        @if (det.lotesConsumidosFefo) {
+                          <div class="ticket-lotes">📦 Lote FEFO: {{ det.lotesConsumidosFefo }}</div>
+                        }
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="ticket-subrow">
+                  <td>S/ {{ det.precioUnitario | number:'1.2-2' }} c/u</td>
+                  <td class="text-right">{{ det.cantidad }}</td>
+                  <td class="text-right font-mono font-bold">S/ {{ det.subtotal | number:'1.2-2' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          <div class="ticket-divider">--------------------------------</div>
+
+          <div class="ticket-totals">
+            <div><span>OP. GRAVADA:</span> <span>S/ {{ v.subtotal | number:'1.2-2' }}</span></div>
+            <div><span>I.G.V. (18%):</span> <span>S/ {{ v.igv | number:'1.2-2' }}</span></div>
+            <div class="ticket-total-main">
+              <span>TOTAL A PAGAR:</span>
+              <span>S/ {{ v.total | number:'1.2-2' }}</span>
+            </div>
+            <div class="ticket-divider">--------------------------------</div>
+            <div><span>FORMA DE PAGO:</span> <span>{{ v.metodoPago }}</span></div>
+            <div><span>IMPORTE RECIBIDO:</span> <span>S/ {{ v.montoPagado | number:'1.2-2' }}</span></div>
+            <div><span>VUELTO:</span> <span>S/ {{ v.vuelto | number:'1.2-2' }}</span></div>
+          </div>
+
+          <div class="ticket-footer">
+            <div class="ticket-divider">================================</div>
+            <p>¡Gracias por su compra!</p>
+            <p>Consuma derivados de cacao y aceite de coco peruano 100% natural</p>
+          </div>
+        </div>
+
+        <div class="modal-footer no-print">
+          <button type="button" class="btn btn-secondary" (click)="imprimirTicket()">🖨️ Imprimir Ticket (80mm)</button>
+          <button type="button" class="btn btn-success" (click)="nuevaVenta()">+ Nueva Venta</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

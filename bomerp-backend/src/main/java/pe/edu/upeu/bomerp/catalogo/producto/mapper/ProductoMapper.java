@@ -11,7 +11,12 @@ import pe.edu.upeu.bomerp.catalogo.producto.entity.Producto;
 @Mapper(componentModel = "spring", uses = CategoriaMapper.class)
 public interface ProductoMapper {
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "nombre", source = "request.nombre")
+    @Mapping(target = "precio", source = "request.precio")
+    @Mapping(target = "stock", source = "request.stock")
+    @Mapping(target = "descripcion", source = "request.descripcion")
+    @Mapping(target = "imagenUrl", source = "request.imagenUrl")
     @Mapping(target = "categoria", source = "categoria")
     Producto toEntity(ProductoRequest request, Categoria categoria);
 

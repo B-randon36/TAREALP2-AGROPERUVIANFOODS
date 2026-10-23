@@ -25,7 +25,11 @@
     <div class="active-shift-card">
       <div class="shift-info">
         <span class="shift-badge-active">TURNO ABIERTO ACTUALMENTE</span>
-        <h3>{{ activa.cajero }} ({{ activa.codigoSesion }})</h3>
+        <h3>
+          {{ activa.cajero }}
+          <span class="badge-role-chip-card">{{ activa.cajeroRol || 'CAJERO' }}</span>
+          ({{ activa.codigoSesion }})
+        </h3>
         <p>Apertura: {{ activa.fechaApertura | date:'dd/MM/yyyy HH:mm' }}</p>
       </div>
 
@@ -94,7 +98,14 @@
             @for (s of sesiones(); track s.id) {
               <tr>
                 <td class="font-mono font-bold">{{ s.codigoSesion }}</td>
-                <td>{{ s.cajero }}</td>
+                <td>
+                  <div class="cashier-cell">
+                    <span class="cashier-name">{{ s.cajero }}</span>
+                    <span class="badge-role-table" [class.badge-admin-subtle]="(s.cajeroRol || '').includes('ADMIN')">
+                      {{ s.cajeroRol || 'CAJERO' }}
+                    </span>
+                  </div>
+                </td>
                 <td>{{ s.fechaApertura | date:'dd/MM/yy HH:mm' }}</td>
                 <td>{{ s.fechaCierre ? (s.fechaCierre | date:'dd/MM/yy HH:mm') : '—' }}</td>
                 <td>
@@ -146,7 +157,13 @@
         <div class="modal-header">
           <div>
             <h3>Detalle de Arqueo — {{ sel.codigoSesion }}</h3>
-            <p class="subtitle">Responsable: {{ sel.cajero }} | Estado: {{ sel.estado }}</p>
+            <p class="subtitle">
+              Responsable: <strong>{{ sel.cajero }}</strong>
+              <span class="badge-role-chip" [class.badge-admin]="(sel.cajeroRol || '').includes('ADMIN')">
+                {{ sel.cajeroRol || 'CAJERO' }}
+              </span>
+              | Estado: <span class="badge-state-mini" [class.state-open]="sel.estado === 'ABIERTA'" [class.state-closed]="sel.estado === 'CERRADA'">{{ sel.estado }}</span>
+            </p>
           </div>
           <button class="btn-close" (click)="cerrarModal()">&times;</button>
         </div>
@@ -218,6 +235,38 @@
               </tbody>
             </table>
           </div>
+
+          @if (sel.detallesArqueo && sel.detallesArqueo.length > 0) {
+            <h4 style="margin: 1.5rem 0 0.5rem 0; color: #1e5a32; font-weight: 700;">
+              &#128181; Desglose Físico de Arqueo de Caja (DetalleArqueoEfectivo M:N)
+            </h4>
+            <div class="table-responsive modal-table">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Valor Facial</th>
+                    <th class="text-center">Cantidad Contada</th>
+                    <th class="text-right">Subtotal Físico</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (a of sel.detallesArqueo; track a.denominacionId) {
+                    <tr>
+                      <td>
+                        <span class="badge-mini" [class.badge-in]="a.tipo === 'BILLETE'" [class.badge-payment]="a.tipo === 'MONEDA'">
+                          {{ a.tipo }}
+                        </span>
+                      </td>
+                      <td class="font-bold">S/ {{ a.valorFacial | number:'1.2-2' }}</td>
+                      <td class="text-center font-mono">{{ a.cantidad }} unid.</td>
+                      <td class="text-right font-mono font-bold">S/ {{ a.subtotal | number:'1.2-2' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
         </div>
 
         <div class="modal-footer">

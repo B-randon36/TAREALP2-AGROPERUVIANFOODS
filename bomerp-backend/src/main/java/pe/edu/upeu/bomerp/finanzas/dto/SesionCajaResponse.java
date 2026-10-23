@@ -20,6 +20,7 @@ public class SesionCajaResponse {
     private String codigoSesion;
     private Long usuarioId;
     private String cajero;
+    private String cajeroRol;
     private LocalDateTime fechaApertura;
     private LocalDateTime fechaCierre;
     private BigDecimal saldoInicial;

@@ -20,6 +20,28 @@ export class RendicionCajaChicaService {
     return this.http.get<CajaChica[]>(this.api.buildUrl(`${this.basePath}/cajas-chicas`));
   }
 
+  listarCentrosCosto(): Observable<import('./rendicion-caja-chica.model').CentroCosto[]> {
+    return this.http.get<import('./rendicion-caja-chica.model').CentroCosto[]>(
+      this.api.buildUrl(`${this.basePath}/centros-costo`)
+    );
+  }
+
+  listarPresupuestosCaja(cajaChicaId: number): Observable<import('./rendicion-caja-chica.model').AsignacionCajaCentroCosto[]> {
+    return this.http.get<import('./rendicion-caja-chica.model').AsignacionCajaCentroCosto[]>(
+      this.api.buildUrl(`${this.basePath}/cajas-chicas/${cajaChicaId}/presupuestos`)
+    );
+  }
+
+  asignarPresupuesto(
+    cajaChicaId: number,
+    data: import('./rendicion-caja-chica.model').AsignarPresupuestoRequest
+  ): Observable<import('./rendicion-caja-chica.model').AsignacionCajaCentroCosto> {
+    return this.http.post<import('./rendicion-caja-chica.model').AsignacionCajaCentroCosto>(
+      this.api.buildUrl(`${this.basePath}/cajas-chicas/${cajaChicaId}/presupuestos`),
+      data
+    );
+  }
+
   crearCajaChica(datos: {
     codigo: string;
     responsable: string;

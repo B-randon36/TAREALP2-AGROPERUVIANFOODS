@@ -43,24 +43,45 @@ public class CajaChica {
     )
     private Set<Usuario> custodiosAutorizados = new HashSet<>();
 
+    @OneToMany(mappedBy = "cajaChica", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<AsignacionCajaCentroCosto> asignacionesPresupuesto = new java.util.ArrayList<>();
+
+    public void agregarAsignacion(AsignacionCajaCentroCosto asignacion) {
+        if (this.asignacionesPresupuesto == null) {
+            this.asignacionesPresupuesto = new java.util.ArrayList<>();
+        }
+        asignacion.setCajaChica(this);
+        if (asignacion.getId() == null) {
+            asignacion.setId(new AsignacionCajaCentroCostoId());
+        }
+        if (this.id != null) {
+            asignacion.getId().setCajaChicaId(this.id);
+        }
+        if (asignacion.getCentroCosto() != null) {
+            asignacion.getId().setCentroCostoId(asignacion.getCentroCosto().getId());
+        }
+        this.asignacionesPresupuesto.add(asignacion);
+    }
+
     public CajaChica() {
     }
 
     public CajaChica(Long id, String codigo, String responsable, BigDecimal saldoDisponible, BigDecimal limiteMaximo) {
-        this.id = id;
-        this.codigo = codigo;
-        this.responsable = responsable;
-        this.saldoDisponible = saldoDisponible;
-        this.limiteMaximo = limiteMaximo;
-        this.custodiosAutorizados = new HashSet<>();
+        this(id, codigo, responsable, saldoDisponible, limiteMaximo, new HashSet<>(), new java.util.ArrayList<>());
     }
 
     public CajaChica(Long id, String codigo, String responsable, BigDecimal saldoDisponible, BigDecimal limiteMaximo, Set<Usuario> custodiosAutorizados) {
+        this(id, codigo, responsable, saldoDisponible, limiteMaximo, custodiosAutorizados, new java.util.ArrayList<>());
+    }
+
+    public CajaChica(Long id, String codigo, String responsable, BigDecimal saldoDisponible, BigDecimal limiteMaximo, Set<Usuario> custodiosAutorizados, java.util.List<AsignacionCajaCentroCosto> asignacionesPresupuesto) {
         this.id = id;
         this.codigo = codigo;
         this.responsable = responsable;
         this.saldoDisponible = saldoDisponible;
         this.limiteMaximo = limiteMaximo;
         this.custodiosAutorizados = custodiosAutorizados != null ? custodiosAutorizados : new HashSet<>();
+        this.asignacionesPresupuesto = asignacionesPresupuesto != null ? asignacionesPresupuesto : new java.util.ArrayList<>();
     }
 }

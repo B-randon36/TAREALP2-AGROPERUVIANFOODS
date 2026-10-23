@@ -28,23 +28,59 @@ import pe.edu.upeu.bomerp.finanzas.service.RendicionCajaChicaService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Caja Chica y Rendiciones", description = "Gestión de cajas chicas operativas, asignación de centros de costo, rendiciones con comprobantes y agregaciones analíticas")
 @CrossOrigin(originPatterns = "*")
 @RestController
 @RequestMapping({"/api/v1/finanzas", "/api/v1"})
 public class RendicionCajaChicaController {
 
     private final RendicionCajaChicaService rendicionService;
+    private final pe.edu.upeu.bomerp.finanzas.service.SesionCajaService sesionCajaService;
 
-    public RendicionCajaChicaController(RendicionCajaChicaService rendicionService) {
+    public RendicionCajaChicaController(
+            RendicionCajaChicaService rendicionService,
+            pe.edu.upeu.bomerp.finanzas.service.SesionCajaService sesionCajaService) {
         this.rendicionService = rendicionService;
+        this.sesionCajaService = sesionCajaService;
     }
 
+    @Operation(summary = "Listar catálogo de billetes y monedas activas para arqueos")
+    @GetMapping("/denominaciones")
+    public ResponseEntity<List<pe.edu.upeu.bomerp.finanzas.dto.DenominacionMonedaResponse>> listarDenominaciones() {
+        return ResponseEntity.ok(sesionCajaService.listarDenominaciones());
+    }
+
+    @Operation(summary = "Listar centros de costo disponibles para asignación presupuestaria")
+    @GetMapping("/centros-costo")
+    public ResponseEntity<List<pe.edu.upeu.bomerp.finanzas.dto.CentroCostoResponse>> listarCentrosCosto() {
+        return ResponseEntity.ok(rendicionService.listarCentrosCosto());
+    }
+
+    @Operation(summary = "Asignar presupuesto por centro de costo a una caja chica")
+    @PostMapping("/cajas-chicas/{id}/presupuestos")
+    public ResponseEntity<pe.edu.upeu.bomerp.finanzas.dto.AsignacionCajaCentroCostoResponse> asignarPresupuesto(
+            @PathVariable Long id,
+            @Valid @RequestBody pe.edu.upeu.bomerp.finanzas.dto.AsignarPresupuestoRequest request) {
+        var response = rendicionService.asignarPresupuestoCentroCosto(id, request.getCentroCostoId(), request.getMontoPresupuesto());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @Operation(summary = "Consultar presupuestos asignados por centro de costo a una caja chica")
+    @GetMapping("/cajas-chicas/{id}/presupuestos")
+    public ResponseEntity<List<pe.edu.upeu.bomerp.finanzas.dto.AsignacionCajaCentroCostoResponse>> listarPresupuestosCaja(@PathVariable Long id) {
+        return ResponseEntity.ok(rendicionService.listarPresupuestosPorCaja(id));
+    }
+
+    @Operation(summary = "Listar todas las cajas chicas activas")
     @GetMapping("/cajas-chicas")
     public ResponseEntity<List<CajaChicaResponse>> listarCajasChicas() {
         return ResponseEntity.ok(rendicionService.listarCajasChicas());
     }
 
+    @Operation(summary = "Crear nueva caja chica operativa")
     @PostMapping("/cajas-chicas")
     public ResponseEntity<CajaChicaResponse> crearCajaChica(
             @RequestParam String codigo,
@@ -55,17 +91,20 @@ public class RendicionCajaChicaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Consultar caja chica por su ID")
     @GetMapping("/cajas-chicas/{id}")
     public ResponseEntity<CajaChicaResponse> obtenerCajaChica(@PathVariable Long id) {
         return ResponseEntity.ok(rendicionService.obtenerCajaChica(id));
     }
 
+    @Operation(summary = "Registrar nueva rendición de gastos con comprobantes de pago")
     @PostMapping("/rendiciones")
     public ResponseEntity<RendicionCajaChicaResponse> registrarRendicion(@Valid @RequestBody RendicionCajaChicaRequest request) {
         RendicionCajaChicaResponse response = rendicionService.registrarRendicion(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Obtener detalle de rendición por ID")
     @GetMapping("/rendiciones/{id}")
     public ResponseEntity<RendicionCajaChicaResponse> obtenerRendicion(@PathVariable Long id) {
         return ResponseEntity.ok(rendicionService.obtenerRendicion(id));
@@ -76,6 +115,7 @@ public class RendicionCajaChicaController {
      * Anula una rendición activa y reintegra el importe debitado a la Caja Chica.
      * Si ya se encuentra en estado ANULADO, el backend rechaza la transacción con HTTP 409 Conflict.
      */
+    @Operation(summary = "Anular rendición activa y reintegrar saldo a la caja chica")
     @PostMapping("/rendiciones/{id}/anular")
     public ResponseEntity<RendicionCajaChicaResponse> anularRendicion(@PathVariable Long id) {
         return ResponseEntity.ok(rendicionService.anularRendicion(id));

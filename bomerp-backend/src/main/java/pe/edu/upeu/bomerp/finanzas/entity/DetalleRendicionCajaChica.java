@@ -46,10 +46,18 @@ public class DetalleRendicionCajaChica {
     @JoinColumn(name = "ID_RENDICION", nullable = false)
     private RendicionCajaChica rendicion;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_CENTRO_COSTO")
+    private CentroCosto centroCosto;
+
     public DetalleRendicionCajaChica() {
     }
 
     public DetalleRendicionCajaChica(Long id, String concepto, Integer cantidad, BigDecimal precioUnitario, BigDecimal subtotal, Long productoId, RendicionCajaChica rendicion) {
+        this(id, concepto, cantidad, precioUnitario, subtotal, productoId, rendicion, null);
+    }
+
+    public DetalleRendicionCajaChica(Long id, String concepto, Integer cantidad, BigDecimal precioUnitario, BigDecimal subtotal, Long productoId, RendicionCajaChica rendicion, CentroCosto centroCosto) {
         this.id = id;
         this.concepto = concepto;
         this.cantidad = cantidad;
@@ -57,5 +65,6 @@ public class DetalleRendicionCajaChica {
         this.subtotal = subtotal;
         this.productoId = productoId;
         this.rendicion = rendicion;
+        this.centroCosto = centroCosto;
     }
 }

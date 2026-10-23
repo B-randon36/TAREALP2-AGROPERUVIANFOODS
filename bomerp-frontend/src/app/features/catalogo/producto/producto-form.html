@@ -57,6 +57,70 @@
     }
   </div>
 
+  <div>
+    <label style="display: block; font-weight: bold; margin-bottom: 0.25rem;">
+      Descripción del Producto (Para POS y Ficha Técnica)
+    </label>
+    <textarea
+      formControlName="descripcion"
+      rows="3"
+      placeholder="Ej: Aceite de coco virgen 100% orgánico prensado en frío..."
+      style="width: 100%; padding: 0.5rem; font-family: inherit; border: 1px solid #cbd5e1; border-radius: 4px; resize: vertical;"
+    ></textarea>
+  </div>
+
+  <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 0.85rem;">
+    <label style="display: block; font-weight: bold; margin-bottom: 0.4rem; color: #1e293b;">
+      Fotografía / Imagen del Producto (Punto de Venta)
+    </label>
+    <p style="font-size: 0.8rem; color: #64748b; margin: 0 0 0.5rem 0;">
+      Puedes subir un archivo de imagen desde tu equipo (.png, .jpg, .webp) o ingresar la ruta/URL:
+    </p>
+
+    <!-- Subida de archivo local -->
+    <div style="margin-bottom: 0.5rem;">
+      <input
+        type="file"
+        accept="image/png, image/jpeg, image/webp"
+        (change)="onFileSelected($event)"
+        style="font-size: 0.85rem;"
+      />
+    </div>
+
+    <!-- O URL / ruta directa -->
+    <div>
+      <input
+        type="text"
+        [value]="form.controls.imagenUrl.value"
+        (input)="onUrlChange($any($event.target).value)"
+        placeholder="O escribe /assets/productos/coco.png o enlace web"
+        style="width: 100%; padding: 0.45rem; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 4px;"
+      />
+    </div>
+
+    <!-- Previsualización instantánea -->
+    @if (imagenPreview()) {
+      <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.75rem; background: white; padding: 0.5rem; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <img
+          [src]="imagenPreview()"
+          alt="Vista previa"
+          style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;"
+          (error)="imagenPreview.set(null)"
+        />
+        <div style="flex: 1;">
+          <div style="font-size: 0.8rem; font-weight: bold; color: #166534;">✓ Imagen lista</div>
+          <button
+            type="button"
+            (click)="limpiarImagen()"
+            style="font-size: 0.75rem; color: #dc2626; background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline;"
+          >
+            Quitar imagen
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
   @if (error()) {
     <p class="error" style="color: red; background-color: #fff0f0; padding: 0.5rem; border-radius: 4px; margin: 0;">
       {{ error() }}

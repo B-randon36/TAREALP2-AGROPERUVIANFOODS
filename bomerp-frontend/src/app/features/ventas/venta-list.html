@@ -1,0 +1,206 @@
+<div class="page-container">
+  <div class="header-section">
+    <div>
+      <div class="breadcrumb">
+        <span>Ventas</span> / <strong>Historial de Operaciones POS</strong>
+      </div>
+      <h2>Registro y Reimpresión de Tickets de Venta</h2>
+      <p class="subtitle">
+        Consulta de transacciones en mostrador y ferias sincronizadas con turno de caja y lotes FEFO
+      </p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/ventas/pos" class="btn btn-primary">
+        🛒 Abrir Terminal POS Mostrador
+      </a>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  <!-- MÉTRICAS -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon" style="background: #ecfdf5; color: #059669;">💰</div>
+      <div class="metric-content">
+        <span class="metric-label">Total Ventas Facturadas</span>
+        <span class="metric-value text-success">S/ {{ totalVendido() | number:'1.2-2' }}</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon" style="background: #eff6ff; color: #2563eb;">🧾</div>
+      <div class="metric-content">
+        <span class="metric-label">Tickets Emitidos</span>
+        <span class="metric-value">{{ ventas().length }} operaciones</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card filter-card">
+    <div class="filters-row">
+      <div class="filter-group">
+        <label>Buscar por Ticket, Cliente o Cajero:</label>
+        <input
+          type="text"
+          placeholder="Ej: VTA-2026..., Brandon, Público..."
+          [ngModel]="filtroTexto()"
+          (ngModelChange)="filtroTexto.set($event)"
+          class="form-control"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>Forma de Pago:</label>
+        <select [ngModel]="filtroMetodo()" (ngModelChange)="filtroMetodo.set($event)" class="form-control">
+          <option value="">-- Todas las Formas --</option>
+          <option value="EFECTIVO">EFECTIVO</option>
+          <option value="TARJETA">TARJETA</option>
+          <option value="TRANSFERENCIA_DIGITAL">TRANSFERENCIA (Yape/Plin)</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-secondary" (click)="cargarVentas()" [disabled]="loading()">
+          🔄 Actualizar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA DE VENTAS -->
+  <div class="card table-card">
+    @if (loading()) {
+      <div class="text-center py-8">Cargando ventas registradas...</div>
+    } @else if (ventasFiltradas().length === 0) {
+      <div class="text-center py-8 text-muted">No se registran ventas para los filtros seleccionados.</div>
+    } @else {
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Ticket N°</th>
+            <th>Fecha y Hora</th>
+            <th>Cajero</th>
+            <th>Cliente</th>
+            <th>Artículos</th>
+            <th>Forma Pago</th>
+            <th>Total Venta</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of ventasFiltradas(); track v.id) {
+            <tr>
+              <td class="font-mono font-bold">{{ v.codigoVenta }}</td>
+              <td class="text-muted">{{ v.fechaHora | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ v.cajeroNombre }}</td>
+              <td>
+                <div class="font-semibold">{{ v.clienteNombre }}</div>
+                @if (v.clienteNumeroDoc) {
+                  <span class="text-xs text-muted">Doc: {{ v.clienteNumeroDoc }}</span>
+                }
+              </td>
+              <td>
+                <div class="items-thumb-stack">
+                  @for (d of v.detalles; track d.id) {
+                    @if (d.productoImagenUrl) {
+                      <img [src]="d.productoImagenUrl" [alt]="d.productoNombre" [title]="d.productoNombre + ' (' + d.cantidad + ' un.)'" class="item-mini-img" />
+                    }
+                  }
+                  <span class="items-count-badge">{{ v.detalles.length }} un.</span>
+                </div>
+              </td>
+              <td>
+                <span class="payment-badge" [ngClass]="'pay-' + v.metodoPago.toLowerCase()">
+                  {{ v.metodoPago }}
+                </span>
+              </td>
+              <td class="font-mono font-bold text-primary font-lg">
+                S/ {{ v.total | number:'1.2-2' }}
+              </td>
+              <td>
+                <button type="button" class="btn-ticket" (click)="verTicket(v)">
+                  🧾 Ver Ticket
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- MODAL DE REIMPRESIÓN DE TICKET -->
+  @if (ventaSeleccionada(); as v) {
+    <div class="modal-backdrop" (click)="cerrarModalTicket()">
+      <div class="modal-card max-w-400" (click)="$event.stopPropagation()">
+        <div class="ticket-wrapper" id="thermal-receipt">
+          <div class="ticket-header">
+            <h3>AGRO PERUVIAN FOODS S.A.C.</h3>
+            <p>R.U.C. 20608549321</p>
+            <p>Carretera Central Km 19.5 - Lima</p>
+            <p class="ticket-type">REIMPRESIÓN TICKET DE VENTA</p>
+            <div class="ticket-divider">================================</div>
+            <p><strong>N°: {{ v.codigoVenta }}</strong></p>
+            <p>Fecha: {{ v.fechaHora | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+            <p>Cajero: {{ v.cajeroNombre }}</p>
+            <p>Cliente: {{ v.clienteNombre }}</p>
+            @if (v.clienteNumeroDoc) {
+              <p>Doc: {{ v.clienteNumeroDoc }}</p>
+            }
+            <div class="ticket-divider">--------------------------------</div>
+          </div>
+
+          <table class="ticket-table">
+            <tbody>
+              @for (det of v.detalles; track det.id) {
+                <tr>
+                  <td colspan="3">
+                    <div class="ticket-prod-line">
+                      @if (det.productoImagenUrl) {
+                        <img [src]="det.productoImagenUrl" [alt]="det.productoNombre" class="ticket-thumb-img" onerror="this.style.display='none';" />
+                      }
+                      <div class="ticket-prod-text">
+                        <div class="ticket-prod-name">{{ det.productoNombre }}</div>
+                        @if (det.lotesConsumidosFefo) {
+                          <div class="ticket-lotes">📦 Lote FEFO: {{ det.lotesConsumidosFefo }}</div>
+                        }
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="ticket-subrow">
+                  <td>S/ {{ det.precioUnitario | number:'1.2-2' }} c/u</td>
+                  <td class="text-right">{{ det.cantidad }}</td>
+                  <td class="text-right font-mono font-bold">S/ {{ det.subtotal | number:'1.2-2' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          <div class="ticket-divider">--------------------------------</div>
+
+          <div class="ticket-totals">
+            <div><span>OP. GRAVADA:</span> <span>S/ {{ v.subtotal | number:'1.2-2' }}</span></div>
+            <div><span>I.G.V. (18%):</span> <span>S/ {{ v.igv | number:'1.2-2' }}</span></div>
+            <div class="ticket-total-main">
+              <span>TOTAL:</span>
+              <span>S/ {{ v.total | number:'1.2-2' }}</span>
+            </div>
+            <div class="ticket-divider">--------------------------------</div>
+            <div><span>PAGO:</span> <span>{{ v.metodoPago }}</span></div>
+            <div><span>RECIBIDO:</span> <span>S/ {{ v.montoPagado | number:'1.2-2' }}</span></div>
+            <div><span>VUELTO:</span> <span>S/ {{ v.vuelto | number:'1.2-2' }}</span></div>
+          </div>
+        </div>
+
+        <div class="modal-footer no-print">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModalTicket()">Cerrar</button>
+          <button type="button" class="btn btn-primary" (click)="imprimir()">🖨️ Imprimir</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -35,4 +35,16 @@ export class ReporteFinancieroService {
       responseType: 'blob',
     });
   }
+
+  obtenerReporteOmnicanal(): Observable<import('./reporte-financiero.model').ReporteOmnicanal> {
+    return this.http.get<import('./reporte-financiero.model').ReporteOmnicanal>(
+      this.api.buildUrl('/api/v1/ventas/reporte-omnicanal')
+    );
+  }
+
+  obtenerReporteSemaforo(): Observable<import('./reporte-financiero.model').ReporteSemaforoInventario> {
+    return this.http.get<import('./reporte-financiero.model').ReporteSemaforoInventario>(
+      this.api.buildUrl('/api/v1/inventario/reporte-semaforo')
+    );
+  }
 }

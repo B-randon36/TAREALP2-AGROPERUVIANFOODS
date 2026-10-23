@@ -11,8 +11,18 @@ import {
   MovimientoCaja,
   SesionCaja,
   SesionCajaDetalle,
+  TipoDenominacion,
   TipoFinanciero,
 } from './sesion-caja.model';
+
+import { AuthService } from '../../../core/auth/auth-service';
+
+export interface ItemArqueo {
+  denominacionId: number;
+  valor: number;
+  tipo: TipoDenominacion;
+  cantidad: number;
+}
 
 @Component({
   selector: 'app-sesion-caja-form',
@@ -25,6 +35,7 @@ export class SesionCajaForm implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly sesionService = inject(SesionCajaService);
   private readonly categoriaService = inject(CategoriaFinancieraService);
+  private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -36,29 +47,33 @@ export class SesionCajaForm implements OnInit {
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly exitoMensaje = signal<string | null>(null);
+  protected readonly turnoActivoExistente = signal<SesionCaja | null>(null);
+  protected readonly esTurnoJornadaAnterior = signal(false);
+  protected readonly saldoSugeridoTurnoAnterior = signal<number | null>(null);
 
-  // Denominaciones de Arqueo Físico (Billetes y Monedas del Perú)
-  protected readonly billetes = signal<{ valor: number; cantidad: number }[]>([
-    { valor: 200, cantidad: 0 },
-    { valor: 100, cantidad: 0 },
-    { valor: 50, cantidad: 0 },
-    { valor: 20, cantidad: 0 },
-    { valor: 10, cantidad: 0 },
+  // Denominaciones de Arqueo Físico M:N (Cargadas dinámicamente desde el backend)
+  protected readonly billetes = signal<ItemArqueo[]>([
+    { denominacionId: 1, valor: 200, tipo: 'BILLETE', cantidad: 0 },
+    { denominacionId: 2, valor: 100, tipo: 'BILLETE', cantidad: 0 },
+    { denominacionId: 3, valor: 50, tipo: 'BILLETE', cantidad: 0 },
+    { denominacionId: 4, valor: 20, tipo: 'BILLETE', cantidad: 0 },
+    { denominacionId: 5, valor: 10, tipo: 'BILLETE', cantidad: 0 },
   ]);
 
-  protected readonly monedas = signal<{ valor: number; cantidad: number }[]>([
-    { valor: 5, cantidad: 0 },
-    { valor: 2, cantidad: 0 },
-    { valor: 1, cantidad: 0 },
-    { valor: 0.5, cantidad: 0 },
-    { valor: 0.2, cantidad: 0 },
-    { valor: 0.1, cantidad: 0 },
+  protected readonly monedas = signal<ItemArqueo[]>([
+    { denominacionId: 6, valor: 5, tipo: 'MONEDA', cantidad: 0 },
+    { denominacionId: 7, valor: 2, tipo: 'MONEDA', cantidad: 0 },
+    { denominacionId: 8, valor: 1, tipo: 'MONEDA', cantidad: 0 },
+    { denominacionId: 9, valor: 0.5, tipo: 'MONEDA', cantidad: 0 },
+    { denominacionId: 10, valor: 0.2, tipo: 'MONEDA', cantidad: 0 },
+    { denominacionId: 11, valor: 0.1, tipo: 'MONEDA', cantidad: 0 },
   ]);
 
   // Formulario Apertura
   protected readonly formApertura = this.fb.nonNullable.group({
     usuarioId: [1, [Validators.required]],
     cajero: ['Brandon Ccalla', [Validators.required, Validators.maxLength(120)]],
+    cajeroRol: ['ADMIN, CAJERO', [Validators.maxLength(80)]],
     saldoInicial: [300, [Validators.required, Validators.min(0)]],
     codigoSesion: [''],
   });
@@ -96,6 +111,13 @@ export class SesionCajaForm implements OnInit {
     return Number((this.saldoRealArqueado() - esperado).toFixed(2));
   });
 
+  // Estado semántico de cuadre
+  protected readonly estadoCuadre = computed(() => {
+    const diff = this.diferenciaArqueo();
+    if (diff === 0) return 'CUADRE_EXACTO';
+    return diff > 0 ? 'SOBRANTE' : 'FALTANTE';
+  });
+
   // =========================================================================
   // REGLA RN-FIN-01 EN FRONTEND: Alerta visual reactiva de falta de liquidez
   // =========================================================================
@@ -115,6 +137,22 @@ export class SesionCajaForm implements OnInit {
 
   ngOnInit(): void {
     this.cargarCategorias();
+    this.cargarDenominaciones();
+
+    // Auto-asignación de cajero y rol desde la sesión Keycloak / JWT activa
+    const usuarioAuth = this.authService.usuario();
+    if (usuarioAuth?.nombre) {
+      this.formApertura.patchValue({ cajero: usuarioAuth.nombre });
+    }
+    const roles = this.authService.roles();
+    if (roles && roles.length > 0) {
+      const rolesRelevantes = roles.filter(
+        (r) => !r.startsWith('default-roles') && r !== 'offline_access' && r !== 'uma_authorization'
+      );
+      const rolStr = rolesRelevantes.length > 0 ? rolesRelevantes.join(', ') : 'CAJERO';
+      this.formApertura.patchValue({ cajeroRol: rolStr });
+    }
+
     const idParam = this.route.snapshot.paramMap.get('id');
 
     if (idParam && idParam !== 'nueva') {
@@ -122,16 +160,91 @@ export class SesionCajaForm implements OnInit {
       this.sesionId.set(id);
       this.cargarDetalle(id);
     } else {
-      // Verificar si hay una activa; si no, mostrar apertura
-      this.sesionService.obtenerActiva().subscribe({
-        next: (activa) => {
-          this.sesionId.set(activa.id);
-          this.cargarDetalle(activa.id);
-        },
-        error: () => {
-          this.modoApertura.set(true);
+      // Intento de apertura de nuevo turno diario
+      this.modoApertura.set(true);
+
+      // Auto-generar código de sesión diario correlativo sugerido
+      const hoyStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const horaStr = new Date().toTimeString().slice(0, 5).replace(/:/g, '');
+      this.formApertura.patchValue({
+        codigoSesion: `SES-${hoyStr}-${horaStr}`,
+      });
+
+      // Continuidad de fondo de caja: consultar el último turno cerrado
+      this.sesionService.listar().subscribe({
+        next: (sesiones) => {
+          const ultimoCerrado = sesiones.find((s) => s.estado === 'CERRADA');
+          if (ultimoCerrado && ultimoCerrado.saldoRealEfectivo != null) {
+            this.saldoSugeridoTurnoAnterior.set(ultimoCerrado.saldoRealEfectivo);
+          }
         },
       });
+
+      // Verificar si ya existe una sesión abierta
+      this.sesionService.obtenerActiva().subscribe({
+        next: (activa) => {
+          this.turnoActivoExistente.set(activa);
+          // Evaluar si es un turno olvidado de una jornada/día anterior
+          if (activa.fechaApertura) {
+            const fechaAperturaDia = new Date(activa.fechaApertura).toISOString().slice(0, 10);
+            const hoyDia = new Date().toISOString().slice(0, 10);
+            this.esTurnoJornadaAnterior.set(fechaAperturaDia !== hoyDia);
+          }
+        },
+        error: () => {
+          this.turnoActivoExistente.set(null);
+          this.esTurnoJornadaAnterior.set(false);
+        },
+      });
+    }
+  }
+
+  cargarDenominaciones(): void {
+    this.sesionService.listarDenominaciones().subscribe({
+      next: (catalogo) => {
+        if (catalogo && catalogo.length > 0) {
+          const bills: ItemArqueo[] = catalogo
+            .filter((d) => d.tipo === 'BILLETE')
+            .sort((a, b) => b.valorFacial - a.valorFacial)
+            .map((d) => ({
+              denominacionId: d.id,
+              valor: d.valorFacial,
+              tipo: 'BILLETE',
+              cantidad: 0,
+            }));
+
+          const coins: ItemArqueo[] = catalogo
+            .filter((d) => d.tipo === 'MONEDA')
+            .sort((a, b) => b.valorFacial - a.valorFacial)
+            .map((d) => ({
+              denominacionId: d.id,
+              valor: d.valorFacial,
+              tipo: 'MONEDA',
+              cantidad: 0,
+            }));
+
+          if (bills.length > 0) this.billetes.set(bills);
+          if (coins.length > 0) this.monedas.set(coins);
+        }
+      },
+      error: () => {
+        console.warn('Usando catálogo local de denominaciones del Perú.');
+      },
+    });
+  }
+
+  irATurnoActivo(): void {
+    const activa = this.turnoActivoExistente();
+    if (activa) {
+      this.sesionId.set(activa.id);
+      this.cargarDetalle(activa.id);
+    }
+  }
+
+  aplicarSaldoSugerido(): void {
+    const saldo = this.saldoSugeridoTurnoAnterior();
+    if (saldo != null) {
+      this.formApertura.patchValue({ saldoInicial: saldo });
     }
   }
 
@@ -238,11 +351,37 @@ export class SesionCajaForm implements OnInit {
     this.billetes.set(lista);
   }
 
+  incrementarBillete(index: number): void {
+    const lista = [...this.billetes()];
+    lista[index] = { ...lista[index], cantidad: (lista[index].cantidad || 0) + 1 };
+    this.billetes.set(lista);
+  }
+
+  decrementarBillete(index: number): void {
+    const lista = [...this.billetes()];
+    const cant = Math.max(0, (lista[index].cantidad || 0) - 1);
+    lista[index] = { ...lista[index], cantidad: cant };
+    this.billetes.set(lista);
+  }
+
   actualizarCantidadMoneda(index: number, event: Event): void {
     const input = event.target as HTMLInputElement;
     const valor = Math.max(0, parseInt(input.value || '0', 10));
     const lista = [...this.monedas()];
     lista[index] = { ...lista[index], cantidad: valor };
+    this.monedas.set(lista);
+  }
+
+  incrementarMoneda(index: number): void {
+    const lista = [...this.monedas()];
+    lista[index] = { ...lista[index], cantidad: (lista[index].cantidad || 0) + 1 };
+    this.monedas.set(lista);
+  }
+
+  decrementarMoneda(index: number): void {
+    const lista = [...this.monedas()];
+    const cant = Math.max(0, (lista[index].cantidad || 0) - 1);
+    lista[index] = { ...lista[index], cantidad: cant };
     this.monedas.set(lista);
   }
 
@@ -260,15 +399,57 @@ export class SesionCajaForm implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.sesionService.cerrar(id, { saldoRealEfectivo: saldoReal, observaciones: obs }).subscribe({
-      next: (cerrada) => {
-        this.exitoMensaje.set(`Turno ${cerrada.codigoSesion} cerrado exitosamente.`);
-        this.cargarDetalle(id);
-      },
-      error: (err) => {
-        this.error.set(err?.error?.message || 'No se pudo cerrar el turno de caja.');
-        this.loading.set(false);
-      },
+    const desglose: import('./sesion-caja.model').DesgloseEfectivoItem[] = [
+      ...this.billetes(),
+      ...this.monedas(),
+    ]
+      .filter((d) => d.cantidad > 0)
+      .map((d) => ({
+        denominacionId: d.denominacionId,
+        valorFacial: d.valor,
+        tipo: d.tipo,
+        cantidad: d.cantidad,
+        subtotal: Number((d.valor * d.cantidad).toFixed(2)),
+      }));
+
+    this.sesionService
+      .cerrar(id, {
+        saldoRealEfectivo: saldoReal,
+        observaciones: obs,
+        desglose,
+      })
+      .subscribe({
+        next: (cerrada) => {
+          this.exitoMensaje.set(`Turno ${cerrada.codigoSesion} cerrado exitosamente.`);
+          this.cargarDetalle(id);
+        },
+        error: (err) => {
+          this.error.set(err?.error?.message || 'No se pudo cerrar el turno de caja.');
+          this.loading.set(false);
+        },
+      });
+  }
+
+  abrirNuevoTurnoDiario(): void {
+    this.router.navigate(['/finanzas/sesiones/nueva']).then(() => {
+      this.modoApertura.set(true);
+      this.sesion.set(null);
+      this.sesionId.set(null);
+      this.turnoActivoExistente.set(null);
+      const hoyStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const horaStr = new Date().toTimeString().slice(0, 5).replace(/:/g, '');
+      const roles = this.authService.roles();
+      const rolesRelevantes = roles.filter(
+        (r) => !r.startsWith('default-roles') && r !== 'offline_access' && r !== 'uma_authorization'
+      );
+      const rolStr = rolesRelevantes.length > 0 ? rolesRelevantes.join(', ') : 'ADMIN, CAJERO';
+      this.formApertura.reset({
+        usuarioId: 1,
+        cajero: this.authService.usuario()?.nombre || 'Brandon Ccalla',
+        cajeroRol: rolStr,
+        saldoInicial: 300,
+        codigoSesion: `SES-${hoyStr}-${horaStr}`,
+      });
     });
   }
 

@@ -20,12 +20,14 @@ public class JwtKeyConfig {
     @Bean
     public RSAKey rsaKey() throws Exception {
         KeyPairGenerator generador = KeyPairGenerator.getInstance("RSA");
-        generador.initialize(2048);
+        java.security.SecureRandom random = java.security.SecureRandom.getInstance("SHA1PRNG");
+        random.setSeed("bomerp-agroperuvian-jwt-secret-seed-2026".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        generador.initialize(2048, random);
         KeyPair par = generador.generateKeyPair();
 
         return new RSAKey.Builder((RSAPublicKey) par.getPublic())
                 .privateKey((RSAPrivateKey) par.getPrivate())
-                .keyID(UUID.randomUUID().toString())
+                .keyID("bomerp-fixed-jwt-key-2026")
                 .build();
     }
 

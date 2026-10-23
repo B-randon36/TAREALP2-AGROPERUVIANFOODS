@@ -23,6 +23,12 @@ export class SesionCajaService {
     return this.http.get<SesionCaja[]>(this.api.buildUrl(this.basePath));
   }
 
+  listarDenominaciones(): Observable<import('./sesion-caja.model').DenominacionMoneda[]> {
+    return this.http.get<import('./sesion-caja.model').DenominacionMoneda[]>(
+      this.api.buildUrl('/api/v1/finanzas/denominaciones')
+    );
+  }
+
   obtenerDetalle(id: number): Observable<SesionCajaDetalle> {
     return this.http.get<SesionCajaDetalle>(this.api.buildUrl(`${this.basePath}/${id}`));
   }

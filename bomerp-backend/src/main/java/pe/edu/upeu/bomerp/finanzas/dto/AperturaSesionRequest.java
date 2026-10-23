@@ -24,6 +24,8 @@ public class AperturaSesionRequest {
     @NotBlank(message = "El nombre del cajero es obligatorio")
     private String cajero;
 
+    private String cajeroRol;
+
     @NotNull(message = "El saldo inicial es obligatorio")
     @DecimalMin(value = "0.0", message = "El saldo inicial no puede ser negativo")
     private BigDecimal saldoInicial;

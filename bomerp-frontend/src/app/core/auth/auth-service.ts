@@ -20,10 +20,27 @@ interface TokenResponse {
 const CLAVE_CODE_VERIFIER = 'agroperuvian_pkce_code_verifier';
 const CLAVE_STATE = 'agroperuvian_pkce_state';
 const CLAVE_DESTINO = 'agroperuvian_pkce_destino';
+const CLAVE_SESION_STORAGE = 'agroperuvian_sesion';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly sesion = signal<SesionKeycloak | null>(null);
+  private readonly sesion = signal<SesionKeycloak | null>(this.recuperarSesionInicial());
+
+  private recuperarSesionInicial(): SesionKeycloak | null {
+    try {
+      const guardada = sessionStorage.getItem(CLAVE_SESION_STORAGE);
+      if (guardada) {
+        const parsed = JSON.parse(guardada) as SesionKeycloak;
+        if (parsed && parsed.expiraEn > Date.now()) {
+          return parsed;
+        }
+        sessionStorage.removeItem(CLAVE_SESION_STORAGE);
+      }
+    } catch {
+      // Ignorar si sessionStorage no está disponible
+    }
+    return null;
+  }
 
   readonly autenticado = computed(() => {
     const actual = this.sesion();
@@ -124,6 +141,9 @@ export class AuthService {
     });
     if (!respuesta.ok) {
       this.sesion.set(null);
+      try {
+        sessionStorage.removeItem(CLAVE_SESION_STORAGE);
+      } catch {}
       return false;
     }
     this.guardarSesion(await respuesta.json());
@@ -133,6 +153,9 @@ export class AuthService {
   cerrarSesion(): void {
     const idToken = this.sesion()?.idToken;
     this.sesion.set(null);
+    try {
+      sessionStorage.removeItem(CLAVE_SESION_STORAGE);
+    } catch {}
     const parametros = new URLSearchParams({
       post_logout_redirect_uri: environment.keycloak.postLogoutRedirectUri,
       ...(idToken ? { id_token_hint: idToken } : {}),
@@ -141,11 +164,15 @@ export class AuthService {
   }
 
   private guardarSesion(datos: TokenResponse): void {
-    this.sesion.set({
+    const ses: SesionKeycloak = {
       accessToken: datos.access_token,
       refreshToken: datos.refresh_token,
       idToken: datos.id_token,
       expiraEn: Date.now() + datos.expires_in * 1000,
-    });
+    };
+    this.sesion.set(ses);
+    try {
+      sessionStorage.setItem(CLAVE_SESION_STORAGE, JSON.stringify(ses));
+    } catch {}
   }
 }

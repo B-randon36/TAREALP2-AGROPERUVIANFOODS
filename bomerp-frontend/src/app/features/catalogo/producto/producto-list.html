@@ -26,7 +26,8 @@
   <thead>
     <tr style="background-color: #f2f2f2;">
       <th>ID</th>
-      <th>Nombre</th>
+      <th>Foto</th>
+      <th>Nombre / Descripción</th>
       <th>Categoría</th>
       <th>Precio</th>
       <th>Stock</th>
@@ -37,7 +38,29 @@
     @for (producto of productos(); track producto.id) {
       <tr>
         <td>{{ producto.id }}</td>
-        <td><strong>{{ producto.nombre }}</strong></td>
+        <td style="text-align: center; width: 60px;">
+          @if (producto.imagenUrl) {
+            <img
+              [src]="producto.imagenUrl"
+              [alt]="producto.nombre"
+              style="width: 44px; height: 44px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;"
+              onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline-flex';"
+            />
+            <div style="display: none; width: 44px; height: 44px; background: #f1f5f9; border-radius: 6px; align-items: center; justify-content: center; font-size: 1.25rem;">
+              📦
+            </div>
+          } @else {
+            <div style="width: 44px; height: 44px; background: #f1f5f9; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+              📦
+            </div>
+          }
+        </td>
+        <td>
+          <strong>{{ producto.nombre }}</strong>
+          @if (producto.descripcion) {
+            <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">{{ producto.descripcion }}</div>
+          }
+        </td>
         <td>{{ producto.categoria.nombre }}</td>
         <td>{{ producto.precio | currency: 'PEN' : 'S/ ' }}</td>
         <td>{{ producto.stock }}</td>
@@ -50,7 +73,7 @@
     } @empty {
       @if (!loading() && !error()) {
         <tr>
-          <td colspan="6">No hay productos registrados.</td>
+          <td colspan="7">No hay productos registrados.</td>
         </tr>
       }
     }

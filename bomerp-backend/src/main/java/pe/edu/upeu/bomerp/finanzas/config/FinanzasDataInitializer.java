@@ -10,6 +10,7 @@ import pe.edu.upeu.bomerp.finanzas.repository.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -21,22 +22,38 @@ public class FinanzasDataInitializer implements CommandLineRunner {
     private final CategoriaFinancieraRepository categoriaFinancieraRepository;
     private final TransaccionFinancieraRepository transaccionFinancieraRepository;
     private final SesionCajaRepository sesionCajaRepository;
+    private final pe.edu.upeu.bomerp.finanzas.repository.DenominacionMonedaRepository denominacionMonedaRepository;
+    private final pe.edu.upeu.bomerp.finanzas.repository.CentroCostoRepository centroCostoRepository;
+    private final pe.edu.upeu.bomerp.finanzas.repository.AsignacionCajaCentroCostoRepository asignacionCajaCentroCostoRepository;
+    private final pe.edu.upeu.bomerp.finanzas.repository.CuentaPorCobrarRepository cuentaPorCobrarRepository;
 
     public FinanzasDataInitializer(
             CajaChicaRepository cajaChicaRepository,
             RendicionCajaChicaRepository rendicionRepository,
             CategoriaFinancieraRepository categoriaFinancieraRepository,
             TransaccionFinancieraRepository transaccionFinancieraRepository,
-            SesionCajaRepository sesionCajaRepository) {
+            SesionCajaRepository sesionCajaRepository,
+            pe.edu.upeu.bomerp.finanzas.repository.DenominacionMonedaRepository denominacionMonedaRepository,
+            pe.edu.upeu.bomerp.finanzas.repository.CentroCostoRepository centroCostoRepository,
+            pe.edu.upeu.bomerp.finanzas.repository.AsignacionCajaCentroCostoRepository asignacionCajaCentroCostoRepository,
+            pe.edu.upeu.bomerp.finanzas.repository.CuentaPorCobrarRepository cuentaPorCobrarRepository) {
         this.cajaChicaRepository = cajaChicaRepository;
         this.rendicionRepository = rendicionRepository;
         this.categoriaFinancieraRepository = categoriaFinancieraRepository;
         this.transaccionFinancieraRepository = transaccionFinancieraRepository;
         this.sesionCajaRepository = sesionCajaRepository;
+        this.denominacionMonedaRepository = denominacionMonedaRepository;
+        this.centroCostoRepository = centroCostoRepository;
+        this.asignacionCajaCentroCostoRepository = asignacionCajaCentroCostoRepository;
+        this.cuentaPorCobrarRepository = cuentaPorCobrarRepository;
     }
 
     @Override
     public void run(String... args) {
+        inicializarDenominaciones();
+        inicializarCentrosCosto();
+        inicializarCuentasPorCobrar();
+
         if (categoriaFinancieraRepository.count() == 0) {
             log.info("Inicializando categorías y transacciones financieras demo...");
             CategoriaFinanciera cat1 = new CategoriaFinanciera();
@@ -145,7 +162,58 @@ public class FinanzasDataInitializer implements CommandLineRunner {
             cajaChicaRepository.save(caja1);
             cajaChicaRepository.save(caja2);
 
-            // Rendición 1: Aprobada - S/ 150.00
+            pe.edu.upeu.bomerp.finanzas.entity.CentroCosto ccCacao = centroCostoRepository.findByCodigoCc("CC-CACAO").orElse(null);
+            pe.edu.upeu.bomerp.finanzas.entity.CentroCosto ccLogistica = centroCostoRepository.findByCodigoCc("CC-LOGISTICA").orElse(null);
+            pe.edu.upeu.bomerp.finanzas.entity.CentroCosto ccAdmin = centroCostoRepository.findByCodigoCc("CC-ADMIN").orElse(null);
+            pe.edu.upeu.bomerp.finanzas.entity.CentroCosto ccCoco = centroCostoRepository.findByCodigoCc("CC-COCO").orElse(null);
+
+            // Asignaciones de presupuesto M:N para caja1 (CCH-001)
+            if (ccCacao != null) {
+                asignacionCajaCentroCostoRepository.save(pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCosto.builder()
+                        .id(new pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCostoId(caja1.getId(), ccCacao.getId()))
+                        .cajaChica(caja1)
+                        .centroCosto(ccCacao)
+                        .presupuestoAsignado(new BigDecimal("500.00"))
+                        .saldoDisponible(new BigDecimal("350.00"))
+                        .fechaAsignacion(LocalDate.now().minusDays(15))
+                        .activo(true)
+                        .build());
+            }
+            if (ccLogistica != null) {
+                asignacionCajaCentroCostoRepository.save(pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCosto.builder()
+                        .id(new pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCostoId(caja1.getId(), ccLogistica.getId()))
+                        .cajaChica(caja1)
+                        .centroCosto(ccLogistica)
+                        .presupuestoAsignado(new BigDecimal("400.00"))
+                        .saldoDisponible(new BigDecimal("100.00"))
+                        .fechaAsignacion(LocalDate.now().minusDays(15))
+                        .activo(true)
+                        .build());
+            }
+            if (ccAdmin != null) {
+                asignacionCajaCentroCostoRepository.save(pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCosto.builder()
+                        .id(new pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCostoId(caja1.getId(), ccAdmin.getId()))
+                        .cajaChica(caja1)
+                        .centroCosto(ccAdmin)
+                        .presupuestoAsignado(new BigDecimal("100.00"))
+                        .saldoDisponible(new BigDecimal("25.00"))
+                        .fechaAsignacion(LocalDate.now().minusDays(15))
+                        .activo(true)
+                        .build());
+            }
+            if (ccCoco != null) {
+                asignacionCajaCentroCostoRepository.save(pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCosto.builder()
+                        .id(new pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCostoId(caja2.getId(), ccCoco.getId()))
+                        .cajaChica(caja2)
+                        .centroCosto(ccCoco)
+                        .presupuestoAsignado(new BigDecimal("500.00"))
+                        .saldoDisponible(new BigDecimal("500.00"))
+                        .fechaAsignacion(LocalDate.now().minusDays(10))
+                        .activo(true)
+                        .build());
+            }
+
+            // Rendición 1: Aprobada - S/ 150.00 (Imputada a CC-CACAO)
             RendicionCajaChica rnd1 = RendicionCajaChica.builder()
                     .codigo("RND-2026-001")
                     .responsable("Brandon Ccalla")
@@ -158,17 +226,19 @@ public class FinanzasDataInitializer implements CommandLineRunner {
                     .cantidad(2)
                     .precioUnitario(new BigDecimal("50.00"))
                     .subtotal(new BigDecimal("100.00"))
+                    .centroCosto(ccCacao)
                     .build());
             rnd1.agregarDetalle(DetalleRendicionCajaChica.builder()
                     .concepto("Cintas de embalaje")
                     .cantidad(1)
                     .precioUnitario(new BigDecimal("50.00"))
                     .subtotal(new BigDecimal("50.00"))
+                    .centroCosto(ccCacao)
                     .build());
             rnd1.calcularTotal();
             rendicionRepository.save(rnd1);
 
-            // Rendición 2: Aprobada - S/ 300.00
+            // Rendición 2: Aprobada - S/ 300.00 (Imputada a CC-LOGISTICA)
             RendicionCajaChica rnd2 = RendicionCajaChica.builder()
                     .codigo("RND-2026-002")
                     .responsable("Brandon Ccalla")
@@ -181,11 +251,12 @@ public class FinanzasDataInitializer implements CommandLineRunner {
                     .cantidad(1)
                     .precioUnitario(new BigDecimal("300.00"))
                     .subtotal(new BigDecimal("300.00"))
+                    .centroCosto(ccLogistica)
                     .build());
             rnd2.calcularTotal();
             rendicionRepository.save(rnd2);
 
-            // Rendición 3: Pendiente - S/ 75.00
+            // Rendición 3: Pendiente - S/ 75.00 (Imputada a CC-ADMIN)
             RendicionCajaChica rnd3 = RendicionCajaChica.builder()
                     .codigo("RND-2026-003")
                     .responsable("Zaggy Morales")
@@ -198,11 +269,12 @@ public class FinanzasDataInitializer implements CommandLineRunner {
                     .cantidad(1)
                     .precioUnitario(new BigDecimal("75.00"))
                     .subtotal(new BigDecimal("75.00"))
+                    .centroCosto(ccAdmin)
                     .build());
             rnd3.calcularTotal();
             rendicionRepository.save(rnd3);
 
-            log.info("Datos demo de Finanzas cargados exitosamente (3 rendiciones registradas).");
+            log.info("Datos demo de Finanzas cargados exitosamente (3 rendiciones registradas con Centro de Costo).");
         }
 
         if (sesionCajaRepository.count() == 0) {
@@ -219,6 +291,7 @@ public class FinanzasDataInitializer implements CommandLineRunner {
                     .codigoSesion("SES-20261018-001")
                     .usuarioId(1L)
                     .cajero("Brandon Ccalla")
+                    .cajeroRol("ADMIN, CAJERO")
                     .fechaApertura(LocalDateTime.now().minusHours(4))
                     .saldoInicial(new BigDecimal("350.00"))
                     .totalIngresosEfectivo(BigDecimal.ZERO)
@@ -263,6 +336,107 @@ public class FinanzasDataInitializer implements CommandLineRunner {
 
             sesionCajaRepository.save(sesion);
             log.info("Sesión de caja demo inicializada con código: {}", sesion.getCodigoSesion());
+        }
+    }
+
+    private void inicializarCuentasPorCobrar() {
+        if (cuentaPorCobrarRepository.count() == 0) {
+            log.info("Inicializando cuentas por cobrar demo (Créditos a clientes / Fiados)...");
+
+            // Crédito 1: Parcialmente Pagado
+            pe.edu.upeu.bomerp.finanzas.entity.CuentaPorCobrar c1 = pe.edu.upeu.bomerp.finanzas.entity.CuentaPorCobrar.builder()
+                    .codigo("CRE-001")
+                    .clienteNombre("Bodega San Martín (Don Jorge)")
+                    .clienteDocumento("10458921345")
+                    .montoTotal(new BigDecimal("450.00"))
+                    .saldoPendiente(new BigDecimal("250.00"))
+                    .fechaEmision(LocalDate.now().minusDays(12))
+                    .fechaVencimiento(LocalDate.now().plusDays(18))
+                    .estado(pe.edu.upeu.bomerp.finanzas.entity.EstadoCredito.PAGADO_PARCIAL)
+                    .build();
+
+            c1.agregarAbono(pe.edu.upeu.bomerp.finanzas.entity.AbonoCuentaPorCobrar.builder()
+                    .monto(new BigDecimal("200.00"))
+                    .metodoPago(pe.edu.upeu.bomerp.finanzas.entity.MetodoPago.TRANSFERENCIA)
+                    .fecha(LocalDateTime.now().minusDays(4))
+                    .nota("Primer abono del 50% vía transferencia bancaria BCP")
+                    .build());
+
+            cuentaPorCobrarRepository.save(c1);
+
+            // Crédito 2: Totalmente Pendiente
+            pe.edu.upeu.bomerp.finanzas.entity.CuentaPorCobrar c2 = pe.edu.upeu.bomerp.finanzas.entity.CuentaPorCobrar.builder()
+                    .codigo("CRE-002")
+                    .clienteNombre("BioMercado Chacarilla S.A.C.")
+                    .clienteDocumento("20601234567")
+                    .montoTotal(new BigDecimal("680.00"))
+                    .saldoPendiente(new BigDecimal("680.00"))
+                    .fechaEmision(LocalDate.now().minusDays(5))
+                    .fechaVencimiento(LocalDate.now().plusDays(10))
+                    .estado(pe.edu.upeu.bomerp.finanzas.entity.EstadoCredito.PENDIENTE)
+                    .build();
+
+            cuentaPorCobrarRepository.save(c2);
+
+            // Crédito 3: Totalmente Pagado
+            pe.edu.upeu.bomerp.finanzas.entity.CuentaPorCobrar c3 = pe.edu.upeu.bomerp.finanzas.entity.CuentaPorCobrar.builder()
+                    .codigo("CRE-003")
+                    .clienteNombre("Restaurante Amazónico Tarapoto")
+                    .clienteDocumento("20549876541")
+                    .montoTotal(new BigDecimal("320.00"))
+                    .saldoPendiente(BigDecimal.ZERO)
+                    .fechaEmision(LocalDate.now().minusDays(20))
+                    .fechaVencimiento(LocalDate.now().minusDays(2))
+                    .estado(pe.edu.upeu.bomerp.finanzas.entity.EstadoCredito.PAGADO_TOTAL)
+                    .build();
+
+            c3.agregarAbono(pe.edu.upeu.bomerp.finanzas.entity.AbonoCuentaPorCobrar.builder()
+                    .monto(new BigDecimal("320.00"))
+                    .metodoPago(pe.edu.upeu.bomerp.finanzas.entity.MetodoPago.EFECTIVO)
+                    .fecha(LocalDateTime.now().minusDays(2))
+                    .nota("Cancelación total en efectivo en mostrador")
+                    .build());
+
+            cuentaPorCobrarRepository.save(c3);
+
+            log.info("Cuentas por cobrar demo inicializadas (CRE-001, CRE-002, CRE-003).");
+        }
+    }
+
+    private void inicializarDenominaciones() {
+        if (denominacionMonedaRepository.count() == 0) {
+            log.info("Inicializando catálogo de denominaciones de moneda oficial (Perú)...");
+            List<pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda> denoms = List.of(
+                    // Billetes
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("200.00")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.BILLETE).orden(1).activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("100.00")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.BILLETE).orden(2).activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("50.00")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.BILLETE).orden(3).activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("20.00")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.BILLETE).orden(4).activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("10.00")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.BILLETE).orden(5).activo(true).build(),
+                    // Monedas
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("5.00")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.MONEDA).orden(6).activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("2.00")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.MONEDA).orden(7).activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("1.00")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.MONEDA).orden(8).activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("0.50")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.MONEDA).orden(9).activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("0.20")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.MONEDA).orden(10).activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda.builder().valorFacial(new BigDecimal("0.10")).tipo(pe.edu.upeu.bomerp.finanzas.entity.TipoDenominacion.MONEDA).orden(11).activo(true).build()
+            );
+            denominacionMonedaRepository.saveAll(denoms);
+            log.info("Catálogo de denominaciones inicializado con {} ítems.", denoms.size());
+        }
+    }
+
+    private void inicializarCentrosCosto() {
+        if (centroCostoRepository.count() == 0) {
+            log.info("Inicializando catálogo de Centros de Costo (Agro Peruvian Foods)...");
+            List<pe.edu.upeu.bomerp.finanzas.entity.CentroCosto> ccs = List.of(
+                    pe.edu.upeu.bomerp.finanzas.entity.CentroCosto.builder().codigoCc("CC-COCO").nombreArea("Línea de Producción Aceite de Coco").activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.CentroCosto.builder().codigoCc("CC-CACAO").nombreArea("Línea de Derivados de Cacao").activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.CentroCosto.builder().codigoCc("CC-LOGISTICA").nombreArea("Logística, Almacén y Distribución").activo(true).build(),
+                    pe.edu.upeu.bomerp.finanzas.entity.CentroCosto.builder().codigoCc("CC-ADMIN").nombreArea("Administración y Operaciones Generales").activo(true).build()
+            );
+            centroCostoRepository.saveAll(ccs);
+            log.info("Centros de costo inicializados: CC-COCO, CC-CACAO, CC-LOGISTICA, CC-ADMIN.");
         }
     }
 }
