@@ -98,8 +98,24 @@ export class RendicionCajaChicaForm implements OnInit {
     return caja.saldoDisponible - this.totalGeneral();
   });
 
-  // Alerta preventiva reactiva desactivada
-  protected readonly alertaRnFin06 = computed(() => null);
+  // Alerta preventiva reactiva RN-FIN-06 en el cliente
+  protected readonly alertaRnFin06 = computed(() => {
+    const presupuestos = this.presupuestosCaja();
+    if (!presupuestos || presupuestos.length === 0) return null;
+
+    const lineas = this.lineasSignal();
+    for (let i = 0; i < lineas.length; i++) {
+      const l = lineas[i];
+      if (l.centroCostoId) {
+        const asig = presupuestos.find((p) => p.centroCostoId === Number(l.centroCostoId));
+        const subtotal = (Number(l.cantidad) || 0) * (Number(l.precioUnitario) || 0);
+        if (asig && subtotal > asig.saldoDisponible) {
+          return `RN-FIN-06 (Control Presupuestal): El importe de la línea #${i + 1} (S/ ${subtotal.toFixed(2)}) supera el saldo disponible de ${asig.codigoCc} (S/ ${asig.saldoDisponible.toFixed(2)}).`;
+        }
+      }
+    }
+    return null;
+  });
 
   get detallesArray(): FormArray<FormGroup> {
     return this.form.get('detalles') as FormArray<FormGroup>;
@@ -168,21 +184,23 @@ export class RendicionCajaChicaForm implements OnInit {
     concepto = '',
     cantidad = 1,
     precioUnitario = 0,
-    productoId: number | null = null
+    productoId: number | null = null,
+    centroCostoId: number | null = null
   ): FormGroup {
     return this.fb.group({
       concepto: [concepto, [Validators.required, Validators.maxLength(150)]],
       cantidad: [cantidad, [Validators.required, Validators.min(1)]],
       precioUnitario: [precioUnitario, [Validators.required, Validators.min(0.01)]],
       productoId: [productoId],
-      centroCostoId: [null],
+      centroCostoId: [centroCostoId, [Validators.required]],
     });
   }
 
   // --- Manejo dinámico de líneas con FormArray ---
 
   agregarLinea(): void {
-    this.detallesArray.push(this.crearGrupoLinea('', 1, 0, null));
+    const primerCc = this.centrosCosto()[0]?.id ?? null;
+    this.detallesArray.push(this.crearGrupoLinea('', 1, 0, null, primerCc));
     this.actualizarLineasSignal();
   }
 
