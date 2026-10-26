@@ -1,0 +1,171 @@
+<div class="compras-container">
+  <div class="header-action">
+    <div>
+      <h2>🛒 Registrar Orden de Compra de Insumos</h2>
+      <p class="subtitle">Ingreso de materias primas y empaques con costeo ponderado y kardex</p>
+    </div>
+    <a routerLink="/compras" class="btn btn-secondary">
+      ← Volver al Listado
+    </a>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <!-- Cabecera de Compra -->
+    <div class="card form-card mb-4">
+      <div class="card-header">
+        <h3>1. Datos del Comprobante y Proveedor</h3>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="proveedorId">Proveedor *</label>
+            <select id="proveedorId" formControlName="proveedorId" class="form-control">
+              <option value="">Seleccione proveedor...</option>
+              @for (prov of proveedores(); track prov.id) {
+                <option [value]="prov.id">{{ prov.razonSocial }} ({{ prov.numeroDocumento }})</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="numeroComprobante">N° Comprobante (Factura / Boleta) *</label>
+            <input
+              id="numeroComprobante"
+              type="text"
+              formControlName="numeroComprobante"
+              class="form-control"
+              placeholder="Ej: F001-001245"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="fechaCompra">Fecha de Compra *</label>
+            <input
+              id="fechaCompra"
+              type="date"
+              formControlName="fechaCompra"
+              class="form-control"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="metodoPago">Método de Pago *</label>
+            <select id="metodoPago" formControlName="metodoPago" class="form-control">
+              <option value="TRANSFERENCIA">Transferencia Bancaria</option>
+              <option value="EFECTIVO">Efectivo (Impacta Caja)</option>
+              <option value="CREDITO">Crédito Comercial a Proveedor</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="observaciones">Observaciones</label>
+            <input
+              id="observaciones"
+              type="text"
+              formControlName="observaciones"
+              class="form-control"
+              placeholder="Ej: Lote de envases con guía de remisión N° 004-9821..."
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detalle de Insumos -->
+    <div class="card form-card mb-4">
+      <div class="card-header items-header">
+        <h3>2. Detalle de Insumos Comprados</h3>
+        <button type="button" class="btn btn-sm btn-secondary" (click)="agregarItem()">
+          + Agregar Insumo
+        </button>
+      </div>
+      <div class="card-body">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Insumo / Empaque</th>
+              <th width="140">Cantidad</th>
+              <th width="160">Precio Unitario (S/)</th>
+              <th width="150">Subtotal</th>
+              <th width="60"></th>
+            </tr>
+          </thead>
+          <tbody formArrayName="items">
+            @for (item of itemsArray.controls; track $index) {
+              <tr [formGroupName]="$index">
+                <td>
+                  <select
+                    formControlName="insumoId"
+                    class="form-control"
+                    (change)="onInsumoChange($index)"
+                  >
+                    @for (ins of insumos(); track ins.id) {
+                      <option [value]="ins.id">
+                        {{ ins.nombre }} (Stock: {{ ins.stockActual }} {{ ins.unidadMedida }})
+                      </option>
+                    }
+                  </select>
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    formControlName="cantidad"
+                    class="form-control"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    min="0.0001"
+                    formControlName="precioUnitario"
+                    class="form-control"
+                  />
+                </td>
+                <td>
+                  <strong class="item-subtotal">
+                    S/ {{ (item.get('cantidad')?.value || 0) * (item.get('precioUnitario')?.value || 0) | number:'1.2-2' }}
+                  </strong>
+                </td>
+                <td>
+                  @if (itemsArray.length > 1) {
+                    <button type="button" class="btn-remove" (click)="eliminarItem($index)">✕</button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <!-- Resumen de Totales -->
+        <div class="totals-panel">
+          <div class="total-row">
+            <span>Subtotal Neto:</span>
+            <strong>S/ {{ subtotal | number:'1.2-2' }}</strong>
+          </div>
+          <div class="total-row">
+            <span>I.G.V. (18%):</span>
+            <strong>S/ {{ igv | number:'1.2-2' }}</strong>
+          </div>
+          <div class="total-row grand">
+            <span>TOTAL A PAGAR:</span>
+            <strong class="text-success">S/ {{ total | number:'1.2-2' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <a routerLink="/compras" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+        @if (guardando()) { Guardando... } @else { Registrar y Recibir Compra }
+      </button>
+    </div>
+  </form>
+</div>

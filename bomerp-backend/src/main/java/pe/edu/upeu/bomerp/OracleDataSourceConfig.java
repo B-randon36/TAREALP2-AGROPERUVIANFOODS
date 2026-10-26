@@ -19,8 +19,10 @@ import java.util.Map;
 @EnableJpaRepositories(
         basePackages = {
                 "pe.edu.upeu.bomerp.catalogo",
+                "pe.edu.upeu.bomerp.compras",
                 "pe.edu.upeu.bomerp.finanzas",
                 "pe.edu.upeu.bomerp.inventario",
+                "pe.edu.upeu.bomerp.produccion",
                 "pe.edu.upeu.bomerp.ventas"
         },
         entityManagerFactoryRef = "oracleEntityManagerFactory",
@@ -47,8 +49,10 @@ public class OracleDataSourceConfig {
         factory.setDataSource(oracleDataSource);
         factory.setPackagesToScan(
                 "pe.edu.upeu.bomerp.catalogo",
+                "pe.edu.upeu.bomerp.compras",
                 "pe.edu.upeu.bomerp.finanzas",
                 "pe.edu.upeu.bomerp.inventario",
+                "pe.edu.upeu.bomerp.produccion",
                 "pe.edu.upeu.bomerp.ventas",
                 "pe.edu.upeu.bomerp.seguridad"
         );

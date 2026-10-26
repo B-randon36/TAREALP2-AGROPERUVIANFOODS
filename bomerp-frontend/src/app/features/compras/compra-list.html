@@ -1,0 +1,121 @@
+<div class="compras-container">
+  <div class="header-action">
+    <div>
+      <h2>📦 Compras de Insumos</h2>
+      <p class="subtitle">Abastecimiento de envases, empaques y materias primas agrícolas</p>
+    </div>
+    <div class="action-buttons">
+      <a routerLink="/terceros" class="btn btn-secondary">
+        👥 Directorio de Proveedores
+      </a>
+      <a routerLink="/compras/nueva" class="btn btn-primary">
+        + Registrar Compra
+      </a>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (cargando()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando compras...</p>
+    </div>
+  } @else {
+    <div class="card table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Proveedor</th>
+            <th>N° Comprobante</th>
+            <th>Fecha</th>
+            <th>Método Pago</th>
+            <th>Total (Inc. IGV)</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of compras(); track c.id) {
+            <tr>
+              <td><strong>{{ c.codigoCompra }}</strong></td>
+              <td>{{ c.proveedorNombre }}</td>
+              <td><span class="comprobante-tag">{{ c.numeroComprobante }}</span></td>
+              <td>{{ c.fechaCompra | date:'dd/MM/yyyy' }}</td>
+              <td><span class="pay-tag">{{ c.metodoPago }}</span></td>
+              <td><strong class="total-text">S/ {{ c.total | number:'1.2-2' }}</strong></td>
+              <td>
+                <span class="status-badge" [ngClass]="'status-' + c.estado.toLowerCase()">
+                  {{ c.estado }}
+                </span>
+              </td>
+              <td>
+                <button type="button" class="btn btn-sm btn-info" (click)="verDetalle(c)">
+                  👁 Detalle
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="empty-row">No hay compras registradas en el historial.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Modal detalle de compra -->
+  @if (compraSeleccionada(); as sel) {
+    <div class="modal-backdrop">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Detalle de Compra: {{ sel.codigoCompra }}</h3>
+          <button type="button" class="close-btn" (click)="cerrarModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="info-grid">
+            <div><strong>Proveedor:</strong> {{ sel.proveedorNombre }}</div>
+            <div><strong>Comprobante:</strong> {{ sel.numeroComprobante }}</div>
+            <div><strong>Fecha:</strong> {{ sel.fechaCompra | date:'dd/MM/yyyy' }}</div>
+            <div><strong>Método de Pago:</strong> {{ sel.metodoPago }}</div>
+          </div>
+
+          <h4>Insumos Adquiridos:</h4>
+          <table class="modal-table">
+            <thead>
+              <tr>
+                <th>Insumo</th>
+                <th>Cantidad</th>
+                <th>P. Unitario</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (det of sel.detalles; track det.id) {
+                <tr>
+                  <td>{{ det.insumoNombre }}</td>
+                  <td>{{ det.cantidad | number:'1.2-2' }}</td>
+                  <td>S/ {{ det.precioUnitario | number:'1.4-4' }}</td>
+                  <td><strong>S/ {{ det.subtotal | number:'1.2-2' }}</strong></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          <div class="totals-box">
+            <div>Subtotal: S/ {{ sel.subtotal | number:'1.2-2' }}</div>
+            <div>IGV (18%): S/ {{ sel.igv | number:'1.2-2' }}</div>
+            <div class="grand-total">Total General: S/ {{ sel.total | number:'1.2-2' }}</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

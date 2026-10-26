@@ -1,0 +1,121 @@
+<div class="produccion-container">
+  <div class="header-action">
+    <div>
+      <h2>✨ Nueva Orden de Producción</h2>
+      <p class="subtitle">Planificación de lote con cálculo en vivo de requerimiento de insumos</p>
+    </div>
+    <a routerLink="/produccion/ordenes" class="btn btn-secondary">
+      ← Volver al Listado
+    </a>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="form-layout">
+    <!-- Panel Izquierdo: Datos de la Orden -->
+    <div class="card form-card">
+      <div class="card-header">
+        <h3>1. Parámetros de la Orden</h3>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="codigoOrden">Código de Orden *</label>
+          <input
+            id="codigoOrden"
+            type="text"
+            formControlName="codigoOrden"
+            class="form-control"
+            placeholder="Ej: OP-2026-003"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="recetaBomId">Ficha Técnica / Receta BOM *</label>
+          <select id="recetaBomId" formControlName="recetaBomId" class="form-control">
+            @for (rec of recetas(); track rec.id) {
+              <option [value]="rec.id">
+                {{ rec.codigoReceta }} - {{ rec.nombreVersion }} ({{ rec.productoNombre }})
+              </option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="cantidadAProducir">Cantidad a Producir (Unidades) *</label>
+          <input
+            id="cantidadAProducir"
+            type="number"
+            step="1"
+            min="1"
+            formControlName="cantidadAProducir"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="observaciones">Observaciones / Instrucciones de Planta</label>
+          <textarea
+            id="observaciones"
+            rows="3"
+            formControlName="observaciones"
+            class="form-control"
+            placeholder="Ej: Cumplir estándares HACCP, lote para exportación..."
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <a routerLink="/produccion/ordenes" class="btn btn-secondary">Cancelar</a>
+          <button type="submit" class="btn btn-primary" [disabled]="guardando()">
+            @if (guardando()) { Guardando... } @else { Registrar Orden de Producción }
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Derecho: Explosión de Materiales Teórica en Vivo -->
+    <div class="card preview-card">
+      <div class="card-header">
+        <h3>2. Consumo Teórico de Insumos</h3>
+      </div>
+      <div class="card-body">
+        @if (recetaSeleccionada(); as rec) {
+          <div class="preview-info">
+            <div><strong>Producto:</strong> {{ rec.productoNombre }}</div>
+            <div><strong>Costo Unitario Teórico:</strong> S/ {{ rec.costoTotalProduccion | number:'1.2-2' }}</div>
+          </div>
+
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th>Insumo</th>
+                <th>Req. x Unidad</th>
+                <th>Total a Consumir</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (det of rec.detalles; track det.id) {
+                <tr>
+                  <td>{{ det.insumoNombre }}</td>
+                  <td>{{ det.cantidadRequerida }} {{ det.unidadMedida }}</td>
+                  <td>
+                    <strong>{{ det.cantidadRequerida * cantidad | number:'1.2-2' }}</strong> {{ det.unidadMedida }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          <div class="cost-summary">
+            <div>Costo estimado de insumos: <strong>S/ {{ (rec.costoTotalProduccion - rec.costoManoObraEstimado) * cantidad | number:'1.2-2' }}</strong></div>
+            <div>Mano de obra estimada: <strong>S/ {{ rec.costoManoObraEstimado * cantidad | number:'1.2-2' }}</strong></div>
+            <div class="cost-total">Inversión Total Estimada: <strong>S/ {{ rec.costoTotalProduccion * cantidad | number:'1.2-2' }}</strong></div>
+          </div>
+        } @else {
+          <p class="text-muted">Seleccione una receta para calcular los requerimientos de insumos.</p>
+        }
+      </div>
+    </div>
+  </form>
+</div>

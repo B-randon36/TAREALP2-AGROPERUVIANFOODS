@@ -1,0 +1,78 @@
+<div class="produccion-container">
+  <div class="header-action">
+    <div>
+      <h2>📜 Recetas y Fichas Técnicas BOM</h2>
+      <p class="subtitle">Estructura de producto, costeo unitario y fórmula estándar de insumos</p>
+    </div>
+    <div class="action-buttons">
+      <a routerLink="/produccion/ordenes" class="btn btn-secondary">
+        ← Ir a Órdenes de Producción
+      </a>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (cargando()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando recetas técnicas BOM...</p>
+    </div>
+  } @else {
+    <div class="recetas-grid">
+      @for (rec of recetas(); track rec.id) {
+        <div class="card recipe-card">
+          <div class="recipe-header">
+            <div>
+              <span class="recipe-code">{{ rec.codigoReceta }}</span>
+              <h3 class="recipe-title">{{ rec.productoNombre }}</h3>
+              <span class="recipe-version">{{ rec.nombreVersion }}</span>
+            </div>
+            <div class="recipe-badge" [class.badge-active]="rec.vigente">
+              {{ rec.vigente ? 'Vigente' : 'Inactiva' }}
+            </div>
+          </div>
+
+          <div class="recipe-costs">
+            <div class="cost-item">
+              <span class="cost-label">Mano de Obra:</span>
+              <span class="cost-value">S/ {{ rec.costoManoObraEstimado | number:'1.2-2' }}</span>
+            </div>
+            <div class="cost-item">
+              <span class="cost-label">Costo Sugerido Lote:</span>
+              <span class="cost-value highlight">S/ {{ rec.costoTotalProduccion | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <div class="recipe-details">
+            <h4>Insumos por Unidad Terminada:</h4>
+            <table class="recipe-table">
+              <thead>
+                <tr>
+                  <th>Insumo</th>
+                  <th>Cantidad</th>
+                  <th>Costo</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (det of rec.detalles; track det.id) {
+                  <tr>
+                    <td>{{ det.insumoNombre }}</td>
+                    <td><strong>{{ det.cantidadRequerida }}</strong> {{ det.unidadMedida }}</td>
+                    <td>S/ {{ det.costoSubtotal | number:'1.2-2' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      } @empty {
+        <div class="card empty-card">
+          <p>No se encontraron recetas registradas.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

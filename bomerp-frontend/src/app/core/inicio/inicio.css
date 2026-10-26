@@ -1,0 +1,122 @@
+.welcome-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.welcome-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+}
+
+.welcome-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.02em;
+}
+
+.welcome-header .subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #059669;
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.module-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.25rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.module-card:hover {
+  border-color: #059669;
+  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.module-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #475569;
+  background-color: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.module-status {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #065f46;
+}
+
+.module-card h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.module-card p {
+  font-size: 0.8125rem;
+  color: #64748b;
+  line-height: 1.45;
+  margin: 0 0 1rem 0;
+  flex: 1;
+}
+
+.card-action {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #059669;
+  margin-top: auto;
+}
+
+.module-card:hover .card-action {
+  color: #047857;
+  text-decoration: underline;
+}

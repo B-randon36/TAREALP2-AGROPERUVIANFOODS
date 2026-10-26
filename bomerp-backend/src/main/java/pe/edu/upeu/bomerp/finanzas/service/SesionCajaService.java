@@ -24,6 +24,8 @@ public interface SesionCajaService {
 
     SesionCajaResponse obtenerSesionActivaUsuario(Long usuarioId);
 
+    java.util.Optional<SesionCajaResponse> buscarUltimaSesionActiva();
+
     SesionCajaResponse obtenerUltimaSesionActiva();
 
     CierreCajaReporteDto generarDatosReporte(Long id);

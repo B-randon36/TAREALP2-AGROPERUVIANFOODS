@@ -21,6 +21,37 @@ header h1 {
   font-weight: 700;
 }
 
+.header-center {
+  display: flex;
+  align-items: center;
+}
+
+.tc-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.75rem;
+  color: #334155;
+}
+
+.tc-label {
+  font-weight: 700;
+  color: #065f46;
+  background-color: #d1fae5;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.03em;
+}
+
+.tc-values {
+  color: #475569;
+}
+
 .user-panel {
   display: flex;
   align-items: center;

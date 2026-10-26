@@ -247,10 +247,16 @@ public class SesionCajaServiceImpl implements SesionCajaService {
 
     @Override
     @Transactional(readOnly = true)
+    public java.util.Optional<SesionCajaResponse> buscarUltimaSesionActiva() {
+        return sesionRepository.findFirstByEstadoOrderByFechaAperturaDesc(EstadoCaja.ABIERTA)
+                .map(this::mapToResponse);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public SesionCajaResponse obtenerUltimaSesionActiva() {
-        SesionCaja sesion = sesionRepository.findFirstByEstadoOrderByFechaAperturaDesc(EstadoCaja.ABIERTA)
+        return buscarUltimaSesionActiva()
                 .orElseThrow(() -> new ResourceNotFoundException("No existe ninguna sesión de caja abierta actualmente."));
-        return mapToResponse(sesion);
     }
 
     @Override

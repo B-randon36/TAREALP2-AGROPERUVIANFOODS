@@ -1,3 +1,74 @@
-<h2>Bienvenido a BomERP - AgroPeruvian Foods</h2>
-<p>Sistema ERP ligero y Punto de Venta (POS) integral.</p>
-<p>Usa el menú de la izquierda para gestionar el catálogo de <strong>Categorías</strong> y <strong>Productos</strong>.</p>
+<div class="welcome-container">
+  <div class="welcome-header">
+    <div class="header-content">
+      <h2>Panel General &bull; AgroPeruvian Foods</h2>
+      <p class="subtitle">Sistema de Planificación de Recursos Empresariales (BomERP)</p>
+    </div>
+    <div class="status-indicator">
+      <span class="status-dot"></span>
+      <span>Sistema Operativo</span>
+    </div>
+  </div>
+
+  <div class="modules-grid">
+    <a routerLink="/ventas/pos" class="module-card">
+      <div class="card-header">
+        <span class="module-code">VNT-01</span>
+        <span class="module-status">POS Activo</span>
+      </div>
+      <h3>Punto de Venta</h3>
+      <p>Emisión rápida de boletas, facturas y atención de pedidos en mostrador.</p>
+      <span class="card-action">Acceder al módulo &rarr;</span>
+    </a>
+
+    <a routerLink="/inventario/lotes" class="module-card">
+      <div class="card-header">
+        <span class="module-code">INV-02</span>
+        <span class="module-status">Control FEFO</span>
+      </div>
+      <h3>Inventario & Lotes</h3>
+      <p>Gestión de fechas de vencimiento, rotación de lotes y kardex valorizado.</p>
+      <span class="card-action">Consultar lotes &rarr;</span>
+    </a>
+
+    <a routerLink="/produccion/ordenes" class="module-card">
+      <div class="card-header">
+        <span class="module-code">PRD-03</span>
+        <span class="module-status">Recetas BOM</span>
+      </div>
+      <h3>Órdenes de Producción</h3>
+      <p>Transformación de materias primas, costos estándar y formulación.</p>
+      <span class="card-action">Ver órdenes &rarr;</span>
+    </a>
+
+    <a routerLink="/compras" class="module-card">
+      <div class="card-header">
+        <span class="module-code">CMP-04</span>
+        <span class="module-status">Proveedores</span>
+      </div>
+      <h3>Compras & Terceros</h3>
+      <p>Recepción de insumos, costo promedio ponderado y directorio RUC/DNI.</p>
+      <span class="card-action">Gestionar compras &rarr;</span>
+    </a>
+
+    <a routerLink="/finanzas/sesiones" class="module-card">
+      <div class="card-header">
+        <span class="module-code">FIN-05</span>
+        <span class="module-status">Tesorería</span>
+      </div>
+      <h3>Sesiones de Caja</h3>
+      <p>Control de turnos, arqueo de efectivo, caja chica y conciliación diaria.</p>
+      <span class="card-action">Gestionar caja &rarr;</span>
+    </a>
+
+    <a routerLink="/finanzas/reportes" class="module-card">
+      <div class="card-header">
+        <span class="module-code">REP-06</span>
+        <span class="module-status">Métricas</span>
+      </div>
+      <h3>Dashboard Financiero</h3>
+      <p>Consolidado de ingresos, egresos, rentabilidad y análisis de ventas.</p>
+      <span class="card-action">Ver reportes &rarr;</span>
+    </a>
+  </div>
+</div>

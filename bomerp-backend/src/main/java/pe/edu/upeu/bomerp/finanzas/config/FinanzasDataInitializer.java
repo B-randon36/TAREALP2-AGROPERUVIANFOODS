@@ -277,8 +277,8 @@ public class FinanzasDataInitializer implements CommandLineRunner {
             log.info("Datos demo de Finanzas cargados exitosamente (3 rendiciones registradas con Centro de Costo).");
         }
 
-        if (sesionCajaRepository.count() == 0) {
-            log.info("Inicializando Sesión de Caja Diaria Demo (Agro Peruvian Foods)...");
+        if (!sesionCajaRepository.existsByCodigoSesion("SES-20261017-001") || !sesionCajaRepository.existsByCodigoSesion("SES-20261018-001")) {
+            log.info("Inicializando Sesiones de Caja Diaria Demo (Agro Peruvian Foods)...");
             CategoriaFinanciera catVentas = categoriaFinancieraRepository.findAll().stream()
                     .filter(c -> c.getTipoDefault() == TipoFinanciero.INGRESO)
                     .findFirst().orElse(null);
@@ -287,55 +287,127 @@ public class FinanzasDataInitializer implements CommandLineRunner {
                     .filter(c -> c.getTipoDefault() == TipoFinanciero.EGRESO)
                     .findFirst().orElse(null);
 
-            SesionCaja sesion = SesionCaja.builder()
-                    .codigoSesion("SES-20261018-001")
-                    .usuarioId(1L)
-                    .cajero("Brandon Ccalla")
-                    .cajeroRol("ADMIN, CAJERO")
-                    .fechaApertura(LocalDateTime.now().minusHours(4))
-                    .saldoInicial(new BigDecimal("350.00"))
-                    .totalIngresosEfectivo(BigDecimal.ZERO)
-                    .totalEgresosEfectivo(BigDecimal.ZERO)
-                    .saldoEsperadoEfectivo(new BigDecimal("350.00"))
-                    .estado(EstadoCaja.ABIERTA)
-                    .build();
+            if (!sesionCajaRepository.existsByCodigoSesion("SES-20261017-001")) {
+                // 1. Sesión Cerrada Demo de la jornada anterior con desglose de monedas y billetes
+                SesionCaja sesionCerrada = SesionCaja.builder()
+                        .codigoSesion("SES-20261017-001")
+                        .usuarioId(1L)
+                        .cajero("Brandon Ccalla")
+                        .cajeroRol("ADMIN, CAJERO")
+                        .fechaApertura(LocalDateTime.now().minusDays(1).withHour(8).withMinute(0))
+                        .fechaCierre(LocalDateTime.now().minusDays(1).withHour(17).withMinute(30))
+                        .saldoInicial(new BigDecimal("300.00"))
+                        .totalIngresosEfectivo(new BigDecimal("450.00"))
+                        .totalEgresosEfectivo(new BigDecimal("50.00"))
+                        .saldoEsperadoEfectivo(new BigDecimal("700.00"))
+                        .saldoRealEfectivo(new BigDecimal("700.00"))
+                        .diferencia(BigDecimal.ZERO)
+                        .estado(EstadoCaja.CERRADA)
+                        .observaciones("Cierre de turno sin descuadre. Se contaron monedas y billetes al 100%.")
+                        .build();
 
-            if (catVentas != null) {
-                sesion.agregarMovimiento(MovimientoCaja.builder()
-                        .fechaHora(LocalDateTime.now().minusHours(3))
-                        .tipo(TipoFinanciero.INGRESO)
-                        .metodoPago(MetodoPago.EFECTIVO)
-                        .monto(new BigDecimal("120.00"))
-                        .descripcion("Venta 3 frascos Aceite de Coco 500ml")
-                        .referenciaExterna("VTA-00101")
-                        .categoriaFinanciera(catVentas)
-                        .build());
+                if (catVentas != null) {
+                    sesionCerrada.agregarMovimiento(MovimientoCaja.builder()
+                            .fechaHora(LocalDateTime.now().minusDays(1).withHour(11))
+                            .tipo(TipoFinanciero.INGRESO)
+                            .metodoPago(MetodoPago.EFECTIVO)
+                            .monto(new BigDecimal("450.00"))
+                            .descripcion("Venta Mayorista Chocolate Orgánico y Nibs")
+                            .referenciaExterna("VTA-00089")
+                            .categoriaFinanciera(catVentas)
+                            .build());
+                }
 
-                sesion.agregarMovimiento(MovimientoCaja.builder()
-                        .fechaHora(LocalDateTime.now().minusHours(2))
-                        .tipo(TipoFinanciero.INGRESO)
-                        .metodoPago(MetodoPago.YAPE)
-                        .monto(new BigDecimal("85.00"))
-                        .descripcion("Venta Pack Chocolates 70% Cacao")
-                        .referenciaExterna("VTA-00102")
-                        .categoriaFinanciera(catVentas)
-                        .build());
+                if (catGastos != null) {
+                    sesionCerrada.agregarMovimiento(MovimientoCaja.builder()
+                            .fechaHora(LocalDateTime.now().minusDays(1).withHour(14))
+                            .tipo(TipoFinanciero.EGRESO)
+                            .metodoPago(MetodoPago.EFECTIVO)
+                            .monto(new BigDecimal("50.00"))
+                            .descripcion("Servicio de flete menor reparto local")
+                            .referenciaExterna("EGR-00038")
+                            .categoriaFinanciera(catGastos)
+                            .build());
+                }
+
+                sesionCajaRepository.save(sesionCerrada);
+
+                for (pe.edu.upeu.bomerp.finanzas.entity.DenominacionMoneda d : denominacionMonedaRepository.findAll()) {
+                    int cant = 0;
+                    if (d.getValorFacial().compareTo(new BigDecimal("100.00")) == 0) cant = 3;
+                    else if (d.getValorFacial().compareTo(new BigDecimal("50.00")) == 0) cant = 4;
+                    else if (d.getValorFacial().compareTo(new BigDecimal("20.00")) == 0) cant = 5;
+                    else if (d.getValorFacial().compareTo(new BigDecimal("5.00")) == 0) cant = 10;
+                    else if (d.getValorFacial().compareTo(new BigDecimal("2.00")) == 0) cant = 15;
+                    else if (d.getValorFacial().compareTo(new BigDecimal("1.00")) == 0) cant = 20;
+
+                    if (cant > 0) {
+                        BigDecimal sub = d.getValorFacial().multiply(BigDecimal.valueOf(cant));
+                        pe.edu.upeu.bomerp.finanzas.entity.DetalleArqueoEfectivo det = pe.edu.upeu.bomerp.finanzas.entity.DetalleArqueoEfectivo.builder()
+                                .id(new pe.edu.upeu.bomerp.finanzas.entity.DetalleArqueoEfectivoId(sesionCerrada.getId(), d.getId()))
+                                .sesionCaja(sesionCerrada)
+                                .denominacionMoneda(d)
+                                .cantidad(cant)
+                                .subtotal(sub)
+                                .build();
+                        sesionCerrada.agregarDetalleArqueo(det);
+                    }
+                }
+                sesionCajaRepository.save(sesionCerrada);
             }
 
-            if (catGastos != null) {
-                sesion.agregarMovimiento(MovimientoCaja.builder()
-                        .fechaHora(LocalDateTime.now().minusHours(1))
-                        .tipo(TipoFinanciero.EGRESO)
-                        .metodoPago(MetodoPago.EFECTIVO)
-                        .monto(new BigDecimal("35.00"))
-                        .descripcion("Compra de bolsas kraft para despacho")
-                        .referenciaExterna("EGR-00045")
-                        .categoriaFinanciera(catGastos)
-                        .build());
-            }
+            if (!sesionCajaRepository.existsByCodigoSesion("SES-20261018-001")) {
+                // 2. Sesión Abierta en curso
+                SesionCaja sesion = SesionCaja.builder()
+                        .codigoSesion("SES-20261018-001")
+                        .usuarioId(1L)
+                        .cajero("Brandon Ccalla")
+                        .cajeroRol("ADMIN, CAJERO")
+                        .fechaApertura(LocalDateTime.now().minusHours(4))
+                        .saldoInicial(new BigDecimal("350.00"))
+                        .totalIngresosEfectivo(BigDecimal.ZERO)
+                        .totalEgresosEfectivo(BigDecimal.ZERO)
+                        .saldoEsperadoEfectivo(new BigDecimal("350.00"))
+                        .estado(EstadoCaja.ABIERTA)
+                        .build();
 
-            sesionCajaRepository.save(sesion);
-            log.info("Sesión de caja demo inicializada con código: {}", sesion.getCodigoSesion());
+                if (catVentas != null) {
+                    sesion.agregarMovimiento(MovimientoCaja.builder()
+                            .fechaHora(LocalDateTime.now().minusHours(3))
+                            .tipo(TipoFinanciero.INGRESO)
+                            .metodoPago(MetodoPago.EFECTIVO)
+                            .monto(new BigDecimal("120.00"))
+                            .descripcion("Venta 3 frascos Aceite de Coco 500ml")
+                            .referenciaExterna("VTA-00101")
+                            .categoriaFinanciera(catVentas)
+                            .build());
+
+                    sesion.agregarMovimiento(MovimientoCaja.builder()
+                            .fechaHora(LocalDateTime.now().minusHours(2))
+                            .tipo(TipoFinanciero.INGRESO)
+                            .metodoPago(MetodoPago.YAPE)
+                            .monto(new BigDecimal("85.00"))
+                            .descripcion("Venta Pack Chocolates 70% Cacao")
+                            .referenciaExterna("VTA-00102")
+                            .categoriaFinanciera(catVentas)
+                            .build());
+                }
+
+                if (catGastos != null) {
+                    sesion.agregarMovimiento(MovimientoCaja.builder()
+                            .fechaHora(LocalDateTime.now().minusHours(1))
+                            .tipo(TipoFinanciero.EGRESO)
+                            .metodoPago(MetodoPago.EFECTIVO)
+                            .monto(new BigDecimal("35.00"))
+                            .descripcion("Compra de bolsas kraft para despacho")
+                            .referenciaExterna("EGR-00045")
+                            .categoriaFinanciera(catGastos)
+                            .build());
+                }
+
+                sesionCajaRepository.save(sesion);
+                log.info("Sesión de caja demo inicializada con código: {}", sesion.getCodigoSesion());
+            }
         }
     }
 

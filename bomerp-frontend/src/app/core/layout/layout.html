@@ -1,9 +1,18 @@
 <header class="app-header">
   <div class="brand">
     <a routerLink="/" class="home-link">
-      <img src="favicon.ico" alt="" height="30" />
+      <img src="favicon.ico" alt="" height="28" />
     </a>
-    <h1>AgroPeruvian Foods - ERP</h1>
+    <h1>AgroPeruvian Foods &bull; BomERP</h1>
+  </div>
+
+  <div class="header-center">
+    @if (tipoCambio(); as tc) {
+      <div class="tc-badge" title="Tipo de cambio oficial SUNAT / SBS">
+        <span class="tc-label">T.C. SUNAT</span>
+        <span class="tc-values">Compra: <strong>S/ {{ tc.compra }}</strong> | Venta: <strong>S/ {{ tc.venta }}</strong></span>
+      </div>
+    }
   </div>
 
   <div class="user-panel">
@@ -22,54 +31,16 @@
 <div class="body">
   <aside class="sidebar">
     <nav>
-      <!-- Menú Módulo Finanzas -->
+      <!-- 1. Catálogo & Inventario -->
       <div class="nav-section-title">
-        Finanzas y Reportes
-      </div>
-
-      @if (auth.tieneRol('ADMIN', 'ADMIN_FINANZAS', 'CAJERO')) {
-        <a routerLink="/finanzas/sesiones" routerLinkActive="active">
-          Turnos y Sesiones de Caja
-        </a>
-        <a routerLink="/finanzas/creditos" routerLinkActive="active">
-          Cuentas por Cobrar
-        </a>
-      }
-
-      @if (auth.tieneRol('ADMIN', 'ADMIN_FINANZAS')) {
-        <a routerLink="/finanzas/reportes" routerLinkActive="active">
-          Dashboard y Reportes
-        </a>
-        <a routerLink="/finanzas/transacciones" routerLinkActive="active">
-          Transacciones Financieras
-        </a>
-      }
-
-      <a routerLink="/finanzas/rendiciones" routerLinkActive="active">
-        Rendiciones de Caja Chica
-      </a>
-
-      @if (auth.tieneRol('ADMIN', 'ADMIN_FINANZAS')) {
-        <a routerLink="/finanzas/categorias" routerLinkActive="active">
-          Categorías Financieras
-        </a>
-      }
-
-      <!-- Menú Módulo Catálogo -->
-      <div class="nav-section-title">
-        Catálogo General
+        Catálogo e Inventario
       </div>
       <a routerLink="/catalogo/productos" routerLinkActive="active">
-        Productos
+        Productos Terminados
       </a>
       <a routerLink="/catalogo/categorias" routerLinkActive="active">
-        Categorías
+        Categorías de Producto
       </a>
-
-      <!-- Menú Módulo Inventario y Lotes FEFO -->
-      <div class="nav-section-title">
-        Inventario y Lotes FEFO
-      </div>
       <a routerLink="/inventario/lotes" routerLinkActive="active">
         Lotes y Caducidad FEFO
       </a>
@@ -77,16 +48,73 @@
         Kardex de Almacén
       </a>
 
-      <!-- Menú Módulo Ventas POS -->
+      <!-- 2. Producción y Recetas BOM -->
       <div class="nav-section-title">
-        Ventas y Mostrador POS
+        Producción y Recetas
+      </div>
+      <a routerLink="/produccion/ordenes" routerLinkActive="active">
+        Órdenes de Producción
+      </a>
+      <a routerLink="/produccion/recetas" routerLinkActive="active">
+        Fichas Técnicas BOM
+      </a>
+
+      <!-- 3. Ventas & Despachos -->
+      <div class="nav-section-title">
+        Ventas y Mostrador
       </div>
       <a routerLink="/ventas/pos" routerLinkActive="active">
-        🛒 Terminal POS Mostrador
+        Punto de Venta (POS)
       </a>
       <a routerLink="/ventas/historial" routerLinkActive="active">
-        🧾 Historial de Ventas
+        Historial de Ventas
       </a>
+      <a routerLink="/ventas/delivery" routerLinkActive="active">
+        Despachos y Delivery
+      </a>
+
+      <!-- 4. Compras & Terceros -->
+      <div class="nav-section-title">
+        Compras y Proveedores
+      </div>
+      <a routerLink="/compras" routerLinkActive="active">
+        Registro de Compras
+      </a>
+      <a routerLink="/terceros" routerLinkActive="active">
+        Gestión de Terceros
+      </a>
+
+      <!-- 5. Finanzas & Tesorería -->
+      <div class="nav-section-title">
+        Finanzas y Tesorería
+      </div>
+      @if (auth.tieneRol('ADMIN', 'ADMIN_FINANZAS', 'CAJERO')) {
+        <a routerLink="/finanzas/sesiones" routerLinkActive="active">
+          Turnos y Sesión de Caja
+        </a>
+        <a routerLink="/finanzas/creditos" routerLinkActive="active">
+          Cuentas por Cobrar
+        </a>
+      }
+      <a routerLink="/finanzas/rendiciones" routerLinkActive="active">
+        Rendición de Caja Chica
+      </a>
+
+      <!-- 6. Reportes y Analítica -->
+      @if (auth.tieneRol('ADMIN', 'ADMIN_FINANZAS')) {
+        <div class="nav-section-title">
+          Reportes y Control
+        </div>
+        <a routerLink="/finanzas/reportes" routerLinkActive="active">
+          Dashboard Financiero
+        </a>
+        <a routerLink="/finanzas/transacciones" routerLinkActive="active">
+          Libro de Transacciones
+        </a>
+        <a routerLink="/finanzas/categorias" routerLinkActive="active">
+          Categorías Contables
+        </a>
+      }
     </nav>
   </aside>
 

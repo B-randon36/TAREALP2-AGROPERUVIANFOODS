@@ -35,4 +35,9 @@ public class JwtKeyConfig {
     public JwtEncoder jwtEncoder(RSAKey rsaKey) {
         return new NimbusJwtEncoder(new ImmutableJWKSet<>(new JWKSet(rsaKey)));
     }
+
+    @Bean
+    public org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder(RSAKey rsaKey) throws Exception {
+        return org.springframework.security.oauth2.jwt.NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
+    }
 }

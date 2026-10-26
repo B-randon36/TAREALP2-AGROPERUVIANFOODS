@@ -77,12 +77,7 @@ public class VentaServiceImpl implements VentaService {
         BigDecimal vuelto = BigDecimal.ZERO;
 
         // 3. Validación y Sincronización con Turno de Caja (SesionCaja)
-        SesionCajaResponse sesionActiva = null;
-        try {
-            sesionActiva = sesionCajaService.obtenerUltimaSesionActiva();
-        } catch (Exception e) {
-            log.warn("No se encontró sesión activa de caja: {}", e.getMessage());
-        }
+        SesionCajaResponse sesionActiva = sesionCajaService.buscarUltimaSesionActiva().orElse(null);
 
         if (request.getMetodoPago() == MetodoPagoVenta.EFECTIVO) {
             if (sesionActiva == null) {

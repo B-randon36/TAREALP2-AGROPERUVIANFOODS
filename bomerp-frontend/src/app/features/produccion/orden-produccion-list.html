@@ -1,0 +1,130 @@
+<div class="produccion-container">
+  <div class="header-action">
+    <div>
+      <h2>🏭 Órdenes de Producción</h2>
+      <p class="subtitle">Control de fabricación, transformación de materias primas y generación de lotes FEFO</p>
+    </div>
+    <div class="action-buttons">
+      <a routerLink="/produccion/recetas" class="btn btn-secondary">
+        📜 Ver Recetas BOM
+      </a>
+      <a routerLink="/produccion/ordenes/nueva" class="btn btn-primary">
+        + Nueva Orden de Trabajo
+      </a>
+    </div>
+  </div>
+
+  @if (exito()) {
+    <div class="alert alert-success">{{ exito() }}</div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (cargando()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando órdenes de producción...</p>
+    </div>
+  } @else {
+    <div class="card table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Producto a Elaborar</th>
+            <th>Cantidad</th>
+            <th>Lote Generado</th>
+            <th>Fecha Registro</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ord of ordenes(); track ord.id) {
+            <tr>
+              <td><strong>{{ ord.codigoOrden }}</strong></td>
+              <td>
+                <span class="product-badge">{{ ord.productoNombre || 'Producto #' + ord.productoId }}</span>
+              </td>
+              <td><strong>{{ ord.cantidadAProducir | number:'1.2-2' }}</strong> un.</td>
+              <td>
+                @if (ord.codigoLoteGenerado) {
+                  <span class="lote-tag">{{ ord.codigoLoteGenerado }}</span>
+                } @else {
+                  <span class="text-muted">Por generar</span>
+                }
+              </td>
+              <td>{{ ord.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="'status-' + ord.estado.toLowerCase()">
+                  {{ ord.estado }}
+                </span>
+              </td>
+              <td class="action-cell">
+                @if (ord.estado === 'PLANIFICADA' || ord.estado === 'EN_PROCESO') {
+                  <button type="button" class="btn btn-sm btn-success" (click)="abrirModalCompletar(ord)">
+                    ✅ Completar
+                  </button>
+                  <button type="button" class="btn btn-sm btn-danger-outline" (click)="cancelarOrden(ord)">
+                    ✖
+                  </button>
+                } @else if (ord.estado === 'COMPLETADA') {
+                  <span class="text-success font-semibold">✔ Concluido</span>
+                } @else {
+                  <span class="text-muted">Cancelada</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty-row">No hay órdenes de producción registradas.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Modal para completar orden -->
+  @if (ordenSeleccionada()) {
+    <div class="modal-backdrop">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Completar Orden: {{ ordenSeleccionada()?.codigoOrden }}</h3>
+          <button type="button" class="close-btn" (click)="cerrarModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Al completar esta orden, se <strong>descontarán automáticamente los insumos consumidos</strong> de almacén
+            y se creará un <strong>nuevo Lote de Inventario</strong> con regla de caducidad.
+          </p>
+
+          <div class="info-box">
+            <div><strong>Producto:</strong> {{ ordenSeleccionada()?.productoNombre }}</div>
+            <div><strong>Cantidad producida:</strong> {{ ordenSeleccionada()?.cantidadAProducir }} unidades</div>
+          </div>
+
+          <div class="form-group">
+            <label>Fecha de Vencimiento del Lote (Opcional - por defecto según estándar):</label>
+            <input type="date" [(ngModel)]="fechaVencimientoPersonalizada" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label>Observaciones de Cierre / Control de Calidad:</label>
+            <textarea [(ngModel)]="observacionCierre" rows="3" class="form-control"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModal()" [disabled]="completando()">
+            Cancelar
+          </button>
+          <button type="button" class="btn btn-success" (click)="confirmarCompletar()" [disabled]="completando()">
+            @if (completando()) { Procesando Lote... } @else { Confirmar e Ingresar a Almacén }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

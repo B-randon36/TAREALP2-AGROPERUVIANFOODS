@@ -128,14 +128,9 @@ public class CuentaPorCobrarServiceImpl implements CuentaPorCobrarService {
         // 2. Impacto en Turno / Sesión de Caja Activa
         Long sesionId = req.getSesionCajaId();
         if (sesionId == null) {
-            try {
-                SesionCajaResponse sesionActiva = sesionCajaService.obtenerUltimaSesionActiva();
-                if (sesionActiva != null) {
-                    sesionId = sesionActiva.getId();
-                }
-            } catch (Exception e) {
-                log.info("No hay sesión de caja abierta actualmente para registrar el cobro automático: {}", e.getMessage());
-            }
+            sesionId = sesionCajaService.buscarUltimaSesionActiva()
+                    .map(SesionCajaResponse::getId)
+                    .orElse(null);
         }
 
         if (sesionId != null) {

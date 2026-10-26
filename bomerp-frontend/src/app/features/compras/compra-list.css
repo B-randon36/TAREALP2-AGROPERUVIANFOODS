@@ -1,0 +1,247 @@
+.compras-container {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-action h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #64748b;
+  margin: 0.25rem 0 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.data-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.data-table td {
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 0.92rem;
+}
+
+.data-table tr:hover {
+  background: #f8fafc;
+}
+
+.comprobante-tag {
+  background: #f1f5f9;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-weight: 600;
+}
+
+.pay-tag {
+  background: #e2e8f0;
+  color: #334155;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.total-text {
+  color: #059669;
+  font-size: 1rem;
+}
+
+.status-badge {
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-recibida {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-registrada {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-anulada {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  background: #10b981;
+  color: white;
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-info {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+  border-radius: 6px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+}
+
+.modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.25rem;
+  font-size: 0.88rem;
+}
+
+.modal-table th {
+  background: #f8fafc;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.totals-box {
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+}
+
+.grand-total {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #059669;
+  border-top: 1px dashed #cbd5e1;
+  padding-top: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+}

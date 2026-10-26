@@ -17,7 +17,7 @@ import { AuthService } from '../../../core/auth/auth-service';
 @Component({
   selector: 'app-cuenta-cobrar-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './cuenta-cobrar-list.html',
   styleUrls: ['./cuenta-cobrar-list.css'],
 })

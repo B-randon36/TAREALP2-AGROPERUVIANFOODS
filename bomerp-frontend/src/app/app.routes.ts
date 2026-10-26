@@ -4,6 +4,10 @@ import { rolGuard } from './core/guards/rol-guard';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    loadComponent: () => import('./core/auth/login').then((m) => m.LoginComponent),
+  },
+  {
     path: 'auth/callback',
     loadComponent: () => import('./core/auth/auth-callback').then((m) => m.AuthCallback),
   },
@@ -185,6 +189,54 @@ export const routes: Routes = [
         path: 'ventas/historial',
         loadComponent: () =>
           import('./features/ventas/venta-list').then((m) => m.VentaList),
+      },
+      {
+        path: 'ventas/delivery',
+        loadComponent: () =>
+          import('./features/ventas/delivery/delivery-list').then((m) => m.DeliveryList),
+      },
+
+      // --- Módulo Producción y Recetas BOM ---
+      {
+        path: 'produccion/ordenes',
+        loadComponent: () =>
+          import('./features/produccion/orden-produccion-list').then(
+            (m) => m.OrdenProduccionList
+          ),
+      },
+      {
+        path: 'produccion/ordenes/nueva',
+        loadComponent: () =>
+          import('./features/produccion/orden-produccion-form').then(
+            (m) => m.OrdenProduccionForm
+          ),
+      },
+      {
+        path: 'produccion/recetas',
+        loadComponent: () =>
+          import('./features/produccion/receta-bom-list').then((m) => m.RecetaBomList),
+      },
+
+      // --- Módulo Compras de Insumos y CRM de Terceros ---
+      {
+        path: 'compras',
+        loadComponent: () =>
+          import('./features/compras/compra-list').then((m) => m.CompraList),
+      },
+      {
+        path: 'compras/nueva',
+        loadComponent: () =>
+          import('./features/compras/compra-form').then((m) => m.CompraForm),
+      },
+      {
+        path: 'terceros',
+        loadComponent: () =>
+          import('./features/terceros/terceros-list').then((m) => m.TercerosList),
+      },
+      {
+        path: 'terceros/nuevo',
+        loadComponent: () =>
+          import('./features/terceros/terceros-form').then((m) => m.TercerosForm),
       },
 
       // --- Ruta de Acceso Denegado ---

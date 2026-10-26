@@ -79,6 +79,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/v1/finanzas/**", "/api/v1/cajas-chicas/**").hasAnyRole("ADMIN", "ADMIN_FINANZAS")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/finanzas/**", "/api/v1/cajas-chicas/**").hasAnyRole("ADMIN", "ADMIN_FINANZAS")
 
+                        // Módulo Producción y Recetas BOM
+                        .requestMatchers("/api/v1/produccion/**").authenticated()
+
+                        // Módulo Compras, Terceros CRM e Integraciones SUNAT
+                        .requestMatchers("/api/v1/compras/**", "/api/v1/terceros/**", "/api/v1/sunat/**").authenticated()
+
+                        // Módulo Ventas y Reparto Delivery
+                        .requestMatchers("/api/v1/ventas/**").authenticated()
+
                         // Resto de endpoints requieren autenticación
                         .anyRequest().authenticated()
                 )

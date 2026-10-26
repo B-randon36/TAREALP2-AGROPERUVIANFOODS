@@ -150,17 +150,42 @@ export class AuthService {
     return true;
   }
 
+  async iniciarSesionDirecta(email: string, password: string): Promise<boolean> {
+    try {
+      const resp = await fetch(`${environment.apiBaseUrl}/api/v1/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!resp.ok) return false;
+      const data = await resp.json();
+      this.guardarSesion({
+        access_token: data.accessToken,
+        refresh_token: '',
+        id_token: '',
+        expires_in: data.expiresIn || 3600,
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   cerrarSesion(): void {
     const idToken = this.sesion()?.idToken;
     this.sesion.set(null);
     try {
       sessionStorage.removeItem(CLAVE_SESION_STORAGE);
     } catch {}
-    const parametros = new URLSearchParams({
-      post_logout_redirect_uri: environment.keycloak.postLogoutRedirectUri,
-      ...(idToken ? { id_token_hint: idToken } : {}),
-    });
-    location.href = `${environment.keycloak.issuer}/protocol/openid-connect/logout?${parametros}`;
+    if (idToken) {
+      const parametros = new URLSearchParams({
+        post_logout_redirect_uri: environment.keycloak.postLogoutRedirectUri,
+        id_token_hint: idToken,
+      });
+      location.href = `${environment.keycloak.issuer}/protocol/openid-connect/logout?${parametros}`;
+    } else {
+      location.href = '/login';
+    }
   }
 
   private guardarSesion(datos: TokenResponse): void {
