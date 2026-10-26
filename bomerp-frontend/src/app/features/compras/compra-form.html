@@ -1,7 +1,7 @@
 <div class="compras-container">
   <div class="header-action">
     <div>
-      <h2>🛒 Registrar Orden de Compra de Insumos</h2>
+      <h2><span class="material-symbols-outlined icon-inline">shopping_cart</span> Registrar Orden de Compra de Insumos</h2>
       <p class="subtitle">Ingreso de materias primas y empaques con costeo ponderado y kardex</p>
     </div>
     <a routerLink="/compras" class="btn btn-secondary">
@@ -135,7 +135,9 @@
                 </td>
                 <td>
                   @if (itemsArray.length > 1) {
-                    <button type="button" class="btn-remove" (click)="eliminarItem($index)">✕</button>
+                    <button type="button" class="btn-remove" (click)="eliminarItem($index)" title="Eliminar ítem">
+                      <span class="material-symbols-outlined" style="font-size: 1rem;">close</span>
+                    </button>
                   }
                 </td>
               </tr>

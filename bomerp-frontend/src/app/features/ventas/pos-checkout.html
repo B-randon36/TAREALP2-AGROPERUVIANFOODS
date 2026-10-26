@@ -50,15 +50,15 @@
                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                 />
                 <div class="prod-icon" style="display: none;">
-                  @if (p.nombre.includes('Aceite')) { 🥥 }
-                  @else if (p.nombre.includes('Cacao') || p.nombre.includes('Nibs')) { 🍫 }
-                  @else { 📦 }
+                  @if (p.nombre.includes('Aceite')) { <span class="material-symbols-outlined">water_drop</span> }
+                  @else if (p.nombre.includes('Cacao') || p.nombre.includes('Nibs')) { <span class="material-symbols-outlined">eco</span> }
+                  @else { <span class="material-symbols-outlined">inventory_2</span> }
                 </div>
               } @else {
                 <div class="prod-icon">
-                  @if (p.nombre.includes('Aceite')) { 🥥 }
-                  @else if (p.nombre.includes('Cacao') || p.nombre.includes('Nibs')) { 🍫 }
-                  @else { 📦 }
+                  @if (p.nombre.includes('Aceite')) { <span class="material-symbols-outlined">water_drop</span> }
+                  @else if (p.nombre.includes('Cacao') || p.nombre.includes('Nibs')) { <span class="material-symbols-outlined">eco</span> }
+                  @else { <span class="material-symbols-outlined">inventory_2</span> }
                 </div>
               }
             </div>
@@ -84,7 +84,7 @@
       <div class="cart-items-wrapper">
         @if (carrito().length === 0) {
           <div class="cart-empty">
-            <span class="cart-empty-icon">🛒</span>
+            <span class="material-symbols-outlined cart-empty-icon" style="font-size:3rem">shopping_cart</span>
             <p>Carrito vacío. Haz clic en un producto para agregarlo a la orden.</p>
           </div>
         } @else {
@@ -100,15 +100,15 @@
                       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                     />
                     <div class="cart-thumb-fallback" style="display: none;">
-                      @if (it.nombre.includes('Aceite') || it.nombre.includes('Coco')) { 🥥 }
-                      @else if (it.nombre.includes('Cacao') || it.nombre.includes('Nibs') || it.nombre.includes('Chocolate')) { 🍫 }
-                      @else { 📦 }
+                      @if (it.nombre.includes('Aceite') || it.nombre.includes('Coco')) { <span class="material-symbols-outlined">water_drop</span> }
+                      @else if (it.nombre.includes('Cacao') || it.nombre.includes('Nibs') || it.nombre.includes('Chocolate')) { <span class="material-symbols-outlined">eco</span> }
+                      @else { <span class="material-symbols-outlined">inventory_2</span> }
                     </div>
                   } @else {
                     <div class="cart-thumb-fallback">
-                      @if (it.nombre.includes('Aceite') || it.nombre.includes('Coco')) { 🥥 }
-                      @else if (it.nombre.includes('Cacao') || it.nombre.includes('Nibs') || it.nombre.includes('Chocolate')) { 🍫 }
-                      @else { 📦 }
+                      @if (it.nombre.includes('Aceite') || it.nombre.includes('Coco')) { <span class="material-symbols-outlined">water_drop</span> }
+                      @else if (it.nombre.includes('Cacao') || it.nombre.includes('Nibs') || it.nombre.includes('Chocolate')) { <span class="material-symbols-outlined">eco</span> }
+                      @else { <span class="material-symbols-outlined">inventory_2</span> }
                     </div>
                   }
                 </div>
@@ -157,7 +157,7 @@
             [class.active]="metodoPago() === 'EFECTIVO'"
             (click)="metodoPago.set('EFECTIVO')"
           >
-            💵 Efectivo
+            <span class="material-symbols-outlined icon-inline">payments</span> Efectivo
           </button>
           <button
             type="button"
@@ -165,7 +165,7 @@
             [class.active]="metodoPago() === 'TARJETA'"
             (click)="metodoPago.set('TARJETA')"
           >
-            💳 Tarjeta (POS)
+            <span class="material-symbols-outlined icon-inline">credit_card</span> Tarjeta (POS)
           </button>
           <button
             type="button"
@@ -173,7 +173,7 @@
             [class.active]="metodoPago() === 'TRANSFERENCIA_DIGITAL'"
             (click)="metodoPago.set('TRANSFERENCIA_DIGITAL')"
           >
-            📱 Yape / Plin
+            <span class="material-symbols-outlined icon-inline">qr_code_2</span> Yape / Plin
           </button>
         </div>
 
@@ -295,7 +295,7 @@
                       <div class="ticket-prod-text">
                         <div class="ticket-prod-name">{{ det.productoNombre }}</div>
                         @if (det.lotesConsumidosFefo) {
-                          <div class="ticket-lotes">📦 Lote FEFO: {{ det.lotesConsumidosFefo }}</div>
+                          <div class="ticket-lotes">Lote FEFO: {{ det.lotesConsumidosFefo }}</div>
                         }
                       </div>
                     </div>
@@ -333,7 +333,7 @@
         </div>
 
         <div class="modal-footer no-print">
-          <button type="button" class="btn btn-secondary" (click)="imprimirTicket()">🖨️ Imprimir Ticket (80mm)</button>
+          <button type="button" class="btn btn-secondary" (click)="imprimirTicket()"><span class="material-symbols-outlined icon-inline">print</span> Imprimir Ticket (80mm)</button>
           <button type="button" class="btn btn-success" (click)="nuevaVenta()">+ Nueva Venta</button>
         </div>
       </div>

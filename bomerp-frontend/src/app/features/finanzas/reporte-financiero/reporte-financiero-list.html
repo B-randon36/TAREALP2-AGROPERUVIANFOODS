@@ -9,10 +9,10 @@
     <div class="header-actions">
       @if (dashboard()?.sesionActivaId) {
         <button class="btn btn-pdf" (click)="descargarReporteActiva('PDF')" [disabled]="exportando()" title="Elegir carpeta y guardar corte en PDF">
-          &#128196; Exportar Corte Activo (PDF)
+          <span class="material-symbols-outlined icon-inline">picture_as_pdf</span> Exportar Corte Activo (PDF)
         </button>
         <button class="btn btn-excel" (click)="descargarReporteActiva('EXCEL')" [disabled]="exportando()" title="Elegir carpeta y guardar corte en Excel">
-          &#128202; Exportar Corte Activo (Excel)
+          <span class="material-symbols-outlined icon-inline">table_view</span> Exportar Corte Activo (Excel)
         </button>
       }
     </div>
@@ -67,7 +67,7 @@
     <div class="section-card mb-6">
       <div class="section-header">
         <div>
-          <h3 class="section-title">&#128202; Tablero Visual de Gráficos Interactivos</h3>
+          <h3 class="section-title"><span class="material-symbols-outlined icon-inline">bar_chart</span> Tablero Visual de Gráficos Interactivos</h3>
           <p class="section-subtitle">Alterna entre los gráficos de barras y los gráficos de pastel para análisis financiero:</p>
         </div>
 
@@ -78,14 +78,14 @@
             class="chart-tab-btn"
             [class.active]="vistaActiva() === 'OMNICANAL_BARRAS'"
             (click)="cambiarVista('OMNICANAL_BARRAS')">
-            &#128202; Gráficos de Barras (Canales & Productos)
+            <span class="material-symbols-outlined icon-inline">analytics</span> Gráficos de Barras (Canales & Productos)
           </button>
           <button
             type="button"
             class="chart-tab-btn"
             [class.active]="vistaActiva() === 'FINANZAS_PASTEL'"
             (click)="cambiarVista('FINANZAS_PASTEL')">
-            &#127856; Gráfico de Pastel (Ganancias & Finanzas)
+            <span class="material-symbols-outlined icon-inline">pie_chart</span> Gráfico de Pastel (Ganancias & Finanzas)
           </button>
         </div>
       </div>
@@ -95,7 +95,7 @@
         <!-- Gráfico 1: Ventas por Canal -->
         <div class="chart-container-box">
           <div class="chart-box-header">
-            <h4 class="chart-box-title">&#128717;&#65039; Facturación vs Pedidos por Canal</h4>
+            <h4 class="chart-box-title"><span class="material-symbols-outlined icon-inline">storefront</span> Facturación vs Pedidos por Canal</h4>
             <span class="text-xs text-muted">Eje izq: Soles (S/) | Eje der: Transacciones</span>
           </div>
           <div class="canvas-wrapper">
@@ -106,7 +106,7 @@
         <!-- Gráfico 2: Top Productos con selector de métrica -->
         <div class="chart-container-box">
           <div class="chart-box-header">
-            <h4 class="chart-box-title">&#127942; Top 5 Productos Agroindustriales</h4>
+            <h4 class="chart-box-title"><span class="material-symbols-outlined icon-inline">leaderboard</span> Top 5 Productos Agroindustriales</h4>
             <div class="metric-pill-group">
               <button
                 type="button"
@@ -142,7 +142,7 @@
         <!-- Canvas del Gráfico de Pastel con rodajas y sombras -->
         <div class="chart-container-box">
           <div class="chart-box-header">
-            <h4 class="chart-box-title">&#127856; Distribución Financiera y Rentabilidad</h4>
+            <h4 class="chart-box-title"><span class="material-symbols-outlined icon-inline">donut_small</span> Distribución Financiera y Rentabilidad</h4>
             <div class="metric-pill-group">
               <button
                 type="button"
@@ -189,7 +189,7 @@
             @if (metricaPastel() === 'ESTRUCTURA') {
               <div class="stat-row-item highlight-row p-3 rounded">
                 <div>
-                  <strong class="text-success">&#128176; Ganancia Neta Consolidada:</strong>
+                  <strong class="text-success"><span class="material-symbols-outlined icon-inline">trending_up</span> Ganancia Neta Consolidada:</strong>
                   <div class="text-xs text-muted">Flujo neto disponible tras cubrir compras y gastos</div>
                 </div>
                 <strong class="text-xl text-success">{{ d.balanceNeto | currency:'PEN':'symbol':'1.2-2' }}</strong>
@@ -197,7 +197,7 @@
 
               <div class="stat-row-item p-2">
                 <div>
-                  <strong>&#128230; Costos Directos Estimados (COGS):</strong>
+                  <strong><span class="material-symbols-outlined icon-inline">inventory_2</span> Costos Directos Estimados (COGS):</strong>
                   <div class="text-xs text-muted">Insumos, prensado en frío y empaque (45%)</div>
                 </div>
                 <strong class="font-mono">{{ (d.totalIngresos * 0.45) | currency:'PEN':'symbol':'1.2-2' }}</strong>
@@ -205,7 +205,7 @@
 
               <div class="stat-row-item p-2">
                 <div>
-                  <strong>&#128184; Egresos y Gastos Operativos:</strong>
+                  <strong><span class="material-symbols-outlined icon-inline">money_off</span> Egresos y Gastos Operativos:</strong>
                   <div class="text-xs text-muted">Servicios, logística y compras menores</div>
                 </div>
                 <strong class="font-mono text-danger">{{ d.totalEgresos | currency:'PEN':'symbol':'1.2-2' }}</strong>
@@ -213,7 +213,7 @@
 
               <div class="stat-row-item p-2">
                 <div>
-                  <strong>&#128188; Rendiciones de Caja Chica:</strong>
+                  <strong><span class="material-symbols-outlined icon-inline">account_balance_wallet</span> Rendiciones de Caja Chica:</strong>
                   <div class="text-xs text-muted">Gastos de administración y logística de furgón</div>
                 </div>
                 <strong class="font-mono text-purple">{{ (d.reporteRendiciones?.totalMonto ?? 0) | currency:'PEN':'symbol':'1.2-2' }}</strong>
@@ -221,7 +221,7 @@
             } @else if (metricaPastel() === 'CATEGORIAS') {
               <div class="stat-row-item p-3 rounded bg-slate-50">
                 <div>
-                  <strong class="text-primary">&#127851; Derivados de Cacao Orgánico:</strong>
+                  <strong class="text-primary"><span class="material-symbols-outlined icon-inline">eco</span> Derivados de Cacao Orgánico:</strong>
                   <div class="text-xs text-muted">Pasta pura de cacao 500g, nibs tostados, manteca</div>
                 </div>
                 <strong class="text-lg text-primary">~52% del ingreso</strong>
@@ -229,7 +229,7 @@
 
               <div class="stat-row-item p-3 rounded bg-slate-50">
                 <div>
-                  <strong class="text-amber">&#129381; Aceites Prensados en Frío:</strong>
+                  <strong class="text-amber"><span class="material-symbols-outlined icon-inline">water_drop</span> Aceites Prensados en Frío:</strong>
                   <div class="text-xs text-muted">Aceite de coco virgen 500ml, 250ml y galón</div>
                 </div>
                 <strong class="text-lg text-amber">~38% del ingreso</strong>
@@ -237,7 +237,7 @@
 
               <div class="stat-row-item p-3 rounded bg-slate-50">
                 <div>
-                  <strong class="text-teal">&#127991;&#65039; Empaques e Insumos:</strong>
+                  <strong class="text-teal"><span class="material-symbols-outlined icon-inline">inventory</span> Empaques e Insumos:</strong>
                   <div class="text-xs text-muted">Frascos hexagonales, tapas twist-off y precintos</div>
                 </div>
                 <strong class="text-lg text-teal">~10% del ingreso</strong>
@@ -265,7 +265,7 @@
       <div class="section-card mb-6">
         <div class="section-header">
           <div>
-            <h3 class="section-title">&#128717;&#65039; Detalle de Ventas por Canal Omnicanal</h3>
+            <h3 class="section-title"><span class="material-symbols-outlined icon-inline">store</span> Detalle de Ventas por Canal Omnicanal</h3>
             <p class="section-subtitle">Facturación, transacciones e impacto relativo de cada canal comercial.</p>
           </div>
           <div class="total-omnicanal-pill">
@@ -280,9 +280,9 @@
               <div class="canal-card-top">
                 <div class="canal-badge-wrapper">
                   <span class="canal-icon">
-                    @if (c.canal === 'TIENDA_MOSTRADOR') { &#127978; }
-                    @else if (c.canal === 'FERIA_COMERCIAL') { &#127914; }
-                    @else { &#128757; }
+                    @if (c.canal === 'TIENDA_MOSTRADOR') { <span class="material-symbols-outlined">point_of_sale</span> }
+                    @else if (c.canal === 'FERIA_COMERCIAL') { <span class="material-symbols-outlined">festival</span> }
+                    @else { <span class="material-symbols-outlined">local_shipping</span> }
                   </span>
                   <div>
                     <h4 class="canal-title">{{ c.canalNombre }}</h4>
@@ -323,7 +323,7 @@
       <div class="section-card mb-6">
         <div class="section-header">
           <div>
-            <h3 class="section-title">&#127942; Ranking Top Productos (Matriz ABC) y Margen de Rentabilidad</h3>
+            <h3 class="section-title"><span class="material-symbols-outlined icon-inline">military_tech</span> Ranking Top Productos (Matriz ABC) y Margen de Rentabilidad</h3>
             <p class="section-subtitle">Productos estrella de Agro Peruvian Foods: unidades comercializadas, ingresos y margen de contribución.</p>
           </div>
           <span class="badge-agro">Clasificación ABC Pareto</span>
@@ -399,7 +399,7 @@
       <div class="section-card mb-6">
         <div class="section-header">
           <div>
-            <h3 class="section-title">&#128678; Semáforo de Caducidad de Lotes (FEFO) & Valorización</h3>
+            <h3 class="section-title"><span class="material-symbols-outlined icon-inline">traffic</span> Semáforo de Caducidad de Lotes (FEFO) & Valorización</h3>
             <p class="section-subtitle">Monitoreo preventivo de fechas de vencimiento de producción y valor monetario del inventario en almacén.</p>
           </div>
           <div class="total-omnicanal-pill">
@@ -411,7 +411,7 @@
         <!-- Semáforo KPI Counters -->
         <div class="semaforo-kpis-grid mb-4">
           <div class="semaforo-kpi-box box-critico">
-            <div class="kpi-icon">&#128680;</div>
+            <div class="kpi-icon"><span class="material-symbols-outlined">priority_high</span></div>
             <div>
               <div class="kpi-count">{{ sf.lotesCriticos }}</div>
               <div class="kpi-label">Lotes Críticos (&le; 30 días)</div>
@@ -419,7 +419,7 @@
           </div>
 
           <div class="semaforo-kpi-box box-preventivo">
-            <div class="kpi-icon">&#9888;&#65039;</div>
+            <div class="kpi-icon"><span class="material-symbols-outlined">warning</span></div>
             <div>
               <div class="kpi-count">{{ sf.lotesPreventivos }}</div>
               <div class="kpi-label">Lotes Preventivos (31 - 60 días)</div>
@@ -427,7 +427,7 @@
           </div>
 
           <div class="semaforo-kpi-box box-optimo">
-            <div class="kpi-icon">&#9989;</div>
+            <div class="kpi-icon"><span class="material-symbols-outlined">check_circle</span></div>
             <div>
               <div class="kpi-count">{{ sf.lotesOptimos }}</div>
               <div class="kpi-label">Lotes Óptimos (&gt; 60 días)</div>
@@ -435,7 +435,7 @@
           </div>
 
           <div class="semaforo-kpi-box box-total">
-            <div class="kpi-icon">&#128230;</div>
+            <div class="kpi-icon"><span class="material-symbols-outlined">inventory_2</span></div>
             <div>
               <div class="kpi-count">{{ sf.totalLotes }}</div>
               <div class="kpi-label">Total Lotes Registrados</div>
@@ -475,13 +475,13 @@
                   </td>
                   <td class="text-center">
                     @if (l.estadoSemaforo === 'CRITICO') {
-                      <span class="badge-semaforo semaforo-critico">&#128308; CRÍTICO (&le; 30d)</span>
+                      <span class="badge-semaforo semaforo-critico"><span class="material-symbols-outlined icon-inline text-danger" style="font-size:0.9rem">error</span> CRÍTICO (&le; 30d)</span>
                     } @else if (l.estadoSemaforo === 'PREVENTIVO') {
-                      <span class="badge-semaforo semaforo-preventivo">&#128993; PREVENTIVO (&le; 60d)</span>
+                      <span class="badge-semaforo semaforo-preventivo"><span class="material-symbols-outlined icon-inline text-amber" style="font-size:0.9rem">schedule</span> PREVENTIVO (&le; 60d)</span>
                     } @else if (l.estadoSemaforo === 'OPTIMO') {
-                      <span class="badge-semaforo semaforo-optimo">&#128994; ÓPTIMO</span>
+                      <span class="badge-semaforo semaforo-optimo"><span class="material-symbols-outlined icon-inline text-success" style="font-size:0.9rem">check_circle</span> ÓPTIMO</span>
                     } @else {
-                      <span class="badge-semaforo semaforo-vencido">&#9888; VENCIDO</span>
+                      <span class="badge-semaforo semaforo-vencido"><span class="material-symbols-outlined icon-inline text-danger" style="font-size:0.9rem">cancel</span> VENCIDO</span>
                     }
                   </td>
                   <td class="text-right font-bold font-mono">{{ l.stockActual | number:'1.2-2' }} unid.</td>
@@ -505,7 +505,7 @@
     <div class="dashboard-grid">
       <!-- Tarjeta: Distribución por Método de Pago -->
       <div class="card p-4">
-        <h3 class="card-title">&#128179; Distribución por Método de Pago</h3>
+        <h3 class="card-title"><span class="material-symbols-outlined icon-inline">credit_card</span> Distribución por Método de Pago</h3>
         <p class="subtitle text-xs mb-3">Participación y montos transaccionados en la gaveta y canales digitales.</p>
 
         <div class="metodos-list">
@@ -529,7 +529,7 @@
 
       <!-- Tarjeta: Consolidado de Rendiciones de Fondos Fijos -->
       <div class="card p-4">
-        <h3 class="card-title">&#128188; Fondos Fijos y Rendiciones (Caja Chica)</h3>
+        <h3 class="card-title"><span class="material-symbols-outlined icon-inline">account_balance_wallet</span> Fondos Fijos y Rendiciones (Caja Chica)</h3>
         <p class="subtitle text-xs mb-3">Métricas de rendiciones operativas del furgón, logística y compras menores.</p>
 
         <div class="stats-table-wrapper">

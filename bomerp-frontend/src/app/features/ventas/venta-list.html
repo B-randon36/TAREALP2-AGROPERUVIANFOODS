@@ -11,7 +11,7 @@
     </div>
     <div class="header-actions">
       <a routerLink="/ventas/pos" class="btn btn-primary">
-        🛒 Abrir Terminal POS Mostrador
+        <span class="material-symbols-outlined icon-inline">point_of_sale</span> Abrir Terminal POS Mostrador
       </a>
     </div>
   </div>
@@ -23,14 +23,14 @@
   <!-- MÉTRICAS -->
   <div class="metrics-grid">
     <div class="metric-card">
-      <div class="metric-icon" style="background: #ecfdf5; color: #059669;">💰</div>
+      <div class="metric-icon" style="background: #ecfdf5; color: #059669;"><span class="material-symbols-outlined">payments</span></div>
       <div class="metric-content">
         <span class="metric-label">Total Ventas Facturadas</span>
         <span class="metric-value text-success">S/ {{ totalVendido() | number:'1.2-2' }}</span>
       </div>
     </div>
     <div class="metric-card">
-      <div class="metric-icon" style="background: #eff6ff; color: #2563eb;">🧾</div>
+      <div class="metric-icon" style="background: #eff6ff; color: #2563eb;"><span class="material-symbols-outlined">receipt_long</span></div>
       <div class="metric-content">
         <span class="metric-label">Tickets Emitidos</span>
         <span class="metric-value">{{ ventas().length }} operaciones</span>
@@ -64,7 +64,7 @@
 
       <div class="filter-actions">
         <button class="btn btn-secondary" (click)="cargarVentas()" [disabled]="loading()">
-          🔄 Actualizar
+          <span class="material-symbols-outlined icon-inline">sync</span> Actualizar
         </button>
       </div>
     </div>
@@ -122,7 +122,7 @@
               </td>
               <td>
                 <button type="button" class="btn-ticket" (click)="verTicket(v)">
-                  🧾 Ver Ticket
+                  <span class="material-symbols-outlined icon-inline">receipt_long</span> Ver Ticket
                 </button>
               </td>
             </tr>
@@ -165,7 +165,7 @@
                       <div class="ticket-prod-text">
                         <div class="ticket-prod-name">{{ det.productoNombre }}</div>
                         @if (det.lotesConsumidosFefo) {
-                          <div class="ticket-lotes">📦 Lote FEFO: {{ det.lotesConsumidosFefo }}</div>
+                          <div class="ticket-lotes">Lote FEFO: {{ det.lotesConsumidosFefo }}</div>
                         }
                       </div>
                     </div>
@@ -198,7 +198,7 @@
 
         <div class="modal-footer no-print">
           <button type="button" class="btn btn-secondary" (click)="cerrarModalTicket()">Cerrar</button>
-          <button type="button" class="btn btn-primary" (click)="imprimir()">🖨️ Imprimir</button>
+          <button type="button" class="btn btn-primary" (click)="imprimir()"><span class="material-symbols-outlined icon-inline">print</span> Imprimir</button>
         </div>
       </div>
     </div>

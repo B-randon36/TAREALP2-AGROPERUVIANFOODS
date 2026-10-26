@@ -127,7 +127,7 @@
                 </td>
                 <td class="text-right actions-cell">
                   <button class="btn-action" title="Ver Arqueo y Movimientos" (click)="verDetalle(s)">
-                    &#128065; Ver
+                    <span class="material-symbols-outlined icon-inline">visibility</span> Ver
                   </button>
                   <button class="btn-action btn-pdf" title="Exportar PDF Oficial" (click)="exportar(s.id, 'PDF')" [disabled]="exportando() === s.id">
                     PDF
@@ -237,8 +237,9 @@
           </div>
 
           @if (sel.detallesArqueo && sel.detallesArqueo.length > 0) {
-            <h4 style="margin: 1.5rem 0 0.5rem 0; color: #1e5a32; font-weight: 700;">
-              &#128181; Desglose Físico de Arqueo de Caja (DetalleArqueoEfectivo M:N)
+            <h4 style="margin: 1.5rem 0 0.5rem 0; color: #1e5a32; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+              <span class="material-symbols-outlined">payments</span>
+              <span>Desglose Físico de Arqueo de Caja (DetalleArqueoEfectivo M:N)</span>
             </h4>
             <div class="table-responsive modal-table">
               <table class="data-table">

@@ -19,7 +19,7 @@
   @if (mensajeExito()) {
     <div class="alert alert-success">
       <div class="alert-content">
-        <span class="alert-icon">✓</span>
+        <span class="material-symbols-outlined alert-icon" style="font-size:1.25rem">check_circle</span>
         <span>{{ mensajeExito() }}</span>
       </div>
       <button type="button" class="btn-close" (click)="mensajeExito.set(null)">×</button>
@@ -29,7 +29,7 @@
   @if (mensajeError()) {
     <div class="alert alert-danger">
       <div class="alert-content">
-        <span class="alert-icon">⚠️</span>
+        <span class="material-symbols-outlined alert-icon" style="font-size:1.25rem">warning</span>
         <span>{{ mensajeError() }}</span>
       </div>
       <button type="button" class="btn-close" (click)="mensajeError.set(null)">×</button>
@@ -39,7 +39,7 @@
   <!-- Métricas Rápidas Estilo KPI Odoo -->
   <div class="metrics-grid">
     <div class="metric-card">
-      <div class="metric-icon">📑</div>
+      <div class="metric-icon"><span class="material-symbols-outlined">receipt_long</span></div>
       <div class="metric-content">
         <span class="metric-label">Créditos Otorgados</span>
         <span class="metric-value">S/ {{ totalCreditosMonto() | number:'1.2-2' }}</span>
@@ -48,7 +48,7 @@
     </div>
 
     <div class="metric-card">
-      <div class="metric-icon text-success-icon">💰</div>
+      <div class="metric-icon text-success-icon"><span class="material-symbols-outlined">payments</span></div>
       <div class="metric-content">
         <span class="metric-label">Total Cobrado (Amortizado)</span>
         <span class="metric-value text-success">S/ {{ totalCobradoMonto() | number:'1.2-2' }}</span>
@@ -57,7 +57,7 @@
     </div>
 
     <div class="metric-card">
-      <div class="metric-icon text-warning-icon">⏳</div>
+      <div class="metric-icon text-warning-icon"><span class="material-symbols-outlined">hourglass_empty</span></div>
       <div class="metric-content">
         <span class="metric-label">Saldo Pendiente por Cobrar</span>
         <span class="metric-value text-warning">S/ {{ totalPendienteMonto() | number:'1.2-2' }}</span>
@@ -66,7 +66,7 @@
     </div>
 
     <div class="metric-card">
-      <div class="metric-icon text-primary-icon">📊</div>
+      <div class="metric-icon text-primary-icon"><span class="material-symbols-outlined">query_stats</span></div>
       <div class="metric-content">
         <span class="metric-label">Tasa de Recuperación</span>
         <span class="metric-value text-primary">{{ tasaRecuperacion() }}%</span>
@@ -116,7 +116,7 @@
       <input
         type="text"
         class="search-input"
-        placeholder="🔍 Buscar por cliente, DNI/RUC o código de crédito..."
+        placeholder="Buscar por cliente, DNI/RUC o código de crédito..."
         [ngModel]="busqueda()"
         (ngModelChange)="busqueda.set($event)"
       />
@@ -132,7 +132,7 @@
       </div>
     } @else if (creditosFiltrados().length === 0) {
       <div class="empty-state">
-        <div class="empty-icon">📂</div>
+        <div class="empty-icon"><span class="material-symbols-outlined" style="font-size:3rem">folder_open</span></div>
         <h3>No se encontraron cuentas por cobrar</h3>
         <p>No hay créditos que coincidan con los filtros seleccionados o aún no has registrado fiados.</p>
         <button type="button" class="btn btn-primary" (click)="abrirModalNuevo()">
@@ -220,7 +220,7 @@
                         title="Registrar cobro o amortización"
                         (click)="abrirModalAbono(cred)"
                       >
-                        💳 Cobrar / Abonar
+                        <span class="material-symbols-outlined icon-inline">credit_card</span> Cobrar / Abonar
                       </button>
                     }
                     <button
@@ -229,7 +229,7 @@
                       title="Ver historial de abonos"
                       (click)="verDetalle(cred)"
                     >
-                      📜 Historial ({{ cred.cantidadAbonos }})
+                      <span class="material-symbols-outlined icon-inline">history</span> Historial ({{ cred.cantidadAbonos }})
                     </button>
                   </div>
                 </td>
@@ -273,7 +273,7 @@
 
           @if (errorAbono()) {
             <div class="alert alert-danger-sm">
-              <span>⚠️ {{ errorAbono() }}</span>
+              <span><span class="material-symbols-outlined icon-inline">error</span> {{ errorAbono() }}</span>
             </div>
           }
 
@@ -318,7 +318,7 @@
                   [ngModel]="abonoMetodo()"
                   (ngModelChange)="abonoMetodo.set($event)"
                 />
-                <span class="icon">💵</span>
+                <span class="icon"><span class="material-symbols-outlined">payments</span></span>
                 <span class="name">Efectivo</span>
               </label>
 
@@ -330,7 +330,7 @@
                   [ngModel]="abonoMetodo()"
                   (ngModelChange)="abonoMetodo.set($event)"
                 />
-                <span class="icon">🟣</span>
+                <span class="icon"><span class="material-symbols-outlined">qr_code_2</span></span>
                 <span class="name">Yape</span>
               </label>
 
@@ -342,7 +342,7 @@
                   [ngModel]="abonoMetodo()"
                   (ngModelChange)="abonoMetodo.set($event)"
                 />
-                <span class="icon">🔵</span>
+                <span class="icon"><span class="material-symbols-outlined">qr_code</span></span>
                 <span class="name">Plin</span>
               </label>
 
@@ -354,7 +354,7 @@
                   [ngModel]="abonoMetodo()"
                   (ngModelChange)="abonoMetodo.set($event)"
                 />
-                <span class="icon">🏦</span>
+                <span class="icon"><span class="material-symbols-outlined">account_balance</span></span>
                 <span class="name">Transferencia</span>
               </label>
             </div>
@@ -375,7 +375,7 @@
 
           <!-- Callout de Integración con Turnos de Caja -->
           <div class="callout-caja">
-            <span class="callout-icon">💡</span>
+            <span class="callout-icon"><span class="material-symbols-outlined">info</span></span>
             <div class="callout-text">
               <strong>Impacto en Turno de Caja Diario:</strong>
               <span>
@@ -394,7 +394,7 @@
             @if (abonoLoading()) {
               <span class="spinner-sm"></span> Procesando Cobro...
             } @else {
-              ✓ Confirmar y Recibir S/ {{ abonoMonto() | number:'1.2-2' }}
+              <span class="material-symbols-outlined icon-inline">check</span> Confirmar y Recibir S/ {{ abonoMonto() | number:'1.2-2' }}
             }
           </button>
         </div>
@@ -418,7 +418,7 @@
         <div class="modal-body">
           @if (errorNuevo()) {
             <div class="alert alert-danger-sm">
-              <span>⚠️ {{ errorNuevo() }}</span>
+              <span><span class="material-symbols-outlined icon-inline">error</span> {{ errorNuevo() }}</span>
             </div>
           }
 
@@ -509,7 +509,7 @@
             @if (nuevoLoading()) {
               <span class="spinner-sm"></span> Guardando...
             } @else {
-              ✓ Registrar Crédito
+              <span class="material-symbols-outlined icon-inline">check</span> Registrar Crédito
             }
           </button>
         </div>
@@ -563,7 +563,7 @@
               <div class="empty-state-sm">
                 <p>No se han registrado abonos aún para este crédito. La deuda se encuentra intacta.</p>
                 <button type="button" class="btn-sm btn-cobrar" (click)="cerrarModalDetalle(); abrirModalAbono(cred)">
-                  💳 Realizar Primer Cobro
+                  <span class="material-symbols-outlined icon-inline">credit_card</span> Realizar Primer Cobro
                 </button>
               </div>
             } @else {
@@ -617,7 +617,7 @@
               class="btn btn-success"
               (click)="cerrarModalDetalle(); abrirModalAbono(cred)"
             >
-              💳 Registrar Nuevo Abono
+              <span class="material-symbols-outlined icon-inline">credit_card</span> Registrar Nuevo Abono
             </button>
           }
         </div>

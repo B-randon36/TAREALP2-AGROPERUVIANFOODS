@@ -1,12 +1,12 @@
 <div class="produccion-container">
   <div class="header-action">
     <div>
-      <h2>🏭 Órdenes de Producción</h2>
+      <h2><span class="material-symbols-outlined icon-inline">precision_manufacturing</span> Órdenes de Producción</h2>
       <p class="subtitle">Control de fabricación, transformación de materias primas y generación de lotes FEFO</p>
     </div>
     <div class="action-buttons">
       <a routerLink="/produccion/recetas" class="btn btn-secondary">
-        📜 Ver Recetas BOM
+        <span class="material-symbols-outlined icon-inline">schema</span> Ver Recetas BOM
       </a>
       <a routerLink="/produccion/ordenes/nueva" class="btn btn-primary">
         + Nueva Orden de Trabajo
@@ -65,13 +65,13 @@
               <td class="action-cell">
                 @if (ord.estado === 'PLANIFICADA' || ord.estado === 'EN_PROCESO') {
                   <button type="button" class="btn btn-sm btn-success" (click)="abrirModalCompletar(ord)">
-                    ✅ Completar
+                    <span class="material-symbols-outlined icon-inline">check_circle</span> Completar
                   </button>
                   <button type="button" class="btn btn-sm btn-danger-outline" (click)="cancelarOrden(ord)">
-                    ✖
+                    Cancelar
                   </button>
                 } @else if (ord.estado === 'COMPLETADA') {
-                  <span class="text-success font-semibold">✔ Concluido</span>
+                  <span class="text-success font-semibold"><span class="material-symbols-outlined icon-inline">verified</span> Concluido</span>
                 } @else {
                   <span class="text-muted">Cancelada</span>
                 }

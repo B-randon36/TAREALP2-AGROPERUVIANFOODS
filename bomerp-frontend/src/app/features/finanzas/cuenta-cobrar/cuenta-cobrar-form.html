@@ -15,9 +15,10 @@
   </div>
 
   @if (mensajeError()) {
-    <div class="alert alert-danger">
-      <span>⚠️ {{ mensajeError() }}</span>
-      <button type="button" class="btn-close" (click)="mensajeError.set(null)">×</button>
+    <div class="alert alert-danger" style="display: flex; align-items: center; gap: 0.5rem;">
+      <span class="material-symbols-outlined" style="color: #dc2626;">error</span>
+      <span>{{ mensajeError() }}</span>
+      <button type="button" class="btn-close" (click)="mensajeError.set(null)" style="margin-left: auto;">×</button>
     </div>
   }
 
@@ -142,7 +143,7 @@
               @if (guardando()) {
                 Guardando...
               } @else {
-                ✓ Registrar Crédito
+                <span class="material-symbols-outlined icon-inline">check</span> Registrar Crédito
               }
             </button>
           }

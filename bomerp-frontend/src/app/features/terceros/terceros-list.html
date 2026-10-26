@@ -1,7 +1,7 @@
 <div class="terceros-container">
   <div class="header-action">
     <div>
-      <h2>👥 Directorio de Clientes y Proveedores</h2>
+      <h2><span class="material-symbols-outlined icon-inline">group</span> Directorio de Clientes y Proveedores</h2>
       <p class="subtitle">Gestión centralizada de terceros comerciales, RUC/DNI y contactos</p>
     </div>
     <a routerLink="/terceros/nuevo" class="btn btn-primary">
@@ -25,7 +25,7 @@
         [class.active]="filtroTipo() === 'PROVEEDOR'"
         (click)="cambiarFiltro('PROVEEDOR')"
       >
-        🏢 Proveedores
+        <span class="material-symbols-outlined icon-inline">business</span> Proveedores
       </button>
       <button
         type="button"
@@ -33,7 +33,7 @@
         [class.active]="filtroTipo() === 'CLIENTE'"
         (click)="cambiarFiltro('CLIENTE')"
       >
-        🛒 Clientes
+        <span class="material-symbols-outlined icon-inline">person</span> Clientes
       </button>
     </div>
 
@@ -42,7 +42,7 @@
         type="text"
         [ngModel]="terminoBusqueda()"
         (ngModelChange)="terminoBusqueda.set($event)"
-        placeholder="🔍 Buscar por Razón Social, RUC o dirección..."
+        placeholder="Buscar por Razón Social, RUC o dirección..."
         class="search-input"
       />
     </div>
