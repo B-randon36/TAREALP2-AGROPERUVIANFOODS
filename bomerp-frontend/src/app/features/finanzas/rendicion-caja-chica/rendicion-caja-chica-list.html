@@ -31,29 +31,6 @@
             <strong>S/ {{ c.saldoDisponible | number:'1.2-2' }}</strong>
             <span class="chip-limit">/ S/ {{ c.limiteMaximo | number:'1.2-2' }}</span>
           </div>
-
-          <!-- Barra de Consumo por Centro de Costo (M:N) -->
-          @if (presupuestosPorCaja()[c.id]; as asigs) {
-            @if (asigs.length > 0) {
-              <div class="chip-cc-list">
-                @for (asig of asigs; track asig.centroCostoId) {
-                  <div class="mini-progress-row" [title]="asig.nombreArea + ': S/ ' + asig.saldoDisponible + ' disponibles de S/ ' + asig.presupuestoAsignado">
-                    <div class="mini-progress-labels">
-                      <span class="mini-cc-name">{{ asig.codigoCc }}</span>
-                      <span class="mini-cc-vals">S/ {{ asig.saldoDisponible | number:'1.0-0' }}/{{ asig.presupuestoAsignado | number:'1.0-0' }}</span>
-                    </div>
-                    <div class="mini-progress-track">
-                      <div class="mini-progress-fill" [style.width.%]="(asig.saldoDisponible / asig.presupuestoAsignado) * 100" [class.low]="(asig.saldoDisponible / asig.presupuestoAsignado) < 0.2"></div>
-                    </div>
-                  </div>
-                }
-              </div>
-            }
-          }
-
-          <button type="button" class="btn-manage-cc" (click)="$event.stopPropagation(); abrirGestionPresupuestos(c)">
-            <span class="material-symbols-outlined icon-inline">settings</span> Presupuestos CC (M:N)
-          </button>
         </div>
       }
     </div>
@@ -267,7 +244,6 @@
             <thead>
               <tr>
                 <th>Concepto / Ítem</th>
-                <th>Centro de Costo / Línea</th>
                 <th style="text-align: center;">Cantidad</th>
                 <th style="text-align: right;">Precio Unitario</th>
                 <th style="text-align: right;">Subtotal</th>
@@ -277,14 +253,6 @@
               @for (det of rend.detalles; track $index) {
                 <tr>
                   <td>{{ det.concepto }}</td>
-                  <td>
-                    <span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 700;">
-                      {{ det.centroCostoCodigo || 'Sin CC' }}
-                    </span>
-                    @if (det.centroCostoNombre) {
-                      <span style="font-size: 0.75rem; color: #64748b; margin-left: 4px;">({{ det.centroCostoNombre }})</span>
-                    }
-                  </td>
                   <td style="text-align: center;">{{ det.cantidad }}</td>
                   <td style="text-align: right;">S/ {{ det.precioUnitario | number:'1.2-2' }}</td>
                   <td style="text-align: right;"><strong>S/ {{ det.subtotal | number:'1.2-2' }}</strong></td>
@@ -292,7 +260,7 @@
               }
               @empty {
                 <tr>
-                  <td colspan="5" class="text-center">No hay líneas asociadas a esta rendición.</td>
+                  <td colspan="4" class="text-center">No hay líneas asociadas a esta rendición.</td>
                 </tr>
               }
             </tbody>
@@ -410,132 +378,4 @@
     </div>
   }
 
-  <!-- MODAL: GESTIÓN PRESUPUESTAL POR CENTRO DE COSTO (M:N ASIGNACION_CAJA_CENTRO_COSTO) -->
-  @if (mostrarModalPresupuestos() && cajaParaPresupuesto(); as cajaP) {
-    <div class="modal-backdrop" (click)="cerrarModalPresupuestos()">
-      <div class="modal-dialog" (click)="$event.stopPropagation()" style="max-width: 680px;">
-        <div class="modal-header">
-          <div>
-            <h3>Gestión Presupuestal por Centro de Costo (M:N)</h3>
-            <p class="subtitle" style="margin: 0; font-size: 0.8125rem; color: #64748b;">
-              Caja Chica: <strong>{{ cajaP.codigo }}</strong> | Responsable: {{ cajaP.responsable }} | Saldo Total Caja: <strong>S/ {{ cajaP.saldoDisponible | number:'1.2-2' }}</strong>
-            </p>
-          </div>
-          <button type="button" class="btn-close" (click)="cerrarModalPresupuestos()">&times;</button>
-        </div>
-
-        <div class="modal-body">
-          @if (mensajeExitoPresupuesto()) {
-            <div class="alert alert-success" style="padding: 0.6rem 0.85rem; margin-bottom: 0.85rem;">
-              <span class="alert-icon">[OK]</span>
-              <div>{{ mensajeExitoPresupuesto() }}</div>
-            </div>
-          }
-
-          <!-- Formulario de Asignación / Actualización -->
-          <div class="card p-3 mb-3" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem;">
-            <h4 style="margin: 0 0 0.5rem 0; font-size: 0.875rem; color: #1e293b;">
-              Asignar / Incrementar Techo Presupuestal a Línea de Costo
-            </h4>
-            <div style="display: grid; grid-template-columns: 2fr 1.2fr auto; gap: 0.5rem; align-items: flex-end;">
-              <div>
-                <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Centro de Costo *</label>
-                <select
-                  class="form-control"
-                  style="font-size: 0.8125rem; padding: 0.4rem 0.6rem;"
-                  [ngModel]="formPresupuestoCentroCostoId()"
-                  (ngModelChange)="formPresupuestoCentroCostoId.set($event)"
-                >
-                  @for (cc of centrosCosto(); track cc.id) {
-                    <option [ngValue]="cc.id">{{ cc.codigoCc }} - {{ cc.nombreArea }}</option>
-                  }
-                </select>
-              </div>
-
-              <div>
-                <label style="font-size: 0.75rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Monto Techo (S/) *</label>
-                <input
-                  type="number"
-                  min="1"
-                  step="50"
-                  class="form-control"
-                  style="font-size: 0.8125rem; padding: 0.4rem 0.6rem;"
-                  [ngModel]="formPresupuestoMonto()"
-                  (ngModelChange)="formPresupuestoMonto.set($event)"
-                />
-              </div>
-
-              <button
-                type="button"
-                class="btn btn-primary"
-                style="padding: 0.45rem 0.85rem; font-size: 0.8125rem;"
-                (click)="guardarPresupuesto()"
-                [disabled]="loadingPresupuestos()"
-              >
-                {{ loadingPresupuestos() ? 'Guardando...' : 'Asignar' }}
-              </button>
-            </div>
-          </div>
-
-          <!-- Tabla de Asignaciones Actuales -->
-          <h4 style="margin: 0.75rem 0 0.5rem 0; font-size: 0.875rem; color: #1e293b;">
-            Líneas Asignadas a esta Caja Chica ({{ asignaciones().length }})
-          </h4>
-          <div class="table-responsive">
-            <table class="table-modal-detalle">
-              <thead>
-                <tr>
-                  <th>Código CC</th>
-                  <th>Área / Línea</th>
-                  <th style="text-align: right;">Presupuesto</th>
-                  <th style="text-align: right;">Disponible</th>
-                  <th style="width: 25%;">Consumo</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (asig of asignaciones(); track asig.centroCostoId) {
-                  <tr>
-                    <td>
-                      <span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 700;">
-                        {{ asig.codigoCc }}
-                      </span>
-                    </td>
-                    <td style="font-size: 0.8125rem;">{{ asig.nombreArea }}</td>
-                    <td style="text-align: right; font-weight: 600;">S/ {{ asig.presupuestoAsignado | number:'1.2-2' }}</td>
-                    <td style="text-align: right; font-weight: 700; color: #15803d;">
-                      S/ {{ asig.saldoDisponible | number:'1.2-2' }}
-                    </td>
-                    <td>
-                      @let porcentaje = asig.presupuestoAsignado > 0 ? ((asig.presupuestoAsignado - asig.saldoDisponible) / asig.presupuestoAsignado) * 100 : 0;
-                      <div style="background: #e2e8f0; border-radius: 9999px; height: 8px; width: 100%; overflow: hidden;">
-                        <div
-                          style="height: 100%; border-radius: 9999px; transition: width 0.3s;"
-                          [style.width.%]="porcentaje > 100 ? 100 : (porcentaje < 0 ? 0 : porcentaje)"
-                          [style.background]="porcentaje > 80 ? '#dc2626' : (porcentaje > 50 ? '#f59e0b' : '#16a34a')"
-                        ></div>
-                      </div>
-                      <span style="font-size: 0.7rem; color: #64748b;">{{ porcentaje | number:'1.0-0' }}% consumido</span>
-                    </td>
-                  </tr>
-                }
-                @empty {
-                  <tr>
-                    <td colspan="5" class="text-center" style="padding: 1rem; color: #64748b;">
-                      No hay centros de costo asignados a esta caja chica. Utilice el formulario superior para crear la primera asignación.
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="cerrarModalPresupuestos()">
-            Cerrar
-          </button>
-        </div>
-      </div>
-    </div>
-  }
 </div>
