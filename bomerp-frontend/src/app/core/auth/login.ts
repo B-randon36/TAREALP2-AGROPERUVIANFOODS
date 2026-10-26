@@ -32,120 +32,76 @@ import { AuthService } from './auth-service';
           </div>
         }
 
-        <!-- Formulario Principal -->
-        <form (ngSubmit)="iniciarSesion()" class="credentials-form">
-          <div class="field-group">
-            <label for="email" class="field-label">Correo electrónico</label>
-            <div class="input-container">
-              <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-              </svg>
-              <input
-                id="email"
-                type="email"
-                [(ngModel)]="email"
-                name="email"
-                required
-                placeholder="usuario@agroperu.com"
-                autocomplete="username"
-                class="form-control"
-              />
-            </div>
+        <!-- Panel de Acceso SSO Keycloak (Proveedor de Identidad Externo) -->
+        <div class="sso-primary-card">
+          <div class="sso-badge">
+            <span class="material-symbols-outlined sso-shield-icon">verified_user</span>
+            <span>Autenticación OIDC + PKCE</span>
           </div>
-
-          <div class="field-group">
-            <label for="password" class="field-label">Contraseña</label>
-            <div class="input-container">
-              <svg class="field-icon" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-              </svg>
-              <input
-                id="password"
-                type="password"
-                [(ngModel)]="password"
-                name="password"
-                required
-                placeholder="••••••••••••"
-                autocomplete="current-password"
-                class="form-control"
-              />
-            </div>
-          </div>
-
-          <button type="submit" class="submit-btn" [disabled]="cargando()">
-            @if (cargando()) {
-              <span class="loading-spinner"></span>
-              <span>Validando credenciales...</span>
-            } @else {
-              <span>Ingresar al panel</span>
-              <svg class="action-icon" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-              </svg>
-            }
-          </button>
-        </form>
-
-        <!-- Selector de Perfil de Prueba -->
-        <div class="section-divider">
-          <span>Perfiles preconfigurados</span>
-        </div>
-
-        <div class="profiles-group">
-          <button
-            type="button"
-            class="profile-item"
-            (click)="iniciarConCredenciales('admin@agroperu.com', 'AgroPeru2026!')"
-            [disabled]="cargando()"
-          >
-            <div class="profile-meta">
-              <span class="profile-name">Administrador</span>
-              <span class="profile-email">admin&#64;agroperu.com</span>
-            </div>
-            <span class="tag tag-admin">ADMIN</span>
-          </button>
+          <p class="sso-desc">
+            Acceso unificado mediante el Proveedor de Identidad corporativo (Keycloak). 
+            Todas las credenciales y roles son validados criptográficamente de forma externa.
+          </p>
 
           <button
             type="button"
-            class="profile-item"
-            (click)="iniciarConCredenciales('cajero@agroperu.com', 'AgroPeru2026!')"
-            [disabled]="cargando()"
-          >
-            <div class="profile-meta">
-              <span class="profile-name">Cajero / Finanzas</span>
-              <span class="profile-email">cajero&#64;agroperu.com</span>
-            </div>
-            <span class="tag tag-cajero">CAJERO</span>
-          </button>
-
-          <button
-            type="button"
-            class="profile-item"
-            (click)="iniciarConCredenciales('vendedor@agroperu.com', 'AgroPeru2026!')"
-            [disabled]="cargando()"
-          >
-            <div class="profile-meta">
-              <span class="profile-name">Vendedor POS</span>
-              <span class="profile-email">vendedor&#64;agroperu.com</span>
-            </div>
-            <span class="tag tag-vendedor">VENTAS</span>
-          </button>
-        </div>
-
-        <!-- Opción SSO Keycloak -->
-        <div class="sso-container">
-          <button
-            type="button"
-            class="sso-btn"
+            class="sso-btn-primary"
             (click)="iniciarKeycloak()"
             [disabled]="cargando()"
           >
-            <svg class="sso-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-            </svg>
-            <span>Autenticación SSO (Keycloak)</span>
+            <span class="material-symbols-outlined">login</span>
+            <span>Iniciar Sesión con Keycloak SSO</span>
           </button>
         </div>
+
+        <!-- Cuentas registradas en el Realm de Keycloak -->
+        <div class="section-divider">
+          <span>Usuarios registrados en Keycloak (Realm: agroperuvianfoods)</span>
+        </div>
+
+        <div class="profiles-group">
+          <div class="profile-item" (click)="iniciarKeycloak()">
+            <div class="profile-meta">
+              <span class="profile-name">Administrador General</span>
+              <span class="profile-email">admin&#64;agroperuvian.pe &bull; Clave: Agro2026!</span>
+            </div>
+            <span class="tag tag-admin">ADMIN</span>
+          </div>
+
+          <div class="profile-item" (click)="iniciarKeycloak()">
+            <div class="profile-meta">
+              <span class="profile-name">Supervisora de Finanzas</span>
+              <span class="profile-email">finanzas&#64;agroperuvian.pe &bull; Clave: Agro2026!</span>
+            </div>
+            <span class="tag tag-admin">FINANZAS</span>
+          </div>
+
+          <div class="profile-item" (click)="iniciarKeycloak()">
+            <div class="profile-meta">
+              <span class="profile-name">Cajero Operativo</span>
+              <span class="profile-email">cajero&#64;agroperuvian.pe &bull; Clave: Agro2026!</span>
+            </div>
+            <span class="tag tag-cajero">CAJERO</span>
+          </div>
+        </div>
+
+        <!-- Acceso de Contingencia / Modo Desarrollo Local -->
+        <details class="dev-bypass-accordion">
+          <summary class="dev-bypass-summary">Acceso directo de contingencia (Modo desarrollo)</summary>
+          <form (ngSubmit)="iniciarSesion()" class="credentials-form" style="margin-top: 1rem;">
+            <div class="field-group">
+              <label for="email" class="field-label">Correo local</label>
+              <input id="email" type="email" [(ngModel)]="email" name="email" class="form-control" placeholder="usuario@agroperu.com" />
+            </div>
+            <div class="field-group">
+              <label for="password" class="field-label">Contraseña local</label>
+              <input id="password" type="password" [(ngModel)]="password" name="password" class="form-control" placeholder="••••••••••••" />
+            </div>
+            <button type="submit" class="submit-btn" [disabled]="cargando()" style="margin-top: 0.5rem;">
+              {{ cargando() ? 'Validando...' : 'Ingreso Local' }}
+            </button>
+          </form>
+        </details>
 
         <footer class="panel-footer">
           <span>Agro Peruvian Foods S.A.C. &bull; Sistema ERP &bull; 2026</span>
@@ -407,36 +363,87 @@ import { AuthService } from './auth-service';
       color: #166534;
     }
 
-    .sso-container {
-      margin-top: 14px;
+    .sso-primary-card {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 1px solid #a7f3d0;
+      border-radius: 8px;
+      padding: 18px 16px;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
-    .sso-btn {
-      width: 100%;
-      height: 38px;
-      background-color: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      color: #334155;
+    .sso-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #d1fae5;
+      color: #065f46;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+
+    .sso-shield-icon {
+      font-size: 15px;
+    }
+
+    .sso-desc {
       font-size: 0.8125rem;
-      font-weight: 500;
+      color: #334155;
+      line-height: 1.45;
+      margin: 0 0 16px;
+    }
+
+    .sso-btn-primary {
+      width: 100%;
+      height: 44px;
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      transition: background-color 0.15s ease, border-color 0.15s ease;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+      transition: all 0.2s ease;
     }
 
-    .sso-btn:hover:not(:disabled) {
-      background-color: #f8fafc;
-      border-color: #94a3b8;
+    .sso-btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+      transform: translateY(-1px);
     }
 
-    .sso-icon {
-      width: 15px;
-      height: 15px;
-      color: #475569;
+    .sso-btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .dev-bypass-accordion {
+      margin-top: 18px;
+      border-top: 1px dashed #cbd5e1;
+      padding-top: 12px;
+    }
+
+    .dev-bypass-summary {
+      font-size: 0.75rem;
+      color: #64748b;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 500;
+    }
+
+    .dev-bypass-summary:hover {
+      color: #334155;
     }
 
     .panel-footer {

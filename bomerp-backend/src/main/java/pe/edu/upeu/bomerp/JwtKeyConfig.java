@@ -3,16 +3,19 @@ package pe.edu.upeu.bomerp;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.UUID;
 
 @Configuration
 public class JwtKeyConfig {
@@ -37,7 +40,21 @@ public class JwtKeyConfig {
     }
 
     @Bean
-    public org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder(RSAKey rsaKey) throws Exception {
-        return org.springframework.security.oauth2.jwt.NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
+    public JwtDecoder jwtDecoder(RSAKey rsaKey,
+                                 @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri:http://localhost:38080/realms/agroperuvianfoods}") String issuerUri) throws Exception {
+        NimbusJwtDecoder localDecoder = NimbusJwtDecoder.withPublicKey(rsaKey.toRSAPublicKey()).build();
+        try {
+            JwtDecoder keycloakDecoder = JwtDecoders.fromIssuerLocation(issuerUri);
+            return token -> {
+                try {
+                    return keycloakDecoder.decode(token);
+                } catch (Exception e) {
+                    return localDecoder.decode(token);
+                }
+            };
+        } catch (Exception e) {
+            return localDecoder;
+        }
     }
 }
+

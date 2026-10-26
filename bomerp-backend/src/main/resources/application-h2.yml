@@ -16,6 +16,11 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:38080/realms/agroperuvianfoods
 
 springdoc:
   swagger-ui:
