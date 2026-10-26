@@ -53,27 +53,6 @@ public class RendicionCajaChicaController {
         return ResponseEntity.ok(sesionCajaService.listarDenominaciones());
     }
 
-    @Operation(summary = "Listar centros de costo disponibles para asignación presupuestaria")
-    @GetMapping("/centros-costo")
-    public ResponseEntity<List<pe.edu.upeu.bomerp.finanzas.dto.CentroCostoResponse>> listarCentrosCosto() {
-        return ResponseEntity.ok(rendicionService.listarCentrosCosto());
-    }
-
-    @Operation(summary = "Asignar presupuesto por centro de costo a una caja chica")
-    @PostMapping("/cajas-chicas/{id}/presupuestos")
-    public ResponseEntity<pe.edu.upeu.bomerp.finanzas.dto.AsignacionCajaCentroCostoResponse> asignarPresupuesto(
-            @PathVariable Long id,
-            @Valid @RequestBody pe.edu.upeu.bomerp.finanzas.dto.AsignarPresupuestoRequest request) {
-        var response = rendicionService.asignarPresupuestoCentroCosto(id, request.getCentroCostoId(), request.getMontoPresupuesto());
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @Operation(summary = "Consultar presupuestos asignados por centro de costo a una caja chica")
-    @GetMapping("/cajas-chicas/{id}/presupuestos")
-    public ResponseEntity<List<pe.edu.upeu.bomerp.finanzas.dto.AsignacionCajaCentroCostoResponse>> listarPresupuestosCaja(@PathVariable Long id) {
-        return ResponseEntity.ok(rendicionService.listarPresupuestosPorCaja(id));
-    }
-
     @Operation(summary = "Listar todas las cajas chicas activas")
     @GetMapping("/cajas-chicas")
     public ResponseEntity<List<CajaChicaResponse>> listarCajasChicas() {

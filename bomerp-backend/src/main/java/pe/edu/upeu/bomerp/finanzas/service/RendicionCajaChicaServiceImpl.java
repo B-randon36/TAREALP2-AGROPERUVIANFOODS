@@ -31,20 +31,14 @@ public class RendicionCajaChicaServiceImpl implements RendicionCajaChicaService 
     private final CajaChicaRepository cajaChicaRepository;
     private final RendicionCajaChicaRepository rendicionRepository;
     private final ProductoService productoService;
-    private final pe.edu.upeu.bomerp.finanzas.repository.CentroCostoRepository centroCostoRepository;
-    private final pe.edu.upeu.bomerp.finanzas.repository.AsignacionCajaCentroCostoRepository asignacionRepository;
 
     public RendicionCajaChicaServiceImpl(
             CajaChicaRepository cajaChicaRepository,
             RendicionCajaChicaRepository rendicionRepository,
-            ProductoService productoService,
-            pe.edu.upeu.bomerp.finanzas.repository.CentroCostoRepository centroCostoRepository,
-            pe.edu.upeu.bomerp.finanzas.repository.AsignacionCajaCentroCostoRepository asignacionRepository) {
+            ProductoService productoService) {
         this.cajaChicaRepository = cajaChicaRepository;
         this.rendicionRepository = rendicionRepository;
         this.productoService = productoService;
-        this.centroCostoRepository = centroCostoRepository;
-        this.asignacionRepository = asignacionRepository;
     }
 
     @Override
@@ -109,18 +103,6 @@ public class RendicionCajaChicaServiceImpl implements RendicionCajaChicaService 
         caja.setSaldoDisponible(caja.getSaldoDisponible().add(rendicion.getMontoTotal()));
         cajaChicaRepository.save(caja);
 
-        // Restitución presupuestal por Centro de Costo M:N
-        if (rendicion.getDetalles() != null && caja.getAsignacionesPresupuesto() != null) {
-            for (DetalleRendicionCajaChica det : rendicion.getDetalles()) {
-                if (det.getCentroCosto() != null) {
-                    caja.getAsignacionesPresupuesto().stream()
-                            .filter(a -> a.getCentroCosto() != null && a.getCentroCosto().getId().equals(det.getCentroCosto().getId()))
-                            .findFirst()
-                            .ifPresent(asig -> asig.reintegrarSaldo(det.getSubtotal()));
-                }
-            }
-        }
-
         RendicionCajaChica guardada = rendicionRepository.save(rendicion);
         return mapToRendicionResponse(guardada);
     }
@@ -169,32 +151,7 @@ public class RendicionCajaChicaServiceImpl implements RendicionCajaChicaService 
                 productoService.obtener(detReq.getProductoId());
             }
 
-            pe.edu.upeu.bomerp.finanzas.entity.CentroCosto centroCosto = null;
-            if (detReq.getCentroCostoId() != null) {
-                centroCosto = centroCostoRepository.findById(detReq.getCentroCostoId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Centro de costo no encontrado con id: " + detReq.getCentroCostoId()));
-            }
-
             BigDecimal subtotalDetalle = detReq.getPrecioUnitario().multiply(BigDecimal.valueOf(detReq.getCantidad()));
-
-            // [RN-FIN-06]: Control de Solvencia Presupuestal por Centro de Costo
-            if (centroCosto != null && cajaChica.getAsignacionesPresupuesto() != null) {
-                var asignacionOpt = cajaChica.getAsignacionesPresupuesto().stream()
-                        .filter(a -> a.getCentroCosto() != null && a.getCentroCosto().getId().equals(detReq.getCentroCostoId()))
-                        .findFirst();
-
-                if (asignacionOpt.isPresent()) {
-                    pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCosto asig = asignacionOpt.get();
-                    if (subtotalDetalle.compareTo(asig.getSaldoDisponible()) > 0) {
-                        throw new SolvenciaInsuficienteException(
-                                "RN-FIN-06: El gasto para el Centro de Costo " + centroCosto.getCodigoCc() +
-                                " (S/ " + subtotalDetalle + ") excede el saldo presupuestal disponible asignado (S/ " +
-                                asig.getSaldoDisponible() + ")"
-                        );
-                    }
-                    asig.descontarSaldo(subtotalDetalle);
-                }
-            }
 
             DetalleRendicionCajaChica detalle = DetalleRendicionCajaChica.builder()
                     .concepto(detReq.getConcepto())
@@ -202,7 +159,6 @@ public class RendicionCajaChicaServiceImpl implements RendicionCajaChicaService 
                     .precioUnitario(detReq.getPrecioUnitario())
                     .subtotal(subtotalDetalle)
                     .productoId(detReq.getProductoId())
-                    .centroCosto(centroCosto)
                     .build();
 
             rendicion.agregarDetalle(detalle);
@@ -313,79 +269,11 @@ public class RendicionCajaChicaServiceImpl implements RendicionCajaChicaService 
     }
 
     @Override
-    @Transactional
-    public pe.edu.upeu.bomerp.finanzas.dto.AsignacionCajaCentroCostoResponse asignarPresupuestoCentroCosto(Long cajaChicaId, Long centroCostoId, BigDecimal montoAsignado) {
-        CajaChica caja = buscarCajaChicaOFallar(cajaChicaId);
-        pe.edu.upeu.bomerp.finanzas.entity.CentroCosto cc = centroCostoRepository.findById(centroCostoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Centro de costo no encontrado con id: " + centroCostoId));
-
-        pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCosto asignacion = null;
-        if (caja.getAsignacionesPresupuesto() != null) {
-            asignacion = caja.getAsignacionesPresupuesto().stream()
-                    .filter(a -> a.getCentroCosto() != null && a.getCentroCosto().getId().equals(centroCostoId))
-                    .findFirst()
-                    .orElse(null);
-        }
-
-        if (asignacion != null) {
-            BigDecimal diferencia = montoAsignado.subtract(asignacion.getPresupuestoAsignado());
-            asignacion.setPresupuestoAsignado(montoAsignado);
-            BigDecimal nuevoSaldo = asignacion.getSaldoDisponible().add(diferencia);
-            if (nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
-                throw new IllegalArgumentException("No se puede reducir el presupuesto por debajo de lo ya consumido");
-            }
-            asignacion.setSaldoDisponible(nuevoSaldo);
-            asignacion.setActivo(true);
-        } else {
-            asignacion = pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCosto.builder()
-                    .id(new pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCostoId(cajaChicaId, centroCostoId))
-                    .cajaChica(caja)
-                    .centroCosto(cc)
-                    .presupuestoAsignado(montoAsignado)
-                    .saldoDisponible(montoAsignado)
-                    .fechaAsignacion(LocalDate.now())
-                    .activo(true)
-                    .build();
-            caja.agregarAsignacion(asignacion);
-        }
-
-        cajaChicaRepository.save(caja);
-        return mapToAsignacionResponse(asignacion);
-    }
-
-    @Override
     @Transactional(readOnly = true)
-    public List<pe.edu.upeu.bomerp.finanzas.dto.AsignacionCajaCentroCostoResponse> listarPresupuestosPorCaja(Long cajaChicaId) {
-        buscarCajaChicaOFallar(cajaChicaId);
-        return asignacionRepository.findByCajaChicaId(cajaChicaId).stream()
-                .map(this::mapToAsignacionResponse)
+    public List<CajaChicaResponse> listarCajasChicas() {
+        return cajaChicaRepository.findAll().stream()
+                .map(this::mapToCajaChicaResponse)
                 .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<pe.edu.upeu.bomerp.finanzas.dto.CentroCostoResponse> listarCentrosCosto() {
-        return centroCostoRepository.findByActivoTrueOrderByCodigoCcAsc().stream()
-                .map(c -> pe.edu.upeu.bomerp.finanzas.dto.CentroCostoResponse.builder()
-                        .id(c.getId())
-                        .codigoCc(c.getCodigoCc())
-                        .nombreArea(c.getNombreArea())
-                        .activo(c.getActivo())
-                        .build())
-                .toList();
-    }
-
-    private pe.edu.upeu.bomerp.finanzas.dto.AsignacionCajaCentroCostoResponse mapToAsignacionResponse(pe.edu.upeu.bomerp.finanzas.entity.AsignacionCajaCentroCosto a) {
-        return pe.edu.upeu.bomerp.finanzas.dto.AsignacionCajaCentroCostoResponse.builder()
-                .cajaChicaId(a.getCajaChica().getId())
-                .centroCostoId(a.getCentroCosto().getId())
-                .codigoCc(a.getCentroCosto().getCodigoCc())
-                .nombreArea(a.getCentroCosto().getNombreArea())
-                .presupuestoAsignado(a.getPresupuestoAsignado())
-                .saldoDisponible(a.getSaldoDisponible())
-                .fechaAsignacion(a.getFechaAsignacion())
-                .activo(a.getActivo())
-                .build();
     }
 
     private CajaChica buscarCajaChicaOFallar(Long id) {
@@ -412,9 +300,6 @@ public class RendicionCajaChicaServiceImpl implements RendicionCajaChicaService 
                         .precioUnitario(d.getPrecioUnitario())
                         .subtotal(d.getSubtotal())
                         .productoId(d.getProductoId())
-                        .centroCostoId(d.getCentroCosto() != null ? d.getCentroCosto().getId() : null)
-                        .centroCostoCodigo(d.getCentroCosto() != null ? d.getCentroCosto().getCodigoCc() : null)
-                        .centroCostoNombre(d.getCentroCosto() != null ? d.getCentroCosto().getNombreArea() : null)
                         .build())
                 .toList();
 

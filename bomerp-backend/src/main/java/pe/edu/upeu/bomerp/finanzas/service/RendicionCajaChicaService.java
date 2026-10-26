@@ -39,11 +39,5 @@ public interface RendicionCajaChicaService {
     List<RendicionResumenDto> obtenerResumen(Long cajaChicaId);
 
     ReporteRendicionesAgregadoDto obtenerReporteAgregado(Long cajaChicaId);
-
-    pe.edu.upeu.bomerp.finanzas.dto.AsignacionCajaCentroCostoResponse asignarPresupuestoCentroCosto(Long cajaChicaId, Long centroCostoId, BigDecimal montoAsignado);
-
-    List<pe.edu.upeu.bomerp.finanzas.dto.AsignacionCajaCentroCostoResponse> listarPresupuestosPorCaja(Long cajaChicaId);
-
-    List<pe.edu.upeu.bomerp.finanzas.dto.CentroCostoResponse> listarCentrosCosto();
 }
 

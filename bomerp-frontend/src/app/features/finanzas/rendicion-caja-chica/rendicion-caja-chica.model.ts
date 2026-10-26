@@ -8,29 +8,6 @@ export interface CajaChica {
   saldoDisponible: number;
 }
 
-export interface CentroCosto {
-  id: number;
-  codigoCc: string;
-  nombreArea: string;
-  activo: boolean;
-}
-
-export interface AsignacionCajaCentroCosto {
-  cajaChicaId: number;
-  centroCostoId: number;
-  codigoCc: string;
-  nombreArea: string;
-  presupuestoAsignado: number;
-  saldoDisponible: number;
-  fechaAsignacion: string;
-  activo: boolean;
-}
-
-export interface AsignarPresupuestoRequest {
-  centroCostoId: number;
-  montoPresupuesto: number;
-}
-
 export interface DetalleRendicion {
   id?: number;
   concepto: string;
@@ -38,9 +15,6 @@ export interface DetalleRendicion {
   precioUnitario: number;
   subtotal?: number;
   productoId?: number;
-  centroCostoId?: number;
-  centroCostoCodigo?: string;
-  centroCostoNombre?: string;
 }
 
 export interface DetalleRendicionRequest {
@@ -48,7 +22,6 @@ export interface DetalleRendicionRequest {
   cantidad: number;
   precioUnitario: number;
   productoId?: number;
-  centroCostoId?: number;
 }
 
 export interface RendicionCajaChica {

@@ -5,10 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RendicionCajaChicaService } from './rendicion-caja-chica-service';
 import {
-  AsignacionCajaCentroCosto,
-  AsignarPresupuestoRequest,
   CajaChica,
-  CentroCosto,
   EstadoRendicion,
   RendicionCajaChica,
   ReporteRendicionesAgregado,
@@ -56,17 +53,6 @@ export class RendicionCajaChicaList implements OnInit {
   protected nuevaCajaLimite = signal(1000);
   protected nuevaCajaSaldo = signal(1000);
   protected loadingCrearCaja = signal(false);
-  protected readonly presupuestosPorCaja = signal<Record<number, AsignacionCajaCentroCosto[]>>({});
-
-  // Gestión de Presupuestos por Centro de Costo (M:N AsignacionCajaCentroCosto)
-  protected readonly centrosCosto = signal<CentroCosto[]>([]);
-  protected readonly asignaciones = signal<AsignacionCajaCentroCosto[]>([]);
-  protected readonly cajaParaPresupuesto = signal<CajaChica | null>(null);
-  protected readonly mostrarModalPresupuestos = signal(false);
-  protected readonly formPresupuestoCentroCostoId = signal<number | null>(null);
-  protected readonly formPresupuestoMonto = signal<number>(500);
-  protected readonly loadingPresupuestos = signal(false);
-  protected readonly mensajeExitoPresupuesto = signal<string | null>(null);
 
   ngOnInit(): void {
     this.cargarCajasChicas();
@@ -78,13 +64,6 @@ export class RendicionCajaChicaList implements OnInit {
     this.rendicionService.listarCajasChicas().subscribe({
       next: (data) => {
         this.cajasChicas.set(data);
-        data.forEach((c) => {
-          this.rendicionService.listarPresupuestosCaja(c.id).subscribe({
-            next: (asigs) => {
-              this.presupuestosPorCaja.update((map) => ({ ...map, [c.id]: asigs }));
-            },
-          });
-        });
       },
       error: () => console.warn('No se pudieron cargar las cajas chicas'),
     });
@@ -274,71 +253,6 @@ export class RendicionCajaChicaList implements OnInit {
         error: (err) => {
           this.mensajeError.set(err?.error?.message || 'Error al crear la caja chica.');
           this.loadingCrearCaja.set(false);
-        },
-      });
-  }
-
-  // --- Gestión de Presupuestos por Centro de Costo (M:N) ---
-
-  abrirGestionPresupuestos(caja: CajaChica): void {
-    this.cajaParaPresupuesto.set(caja);
-    this.mensajeExitoPresupuesto.set(null);
-    this.mostrarModalPresupuestos.set(true);
-    this.cargarPresupuestosCaja(caja.id);
-
-    if (this.centrosCosto().length === 0) {
-      this.rendicionService.listarCentrosCosto().subscribe({
-        next: (ccs) => {
-          this.centrosCosto.set(ccs);
-          if (ccs.length > 0 && !this.formPresupuestoCentroCostoId()) {
-            this.formPresupuestoCentroCostoId.set(ccs[0].id);
-          }
-        },
-      });
-    }
-  }
-
-  cargarPresupuestosCaja(cajaId: number): void {
-    this.loadingPresupuestos.set(true);
-    this.rendicionService.listarPresupuestosCaja(cajaId).subscribe({
-      next: (asigs) => {
-        this.asignaciones.set(asigs);
-        this.loadingPresupuestos.set(false);
-      },
-      error: () => {
-        this.loadingPresupuestos.set(false);
-      },
-    });
-  }
-
-  cerrarModalPresupuestos(): void {
-    this.mostrarModalPresupuestos.set(false);
-    this.cajaParaPresupuesto.set(null);
-    this.mensajeExitoPresupuesto.set(null);
-  }
-
-  guardarPresupuesto(): void {
-    const caja = this.cajaParaPresupuesto();
-    const ccId = this.formPresupuestoCentroCostoId();
-    const monto = this.formPresupuestoMonto();
-
-    if (!caja || !ccId || monto <= 0) return;
-
-    this.loadingPresupuestos.set(true);
-    this.mensajeExitoPresupuesto.set(null);
-
-    this.rendicionService
-      .asignarPresupuesto(caja.id, { centroCostoId: Number(ccId), montoPresupuesto: Number(monto) })
-      .subscribe({
-        next: (asig) => {
-          this.mensajeExitoPresupuesto.set(
-            `Presupuesto asignado a ${asig.codigoCc} (${asig.nombreArea}): S/ ${asig.presupuestoAsignado.toFixed(2)}`
-          );
-          this.cargarPresupuestosCaja(caja.id);
-        },
-        error: (err) => {
-          this.mensajeError.set(err?.error?.message || 'Error al asignar presupuesto.');
-          this.loadingPresupuestos.set(false);
         },
       });
   }
